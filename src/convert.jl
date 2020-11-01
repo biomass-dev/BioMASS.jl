@@ -4,7 +4,6 @@ py"""
 import os
 import shutil
 import re
-import numpy as np
 
 
 def main(model_path):
@@ -21,6 +20,11 @@ def main(model_path):
     $ mv dat2npy/out/ path_to_biomass/
     
     '''
+    try:
+        import numpy as np
+    except ImportError:
+        print('numpy: Not installed')
+    
     n_file = []
     fitparam_files = os.listdir(model_path.strip('/') + '/fitparam')
     for file in fitparam_files:
