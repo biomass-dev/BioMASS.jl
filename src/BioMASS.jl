@@ -9,8 +9,10 @@ using DelimitedFiles
 
 export
     optimize,
-    optimize_continue
+    optimize_continue,
+    param2biomass
 
+include("convert.jl")
 include("optimize.jl")
 include("ga/initial_population.jl")
 include("ga/undxmgg.jl")
