@@ -10,7 +10,7 @@ function ga_v2(
         allowable_error::Float64)::Tuple{Array{Float64, 1}, Float64}
     
     #=
-    1. Initialization
+        1. Initialization
             As an initial population, create np individuals randomly.
             ga_v2 also represents individuals as n-dimensional real number
             vectors, where n is the dimension of the search space. Set
