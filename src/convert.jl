@@ -76,5 +76,9 @@ def main(model_path):
 """
 
 function param2biomass(model_path::String)
-    py"main"(model_path)
+    try
+        py"main"(model_path)
+    catch
+        return
+    end
 end
