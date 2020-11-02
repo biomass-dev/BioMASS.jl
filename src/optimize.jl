@@ -37,7 +37,7 @@ function optimize(
     (best_indiv, best_fitness) = ga_v2(
         MODEL_PATH,
         Main.ExecModel.objective,
-        Main.decode_gene2val,
+        Main.ExecModel.decode_gene2val,
         nth_param_set,
         max_generation,
         n_population,
@@ -68,7 +68,7 @@ function optimize_continue(
         (best_indiv, best_fitness) = ga_v2(
             MODEL_PATH,
             Main.ExecModel.objective,
-            Main.decode_gene2val,
+            Main.ExecModel.decode_gene2val,
             nth_param_set,
             max_generation,
             n_population,
@@ -80,9 +80,9 @@ function optimize_continue(
         (best_indiv, best_fitness) = ga_v2_continue(
             MODEL_PATH,
             Main.ExecModel.objective,
-            Main.decode_gene2val,
-            Main.encode_val2gene,
-            Main.encode_bestIndivVal2randGene,
+            Main.ExecModel.decode_gene2val,
+            Main.ExecModel.encode_val2gene,
+            Main.ExecModel.encode_bestIndivVal2randGene,
             nth_param_set,
             max_generation,
             n_population,
