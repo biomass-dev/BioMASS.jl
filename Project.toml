@@ -16,6 +16,8 @@ Sundials = "c3572dad-4567-51f8-b174-8c6c989267f4"
 
 [compat]
 StatsBase = "0.33"
+SteadyStateDiffEq = "1.5"
+PyCall = "1.92"
 julia = "1.0"
 
 [extras]
