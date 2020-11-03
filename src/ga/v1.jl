@@ -7,7 +7,7 @@ function ga_v1(
         n_population::Int64,
         n_children::Int64,
         n_gene::Int64,
-        allowable_error::Float64)::Tuple{Array{Float64, 1}, Float64}
+        allowable_error::Float64)
     population::Matrix{Float64} = get_initial_population(
         MODEL_PATH, objective, nth_param_set, n_population, n_gene
     )
@@ -34,10 +34,7 @@ function ga_v1(
     end
 
     if population[1, end] <= allowable_error
-        best_indiv = decode_gene2val(population[1, 1:n_gene])
-        best_fitness = population[1, end]
-
-        return best_indiv, best_fitness
+        return
     end
 
     generation::Int64 = 2
@@ -72,10 +69,7 @@ function ga_v1(
         end
 
         if population[1, end] <= allowable_error
-            best_indiv = decode_gene2val(population[1, 1:n_gene])
-            best_fitness = population[1, end]
-
-            return best_indiv, best_fitness
+            break
         end
 
         open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/count_num.dat", "w") do f
@@ -85,10 +79,7 @@ function ga_v1(
         generation += 1
     end
 
-    best_indiv = decode_gene2val(population[1, 1:n_gene])
-    best_fitness = population[1, end]
-
-    return best_indiv, best_fitness
+    return
 end
 
 
@@ -104,7 +95,7 @@ function ga_v1_continue(
         n_children::Int64,
         n_gene::Int64,
         allowable_error::Float64, 
-        p0_bounds::Vector{Float64})::Tuple{Array{Float64, 1}, Float64}
+        p0_bounds::Vector{Float64})
     count::Int64 = readdlm(
         strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/count_num.dat"
     )[1, 1]
@@ -145,10 +136,7 @@ function ga_v1_continue(
     end
 
     if population[1, end] <= allowable_error
-        best_indiv = decode_gene2val(population[1, 1:n_gene])
-        best_fitness = population[1, end]
-
-        return best_indiv, best_fitness
+        return
     end
 
     generation::Int64 = 2 + count
@@ -185,10 +173,7 @@ function ga_v1_continue(
         end
 
         if population[1, end] <= allowable_error
-            best_indiv = decode_gene2val(population[1, 1:n_gene])
-            best_fitness = population[1, end]
-
-            return best_indiv, best_fitness
+            break
         end
 
         open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/count_num.dat", "w") do f
@@ -198,8 +183,5 @@ function ga_v1_continue(
         generation += 1
     end
 
-    best_indiv = decode_gene2val(population[1, 1:n_gene])
-    best_fitness = population[1, end]
-
-    return best_indiv, best_fitness
+    return
 end

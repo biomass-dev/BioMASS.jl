@@ -34,7 +34,7 @@ function optimize(
     n_children::Int64 = 50
     n_gene::Int64 = size(search_rgn, 2)
     
-    (best_indiv, best_fitness) = ga_v2(
+    ga_v2(
         MODEL_PATH,
         Main.ExecModel.objective,
         Main.ExecModel.decode_gene2val,
@@ -65,7 +65,7 @@ function optimize_continue(
     if !isdir(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set")
         mkdir(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set")
         
-        (best_indiv, best_fitness) = ga_v2(
+        ga_v2(
             MODEL_PATH,
             Main.ExecModel.objective,
             Main.ExecModel.decode_gene2val,
@@ -77,7 +77,7 @@ function optimize_continue(
             allowable_error
         )
     else
-        (best_indiv, best_fitness) = ga_v2_continue(
+        ga_v2_continue(
             MODEL_PATH,
             Main.ExecModel.objective,
             Main.ExecModel.decode_gene2val,
