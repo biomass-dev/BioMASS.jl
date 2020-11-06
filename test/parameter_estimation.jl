@@ -1,4 +1,4 @@
-model = load_model("../fos_model")
+const model = load_model("../fos_model")
 
 @testset "Parameter Estimation" begin
     @testset "optimize" begin
