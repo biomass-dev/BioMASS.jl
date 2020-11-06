@@ -7,16 +7,21 @@ struct ExecModel
     bestIndivVal2randGene::Function
 end
 
-function load_model(model_path::String)
-    include(strip(model_path, '/') * "/name2idx/parameters.jl")
-    include(strip(model_path, '/') * "/name2idx/species.jl")
-    include(strip(model_path, '/') * "/set_model.jl")
-    include(strip(model_path, '/') * "/observable.jl")
-    include(strip(model_path, '/') * "/experimental_data.jl")
-    include(strip(model_path, '/') * "/simulation.jl")
-    include(strip(model_path, '/') * "/fitness.jl")
-    include(strip(model_path, '/') * "/set_search_param.jl")
 
+function set_files(dir::Union{String, SubString{String}})
+    for child in readdir(dir)
+        # if isdir("$dir/$child")
+        if child == "name2idx"
+            set_files("$dir/$child")
+        elseif splitext(child)[end] == ".jl"
+            include("$dir/$child")
+        end
+    end
+end
+
+
+function load_model(model_path::String)
+    set_files(strip(model_path, '/'))
     return ExecModel(
         model_path,
         objective,
