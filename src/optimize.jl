@@ -1,43 +1,41 @@
-import .Main
+#import .Main
 
 function optimize(
-        MODEL_PATH::String,
+        model::ExecModel,
         nth_param_set::Int64;
         max_generation::Int64=10000,
         allowable_error::Float64=0.0)
     
-    if !isdir(strip(MODEL_PATH, '/') * "/fitparam")
-        mkdir(strip(MODEL_PATH, '/') * "/fitparam")
+    if !isdir(strip(model.path, '/') * "/fitparam")
+        mkdir(strip(model.path, '/') * "/fitparam")
     end
-    if !isdir(strip(MODEL_PATH, '/') * "/logs")
-        mkdir(strip(MODEL_PATH, '/') * "/logs")
+    if !isdir(strip(model.path, '/') * "/logs")
+        mkdir(strip(model.path, '/') * "/logs")
     end
 
     try
         files = readdir(
-            strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set"
+            strip(model.path, '/') * "/fitparam/$nth_param_set"
         )
         for file in files
             if occursin(".dat",file)
                 rm(
-                    strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/$file"
+                    strip(model.path, '/') * "/fitparam/$nth_param_set/$file"
                 )
             end
         end
     catch
-        mkdir(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set")
+        mkdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
     end
 
-    search_rgn::Matrix{Float64} = Main.ExecModel.get_search_region()
+    search_rgn::Matrix{Float64} = model.search_region()
 
     n_population::Int64 = 5*size(search_rgn, 2)
     n_children::Int64 = 50
     n_gene::Int64 = size(search_rgn, 2)
     
     ga_v2(
-        MODEL_PATH,
-        Main.ExecModel.objective,
-        Main.ExecModel.decode_gene2val,
+        model,
         nth_param_set,
         max_generation,
         n_population,
@@ -49,12 +47,12 @@ end
 
 
 function optimize_continue(
-        MODEL_PATH::String,
+        model::ExecModel,
         nth_param_set::Int64;
         max_generation::Int64=10000,
         allowable_error::Float64=0.0)
 
-    search_rgn::Matrix{Float64} = Main.ExecModel.get_search_region()
+    search_rgn::Matrix{Float64} = model.search_region()
 
     n_population::Int64 = 5*size(search_rgn, 2)
     n_children::Int64 = 50
@@ -62,13 +60,11 @@ function optimize_continue(
 
     p0_bounds::Vector{Float64} = [0.1, 10.0]  # [lower_bound, upper_bound]
 
-    if !isdir(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set")
-        mkdir(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set")
+    if !isdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
+        mkdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
         
         ga_v2(
-            MODEL_PATH,
-            Main.ExecModel.objective,
-            Main.ExecModel.decode_gene2val,
+            model,
             nth_param_set,
             max_generation,
             n_population,
@@ -78,11 +74,7 @@ function optimize_continue(
         )
     else
         ga_v2_continue(
-            MODEL_PATH,
-            Main.ExecModel.objective,
-            Main.ExecModel.decode_gene2val,
-            Main.ExecModel.encode_val2gene,
-            Main.ExecModel.encode_bestIndivVal2randGene,
+            model,
             nth_param_set,
             max_generation,
             n_population,

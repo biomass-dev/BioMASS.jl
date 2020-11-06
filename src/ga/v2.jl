@@ -1,7 +1,5 @@
 function ga_v2(
-        MODEL_PATH::String,
-        objective::Function,
-        decode_gene2val::Function,
+        model::ExecModel,
         nth_param_set::Int64,
         max_generation::Int64,
         n_population::Int64,
@@ -76,28 +74,28 @@ function ga_v2(
     N0::Vector{Float64} = zeros(3*n_population)
 
     population::Matrix{Float64} = get_initial_population(
-        MODEL_PATH, objective, nth_param_set, n_population, n_gene
+        model, nth_param_set, n_population, n_gene
     )
     N0[1] = population[1, end]
-    open(strip(MODEL_PATH, '/') * "/logs/$nth_param_set.log", "a") do f
+    open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
         write(f,
             @sprintf(
                 "Generation%d: Best Fitness = %.6e\n", 1, population[1, end]
             )
         )
     end
-    best_indiv::Vector{Float64} = decode_gene2val(population[1, 1:n_gene])
+    best_indiv::Vector{Float64} = model.gene2val(population[1, 1:n_gene])
     best_fitness::Float64 = population[1, end]
 
-    open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/fit_param1.dat", "w") do f
+    open(strip(model.path, '/') * "/fitparam/$nth_param_set/fit_param1.dat", "w") do f
         for val in best_indiv
             write(f, @sprintf("%.6e\n", val))
         end
     end
-    open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/generation.dat", "w") do f
+    open(strip(model.path, '/') * "/fitparam/$nth_param_set/generation.dat", "w") do f
         write(f, @sprintf("%d", 1))
     end
-    open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/best_fitness.dat", "w") do f
+    open(strip(model.path, '/') * "/fitparam/$nth_param_set/best_fitness.dat", "w") do f
         write(f, @sprintf("%.6e", best_fitness))
     end
 
@@ -109,16 +107,16 @@ function ga_v2(
     while generation <= max_generation
         ip = randperm(n_population)[1:n_gene+2]
         population = converging!(
-            objective, ip, population, n_population, n_gene
+            model.obj_func, ip, population, n_population, n_gene
         )
         population = local_search!(
-            objective, ip, population, n_population, n_children, n_gene
+            model.obj_func, ip, population, n_population, n_children, n_gene
         )
         if N_iter > 1
             for _ in 1:N_iter
                 ip = randperm(n_population)[1:n_gene+2]
                 population = converging!(
-                    objective, ip, population, n_population, n_gene
+                    model.obj_func, ip, population, n_population, n_gene
                 )
             end
         end
@@ -133,7 +131,7 @@ function ga_v2(
         else
             N0[generation%length(N0)] = population[1, end]
         end
-        open(strip(MODEL_PATH, '/') * "/logs/$nth_param_set.log", "a") do f
+        open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
             write(f,
                 @sprintf(
                     "Generation%d: Best Fitness = %.6e\n",
@@ -141,22 +139,22 @@ function ga_v2(
                 )
             )
         end
-        best_indiv = decode_gene2val(population[1, 1:n_gene])
+        best_indiv = model.gene2val(population[1, 1:n_gene])
         if population[1, end] < best_fitness
             open(
-                strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/fit_param$generation.dat", "w"
+                strip(model.path, '/') * "/fitparam/$nth_param_set/fit_param$generation.dat", "w"
             ) do f
                 for val in best_indiv
                     write(f, @sprintf("%.6e\n", val))
                 end
             end
-            open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/generation.dat", "w") do f
+            open(strip(model.path, '/') * "/fitparam/$nth_param_set/generation.dat", "w") do f
                 write(f, @sprintf("%d", generation))
             end
         end
         best_fitness = population[1, end]
 
-        open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/best_fitness.dat", "w") do f
+        open(strip(model.path, '/') * "/fitparam/$nth_param_set/best_fitness.dat", "w") do f
             write(f, @sprintf("%.6e", best_fitness))
         end
 
@@ -164,7 +162,7 @@ function ga_v2(
             break
         end
 
-        open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/count_num.dat", "w") do f
+        open(strip(model.path, '/') * "/fitparam/$nth_param_set/count_num.dat", "w") do f
             write(f, @sprintf("%d", generation))
         end
 
@@ -176,11 +174,7 @@ end
 
 
 function ga_v2_continue(
-        MODEL_PATH::String,
-        objective::Function,
-        decode_gene2val::Function,
-        encode_val2gene::Function,
-        encode_bestIndivVal2randGene::Function,
+        model::ExecModel,
         nth_param_set::Int64,
         max_generation::Int64,
         n_population::Int64,
@@ -196,20 +190,19 @@ function ga_v2_continue(
     N0::Vector{Float64} = zeros(3*n_population)
 
     count::Int64 = readdlm(
-        strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/count_num.dat"
+        strip(model.path, '/') * "/fitparam/$nth_param_set/count_num.dat"
     )[1, 1]
     best_generation::Int64 = readdlm(
-        strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/generation.dat"
+        strip(model.path, '/') * "/fitparam/$nth_param_set/generation.dat"
     )[1, 1]
     best_indiv::Vector{Float64} = readdlm(
-        strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/fit_param$best_generation.dat"
+        strip(model.path, '/') * "/fitparam/$nth_param_set/fit_param$best_generation.dat"
     )[:, 1]
-    best_indiv_gene::Vector{Float64} = encode_val2gene(best_indiv)
+    best_indiv_gene::Vector{Float64} = model.val2gene(best_indiv)
     best_fitness::Float64 = objective(best_indiv_gene)
 
     population::Matrix{Float64} = get_initial_population_continue(
-        MODEL_PATH, objective, encode_bestIndivVal2randGene,
-        nth_param_set, n_population, n_gene, p0_bounds
+        model, nth_param_set, n_population, n_gene, p0_bounds
     )
     if best_fitness < population[1, end]
         for i in 1:n_gene
@@ -217,9 +210,9 @@ function ga_v2_continue(
         end
         population[1, end] = best_fitness
     else
-        best_indiv = decode_gene2val(population[1, 1:n_gene])
+        best_indiv = model.gene2val(population[1, 1:n_gene])
         best_fitness = population[1, end]
-        open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/fit_param$count.dat", "w") do f
+        open(strip(model.path, '/') * "/fitparam/$nth_param_set/fit_param$count.dat", "w") do f
             for i=1:n_gene
                 write(f, @sprintf("%.6e", best_indiv[i]))
             end
@@ -227,7 +220,7 @@ function ga_v2_continue(
     end
 
     N0[1] = population[1, end]
-    open(strip(MODEL_PATH, '/') * "/logs/$nth_param_set.log", "a") do f
+    open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
         write(f,
             @sprintf(
                 "Generation%d: Best Fitness = %.6e\n",
@@ -244,16 +237,16 @@ function ga_v2_continue(
     while generation <= max_generation
         ip = randperm(n_population)[1:n_gene+2]
         population = converging!(
-            objective, ip, population, n_population, n_gene
+            model.obj_func, ip, population, n_population, n_gene
         )
         population = local_search!(
-            objective, ip, population, n_population, n_children, n_gene
+            model.obj_func, ip, population, n_population, n_children, n_gene
         )
         if N_iter > 1
             for _ in 1:N_iter
                 ip = randperm(n_population)[1:n_gene+2]
                 population = converging!(
-                    objective, ip, population, n_population, n_gene
+                    model.obj_func, ip, population, n_population, n_gene
                 )
             end
         end
@@ -268,7 +261,7 @@ function ga_v2_continue(
         else
             N0[generation%length(N0)] = population[1, end]
         end
-        open(strip(MODEL_PATH, '/') * "/logs/$nth_param_set.log", "a") do f
+        open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
             write(f,
                 @sprintf(
                     "Generation%d: Best Fitness = %.6e\n",
@@ -276,23 +269,23 @@ function ga_v2_continue(
                 )
             )
         end
-        best_indiv = decode_gene2val(population[1, 1:n_gene])
+        best_indiv = model.gene2val(population[1, 1:n_gene])
         if population[1, end] < best_fitness
             open(
-                strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/fit_param$generation.dat"
+                strip(model.path, '/') * "/fitparam/$nth_param_set/fit_param$generation.dat"
                 , "w"
             ) do f
                 for val in best_indiv
                     write(f, @sprintf("%.6e\n", val))
                 end
             end
-            open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/generation.dat", "w") do f
+            open(strip(model.path, '/') * "/fitparam/$nth_param_set/generation.dat", "w") do f
                 write(f, @sprintf("%d", generation))
             end
         end
         best_fitness = population[1, end]
 
-        open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/best_fitness.dat", "w") do f
+        open(strip(model.path, '/') * "/fitparam/$nth_param_set/best_fitness.dat", "w") do f
             write(f, @sprintf("%.6e", best_fitness))
         end
 
@@ -300,7 +293,7 @@ function ga_v2_continue(
             break
         end
 
-        open(strip(MODEL_PATH, '/') * "/fitparam/$nth_param_set/count_num.dat", "w") do f
+        open(strip(model.path, '/') * "/fitparam/$nth_param_set/count_num.dat", "w") do f
             write(f, @sprintf("%d", generation))
         end
 
