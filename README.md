@@ -9,17 +9,15 @@ This module provides a Julia interface to the [BioMASS](https://github.com/okada
 
 ## Usage
 ```julia
-const MODEL_PATH = "./fos_model"
-include(MODEL_PATH * "/exec_model.jl")
-using .ExecModel
-
 using BioMASS
 
+model = load_model("./fos_model")
+
 # Estimate unknown model parameters against experimental observations.
-optimize(MODEL_PATH, 1, max_generation=20000, allowable_error=0.5)
+optimize(model, 1, max_generation=20000, allowable_error=0.5)
 
 # Convert optimized parameters into BioMASS format.
-param2biomass("./fos_model/")
+param2biomass("./fos_model")
 ```
 
 ## Installation
