@@ -8,11 +8,11 @@ struct ExecModel
 end
 
 
-function set_files(dir::Union{String, SubString{String}})
+function set_model_files(dir::Union{String, SubString{String}})
     for child in readdir(dir)
         # if isdir("$dir/$child")
         if child == "name2idx"
-            set_files("$dir/$child")
+            set_model_files("$dir/$child")
         elseif splitext(child)[end] == ".jl"
             include("$dir/$child")
         end
@@ -21,7 +21,7 @@ end
 
 
 function load_model(model_path::String)
-    set_files(strip(model_path, '/'))
+    set_model_files(strip(model_path, '/'))
     return ExecModel(
         model_path,
         objective,
