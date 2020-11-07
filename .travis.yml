@@ -3,10 +3,14 @@ language: julia
 branches:
   only:
     - master
+os:
+  - osx
+  - linux
 julia:
   - 1
   - nightly
-os:
-  - linux
+matrix:
+  allow_failures:
+    - julia: nightly
 notifications:
   email: false
