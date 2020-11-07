@@ -9,12 +9,12 @@ function get_initial_population(
     population::Matrix{Float64} = fill(
         Inf, (n_population, n_gene + 1)
     )
-    for i = 1:n_population
-        while !isfinite(population[i,end])
+    @inbounds @simd for i = 1:n_population
+        while !isfinite(population[i, end])
             for j = 1:n_gene
-                population[i,j] = rand()
+                population[i, j] = rand()
             end
-            population[i,end] = model.obj_func(population[i,1:n_gene])
+            population[i, end] = model.obj_func(population[i, 1:n_gene])
         end
         open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
             write(f, @sprintf("%d / %d\n", i, n_population))
@@ -37,12 +37,12 @@ function get_initial_population_continue(
         p0_bounds::Vector{Float64})::Matrix{Float64}
     generation::Int64 = readdlm(
         strip(model.path, '/') * "/fitparam/$nth_param_set/generation.dat"
-    )[1,1]
+    )[1, 1]
     best_indiv::Vector{Float64} = readdlm(
         strip(model.path, '/') * "/fitparam/$nth_param_set/fit_param$generation.dat"
-    )[:,1]
+    )[:, 1]
     open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
-        write(f,
+        write(f, 
             "\n----------------------------------------\n"*
             "Generating the initial population...\n"
         )
@@ -50,19 +50,19 @@ function get_initial_population_continue(
     population::Matrix{Float64} = fill(
         Inf, (n_population, n_gene + 1)
     )
-    for i = 1:n_population
-        while !isfinite(population[i,end])
-            for j = 1:n_gene
-                population[i,j] = model.bestIndivVal2randGene(
-                    j, best_indiv, p0_bounds
+    @inbounds @simd for i = 1:n_population
+        while !isfinite(population[i, end])
+            for gene_idx = 1:n_gene
+                population[i, gene_idx] = model.bestIndivVal2randGene(
+                    gene_idx, best_indiv, p0_bounds
                 )
-                if population[i,j] > 1.0
-                    population[i,j] = 1.0
-                elseif population[i,j] < 0.0
-                    population[i,j] = 0.0
+                if population[i, gene_idx] > 1.0
+                    population[i, gene_idx] = 1.0
+                elseif population[i, gene_idx] < 0.0
+                    population[i, gene_idx] = 0.0
                 end
             end
-            population[i,end] = model.obj_func(population[i,1:n_gene])
+            population[i, end] = model.obj_func(population[i, 1:n_gene])
         end
         open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
             write(f, @sprintf("%d / %d\n", i, n_population))
