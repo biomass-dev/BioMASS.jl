@@ -1,8 +1,8 @@
 # The BioMASS module for Julia
 
+[![Actions Status](https://github.com/himoto/BioMASS.jl/workflows/CI/badge.svg)](https://github.com/himoto/BioMASS.jl/actions)
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://himoto.github.io/BioMASS.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://himoto.github.io/BioMASS.jl/dev)
-[![Build Status](https://travis-ci.com/himoto/BioMASS.jl.svg?branch=master)](https://travis-ci.com/himoto/BioMASS.jl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 This module provides a Julia interface to the [BioMASS](https://github.com/okadalabipr/biomass) parameter estimation.
@@ -24,6 +24,3 @@ param2biomass("./fos_model")
 ```julia
 pkg> add https://github.com/himoto/BioMASS.jl  # Press ']' to enter the Pkg REPL mode.
 ```
-
-## License
-[MIT](LICENSE)
