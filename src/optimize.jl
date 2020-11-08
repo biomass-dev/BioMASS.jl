@@ -1,8 +1,7 @@
-#import .Main
-
 function optimize(
         model::ExecModel,
         nth_param_set::Int64;
+        n_children::Int64=50,
         max_generation::Int64=10000,
         allowable_error::Float64=0.0)
     
@@ -31,7 +30,6 @@ function optimize(
     search_rgn::Matrix{Float64} = model.search_region()
 
     n_population::Int64 = 5*size(search_rgn, 2)
-    n_children::Int64 = 50
     n_gene::Int64 = size(search_rgn, 2)
     
     ga_v2(
@@ -49,13 +47,13 @@ end
 function optimize_continue(
         model::ExecModel,
         nth_param_set::Int64;
+        n_children::Int64=50,
         max_generation::Int64=10000,
         allowable_error::Float64=0.0)
 
     search_rgn::Matrix{Float64} = model.search_region()
 
     n_population::Int64 = 5*size(search_rgn, 2)
-    n_children::Int64 = 50
     n_gene::Int64 = size(search_rgn, 2)
 
     p0_bounds::Vector{Float64} = [0.1, 10.0]  # [lower_bound, upper_bound]
