@@ -5,11 +5,10 @@ function optimize(
         max_generation::Int64=10000,
         allowable_error::Float64=0.0)
     
-    if !isdir(strip(model.path, '/') * "/fitparam")
-        mkdir(strip(model.path, '/') * "/fitparam")
-    end
-    if !isdir(strip(model.path, '/') * "/logs")
-        mkdir(strip(model.path, '/') * "/logs")
+    for dir in ["/fitparam", "/logs"]
+        if !isdir(strip(model.path, '/') * dir)
+            mkdir(strip(model.path, '/') * dir)
+        end
     end
 
     try
