@@ -15,11 +15,14 @@ const ABSTOL = 1e-9
 const RELTOL = 1e-9
 const DTMIN = 1e-8
 
-const normalization = true 
-#=
-if true, simulation results in each observable 
-are divided by their maximum values
-=#
+normalization = Dict{String, Dict{}}()
+for observable in observables
+    normalization[observable] = Dict(
+        "timepoint" => nothing,
+        "condition" => ["EGF", "HRG"]
+    )
+end
+
 const dt = 1.0
 t = collect(0.0:dt:5400.0)  # 0, 1, 2, ..., 5400 [sec.]
 
