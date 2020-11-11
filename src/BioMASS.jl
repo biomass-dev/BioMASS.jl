@@ -12,9 +12,11 @@ export
     optimize_continue,
     param2biomass,
     ExecModel,
-    load_model
+    load_model,
+    visualize
 
 include("exec_model.jl")
+include("visualize.jl")
 include("convert.jl")
 include("optimize.jl")
 include("ga/initial_population.jl")
