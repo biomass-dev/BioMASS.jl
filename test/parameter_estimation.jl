@@ -1,14 +1,5 @@
 using PyCall
 
-function isinstalled()::Bool
-    try
-        pyimport("matplotlib")
-        return true
-    catch
-        return false
-    end
-end
-
 const model = load_model("../fos_model")
 
 output = []
@@ -23,7 +14,7 @@ output = []
         push!(output, "logs")
         push!(output, "fitparam")
     end
-    if isinstalled()
+    if isinstalled_plt()
         @testset "visualization" begin
             visualize(model, viz_type="best")
             @test isdir("../fos_model/figure/simulation/best")
