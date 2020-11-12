@@ -16,9 +16,9 @@ export
     load_model,
     visualize
 
-function isinstalled_plt()::Bool
+function isinstalled(pymodule::String)::Bool
     try
-        pyimport("matplotlib")
+        pyimport(pymodule)
         return true
     catch
         return false
@@ -34,7 +34,7 @@ include("ga/converging.jl")
 include("ga/local_search.jl")
 include("ga/v1.jl")
 include("ga/v2.jl")
-if isinstalled_plt()
+if isinstalled("matplotlib")
     include("visualize.jl")
 else
     function visualize(model::ExecModel; kwargs...)

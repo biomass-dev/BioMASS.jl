@@ -1,4 +1,4 @@
-import BioMASS: isinstalled_plt
+import BioMASS: isinstalled
 
 const model = load_model("../fos_model")
 
@@ -14,16 +14,18 @@ output = []
         push!(output, "logs")
         push!(output, "fitparam")
     end
-    if isinstalled_plt()
+    if isinstalled("matplotlib")
         @testset "visualization" begin
             visualize(model, viz_type="best")
             @test isdir("../fos_model/figure/simulation/best")
             push!(output, "figure")
         end
     end
-    @testset "conversion" begin
-        @test param2biomass(model.path) === nothing
-        push!(output, "dat2npy")
+    if isinstalled("numpy")
+        @testset "conversion" begin
+            @test param2biomass(model.path) === nothing
+            push!(output, "dat2npy")
+        end
     end
     for dir in output
         rm("../fos_model/$dir", recursive=true, force=true)
