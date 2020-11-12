@@ -6,6 +6,7 @@ using Random
 using StatsBase
 using Statistics
 using DelimitedFiles
+using PyCall
 
 export
     optimize,
@@ -13,7 +14,7 @@ export
     param2biomass,
     ExecModel,
     load_model,
-    isinstalled_plt
+    visualize
 
 function isinstalled_plt()::Bool
     try
@@ -35,6 +36,13 @@ include("ga/v1.jl")
 include("ga/v2.jl")
 if isinstalled_plt()
     include("visualize.jl")
-    export visualize
+else
+    function visualize(model::ExecModel; kwargs...)
+        error(
+            "The Python package matplotlib could not be imported by pyimport.\n"
+            * "Usually this means that you did not install matplotlib in the "
+            * "Python version being used by PyCall."
+        )
+    end
 end
-end
+end # module

@@ -1,4 +1,4 @@
-using PyCall
+import BioMASS: isinstalled_plt
 
 const model = load_model("../fos_model")
 
