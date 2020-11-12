@@ -1,27 +1,26 @@
 # Residual Sum of Squares
-function compute_objval_rss(sim_data::Vector{Float64}, exp_data::Vector{Float64})::Float64
+function compute_objval_rss(
+        sim_data::Vector{Float64},
+        exp_data::Vector{Float64})::Float64
     error::Float64 = 0.0
-
-    @simd for i in eachindex(exp_data)
+    for i in eachindex(exp_data)
         @inbounds error += (sim_data[i] - exp_data[i])^2
     end
-
     return error
 end
 
 
 # Cosine similarity
-function compute_objval_cos(sim_data::Vector{Float64}, exp_data::Vector{Float64})::Float64
-
+function compute_objval_cos(
+        sim_data::Vector{Float64},
+        exp_data::Vector{Float64})::Float64
     error::Float64 = 1.0 - dot(sim_data,exp_data)/(norm(sim_data)*norm(exp_data))
-
     return error
 end
 
 
 function conditions_index(condition_name::String)::Int
-
-    return findfirst(isequal(condition_name),Sim.conditions)
+    return findfirst(isequal(condition_name), Sim.conditions)
 end
 
 
@@ -30,7 +29,7 @@ function diff_sim_and_exp(
         exp_dict::Dict{String,Array{Float64,1}},
         exp_timepoint::Vector{Float64},
         conditions::Vector{String};
-        sim_norm_max::Float64)
+        sim_norm_max::Float64)::Tuple{Vector{Float64}, Vector{Float64}}
     sim_result::Vector{Float64} = []
     exp_result::Vector{Float64} = []
 
@@ -55,17 +54,34 @@ function objective(indiv_gene::Vector{Float64})::Float64
         error::Vector{Float64} = zeros(length(observables))
         for (i,obs_name) in enumerate(observables)
             if isassigned(Exp.experiments,i)
+                if length(Sim.normalization) > 0
+                    norm_max::Float64 = (
+                        Sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
+                            Sim.simulations[
+                                i,
+                                Sim.normalization[obs_name]["timepoint"],
+                                [conditions_index(c) for c in
+                                    Sim.normalization[obs_name]["condition"]]
+                            ]
+                        ) : maximum(
+                            Sim.simulations[
+                                i,
+                                :,
+                                [conditions_index(c) for c in
+                                    Sim.normalization[obs_name]["condition"]]
+                            ]
+                        )
+                    )
+                end
                 error[i] = compute_objval_rss(
                     diff_sim_and_exp(
                         Sim.simulations[i,:,:],
                         Exp.experiments[i],
                         Exp.get_timepoint(obs_name),
                         Sim.conditions,
-                        sim_norm_max=ifelse(
-                            Sim.normalization,
-                            maximum(Sim.simulations[i,:,:]),
-                            1.0
-                        ),
+                        sim_norm_max = (
+                            length(Sim.normalization) == 0 ? 1.0 : norm_max
+                        )
                     )...
                 )
             end

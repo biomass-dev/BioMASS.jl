@@ -12,3 +12,6 @@
 fitparam/
 logs/
 dat2npy/
+
+# Simulation results
+figure/

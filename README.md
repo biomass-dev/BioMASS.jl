@@ -16,6 +16,9 @@ model = load_model("./fos_model")
 # Estimate unknown model parameters against experimental observations.
 optimize(model, 1, max_generation=20000, allowable_error=0.5)
 
+# Save simulation results to figure/ in the model folder
+visualize(model, viz_type="best", show_all=true)
+
 # Convert optimized parameters into BioMASS format.
 param2biomass("./fos_model")
 ```

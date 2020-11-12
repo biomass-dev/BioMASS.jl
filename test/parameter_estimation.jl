@@ -1,14 +1,33 @@
+import BioMASS: isinstalled
+
 const model = load_model("../fos_model")
 
+output = []
+
 @testset "Parameter Estimation" begin
-    @testset "optimize" begin
+    @testset "optimization" begin
         optimize(model, 1, max_generation=10)
         lines = open(model.path * "/logs/1.log", "r") do f
             readlines(f)
         end
         @test lines[end][1:14] == "Generation10: "
+        push!(output, "logs")
+        push!(output, "fitparam")
     end
-    @testset "conversion" begin
-        @test param2biomass(model.path) === nothing
+    if isinstalled("matplotlib")
+        @testset "visualization" begin
+            visualize(model, viz_type="best")
+            @test isdir("../fos_model/figure/simulation/best")
+            push!(output, "figure")
+        end
+    end
+    if isinstalled("numpy")
+        @testset "conversion" begin
+            @test param2biomass(model.path) === nothing
+            push!(output, "dat2npy")
+        end
+    end
+    for dir in output
+        rm("../fos_model/$dir", recursive=true, force=true)
     end
 end
