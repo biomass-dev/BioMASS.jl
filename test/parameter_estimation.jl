@@ -1,4 +1,17 @@
+using PyCall
+
+function isinstalled()::Bool
+    try
+        pyimport("matplotlib")
+        return true
+    catch
+        return false
+    end
+end
+
 const model = load_model("../fos_model")
+
+output = []
 
 @testset "Parameter Estimation" begin
     @testset "optimization" begin
@@ -7,15 +20,21 @@ const model = load_model("../fos_model")
             readlines(f)
         end
         @test lines[end][1:14] == "Generation10: "
+        push!(output, "logs")
+        push!(output, "fitparam")
     end
-    @testset "visualization" begin
-        visualize(model, viz_type="best")
-        @test isdir("../fos_model/figure/simulation/best")
+    if isinstalled()
+        @testset "visualization" begin
+            visualize(model, viz_type="best")
+            @test isdir("../fos_model/figure/simulation/best")
+            push!(output, "figure")
+        end
     end
     @testset "conversion" begin
         @test param2biomass(model.path) === nothing
+        push!(output, "dat2npy")
     end
-    for dir in ["logs", "fitparam", "figure", "fitparam"]
+    for dir in output
         rm("../fos_model/$dir", recursive=true, force=true)
     end
 end
