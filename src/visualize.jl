@@ -155,6 +155,28 @@ function plot_timecourse(
                         )
                     end
                 end
+                if length(Sim.normalization) > 0 && Sim.normalization[obs_name]["timepoint"] === nothing
+                    mean_norm_max::Float64 = maximum(
+                        vcat(
+                            [
+                                [
+                                    mean(
+                                        filter(
+                                            !isnan,normalized[i,:,k,l]
+                                        )
+                                    ) for k in eachindex(Sim.t)
+                                ] for l in eachindex(Sim.normalization[obs_name]["condition"])
+                            ]...
+                        )
+                    )
+                    for j in eachindex(n_file)
+                        for k in eachindex(Sim.t)
+                            for l in eachindex(Sim.conditions)
+                                @inbounds normalized[i,j,k,l] /= mean_norm_max
+                            end
+                        end
+                    end
+                end
                 for (l,condition) in enumerate(Sim.conditions)
                     plot(
                         Sim.t,[
