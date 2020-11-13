@@ -17,6 +17,7 @@ Sundials = "c3572dad-4567-51f8-b174-8c6c989267f4"
 
 [compat]
 PyCall = "1.92"
+PyPlot = "2.9"
 StatsBase = "0.33"
 SteadyStateDiffEq = "1.5"
 Sundials = "4.3"
