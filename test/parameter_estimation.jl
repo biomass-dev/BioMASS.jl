@@ -14,6 +14,13 @@ output = []
         push!(output, "logs")
         push!(output, "fitparam")
     end
+    @testset "optimization_continue" begin
+        optimize_continue(model, 1, max_generation=20)
+        lines = open(model.path * "/logs/1.log", "r") do f
+            readlines(f)
+        end
+        @test lines[end][1:14] == "Generation20: "
+    end
     if isinstalled("matplotlib")
         @testset "visualization" begin
             visualize(model, viz_type="best")
