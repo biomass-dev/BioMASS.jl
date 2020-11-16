@@ -24,7 +24,14 @@ output = []
     if isinstalled("matplotlib")
         @testset "visualization" begin
             visualize(model, viz_type="best")
-            @test isdir("../fos_model/figure/simulation/best")
+            files = readdir("../fos_model/figure/simulation/best")
+            n_pdf = 0
+            for file in files
+                if occursin(".pdf", file)
+                    n_pdf += 1
+                end
+            end
+            @test n_pdf == 8  # length(observables)
             push!(output, "figure")
         end
     end

@@ -60,15 +60,13 @@ function objective(indiv_gene::Vector{Float64})::Float64
                             Sim.simulations[
                                 i,
                                 Sim.normalization[obs_name]["timepoint"],
-                                [conditions_index(c) for c in
-                                    Sim.normalization[obs_name]["condition"]]
+                                [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
                             ]
                         ) : maximum(
                             Sim.simulations[
                                 i,
                                 :,
-                                [conditions_index(c) for c in
-                                    Sim.normalization[obs_name]["condition"]]
+                                [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
                             ]
                         )
                     )

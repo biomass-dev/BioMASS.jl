@@ -62,16 +62,14 @@ function get_norm_max(
                     i,
                     j,
                     Sim.normalization[obs_name]["timepoint"],
-                    [conditions_index(c) for c in
-                        Sim.normalization[obs_name]["condition"]]
+                    [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
                 ]
             ) : maximum(
                 simulations_all[
                     i,
                     j,
                     :,
-                    [conditions_index(c) for c in
-                        Sim.normalization[obs_name]["condition"]]
+                    [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
                 ]
             )
         )
@@ -126,7 +124,7 @@ function plot_timecourse(
                         plot(
                             Sim.t,
                             simulations_all[i,j,:,l] ./ ifelse(
-                                length(Sim.normalization) == 0,
+                                length(Sim.normalization) == 0 || maximum(simulations_all[i,j,:,l]) == 0.0,
                                 1.0,
                                 norm_max
                             ),
@@ -148,7 +146,7 @@ function plot_timecourse(
                     @simd for l in eachindex(Sim.conditions)
                         normalized[i,j,:,l] = (
                             simulations_all[i,j,:,l] ./ ifelse(
-                                length(Sim.normalization) == 0,
+                                length(Sim.normalization) == 0 || maximum(simulations_all[i,j,:,l]) == 0.0,
                                 1.0,
                                 norm_max
                             )
@@ -172,7 +170,9 @@ function plot_timecourse(
                     for j in eachindex(n_file)
                         for k in eachindex(Sim.t)
                             for l in eachindex(Sim.conditions)
-                                @inbounds normalized[i,j,k,l] /= mean_norm_max
+                                if !isnan(mean_norm_max) && mean_norm_max != 0.0
+                                    @inbounds normalized[i,j,k,l] /= mean_norm_max
+                                end
                             end
                         end
                     end
@@ -220,15 +220,13 @@ function plot_timecourse(
                         Sim.simulations[
                             i,
                             Sim.normalization[obs_name]["timepoint"],
-                            [conditions_index(c) for c in
-                                Sim.normalization[obs_name]["condition"]]
+                            [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
                         ]
                     ) : maximum(
                         Sim.simulations[
                             i,
                             :,
-                            [conditions_index(c) for c in
-                                Sim.normalization[obs_name]["condition"]]
+                            [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
                         ]
                     )
                 )
@@ -236,7 +234,7 @@ function plot_timecourse(
                     plot(
                         Sim.t,
                         Sim.simulations[i,:,l] ./ ifelse(
-                            length(Sim.normalization) == 0,
+                            length(Sim.normalization) == 0 || maximum(Sim.simulations[i,:,l]) == 0.0,
                             1.0,
                             norm_max
                         ),
