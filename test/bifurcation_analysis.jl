@@ -4,7 +4,7 @@ using SteadyStateDiffEq
 import BioMASS: isinstalled
 
 @testset "Bifurcation analysis" begin
-    for model in ["restriction_point", "g1s_transition", "mitotic_exit"]
+    for model in ["restriction_point", "g1s_transition", "mitotic_control"]
         @testset "$model" begin
             MODEL_PATH = "../examples/bifurcation/" * model
             create_diffeq(MODEL_PATH)
