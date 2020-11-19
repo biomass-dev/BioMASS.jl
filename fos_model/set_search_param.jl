@@ -378,7 +378,7 @@ function conv_lin2log!(
     )
     if length(difference) > 0
         for idx in difference
-            if j <= C.NUM
+            if idx <= C.NUM
                 println(@sprintf("`C.%s`", C.NAMES[Int(idx)]))
             else
                 println(@sprintf("`V.%s`", V.NAMES[Int(idx)-C.NUM]))
