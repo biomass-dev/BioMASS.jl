@@ -15,3 +15,7 @@ dat2npy/
 
 # Simulation results
 figure/
+
+# Fixed point and eigenvalues
+fp.dat
+ev.dat
