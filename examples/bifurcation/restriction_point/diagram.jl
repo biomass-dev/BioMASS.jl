@@ -15,7 +15,7 @@ function calc_fixed_point_vec(model_path::String)
     global p = param_values()
     new_curve!(
         model_path, p, diffeq2, get_derivatives, get_steady_state,
-        direction=false, BP=BP, SN=SN
+        direction=false, bifparam=BP, n_state=SN
     )
     fp = readdlm(model_path * "/data/fp.dat",'\t',Float64,'\n')
     ev = readdlm(model_path * "/data/ev.dat",'\t',Float64,'\n')

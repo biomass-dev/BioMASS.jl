@@ -29,9 +29,9 @@ end
 
 
 # matrix transformation (large diagonal elements move to upper)
-function pivoting!(s::Matrix{Float64}, pivot::Int, MN::Int)
-    v0::Vector{Float64} = zeros(MN+1)
-    v1::Vector{Float64} = zeros(MN+1)
+function pivoting!(s::Matrix{Float64}, pivot::Int, dim_newton::Int)
+    v0::Vector{Float64} = zeros(dim_newton+1)
+    v1::Vector{Float64} = zeros(dim_newton+1)
     possess::Int = 0
     max_element::Float64 = 0.0
 
@@ -55,9 +55,9 @@ function pivoting!(s::Matrix{Float64}, pivot::Int, MN::Int)
 end
 
 # Gaussian elimination (row reduction)
-function gaussian_elimination!(s::Matrix{Float64}, e::Vector{Float64}, MN::Int)
-    for i in 1:MN
-        pivoting!(s, i, MN)
+function gaussian_elimination!(s::Matrix{Float64}, e::Vector{Float64}, dim_newton::Int)
+    for i in 1:dim_newton
+        pivoting!(s, i, dim_newton)
     end
     # forward
     for k in 1:size(s,1)
@@ -90,13 +90,13 @@ function newtons_method!(
         fix_num::Int,
         p::Vector{Float64},
         successful::Bool,
-        BP::Int,
-        SN::Int,
-        MN::Int,
-        VN::Int)
-    u::Vector{Float64} = zeros(SN)
-    vx::Vector{Float64} = zeros(MN)
-    s::Matrix{Float64} = zeros(MN, MN+1)
+        bifparam::Int,
+        n_state::Int,
+        dim_newton::Int,
+        n_variable::Int)
+    u::Vector{Float64} = zeros(n_state)
+    vx::Vector{Float64} = zeros(dim_newton)
+    s::Matrix{Float64} = zeros(dim_newton, dim_newton+1)
 
     for i in eachindex(x)
         if fix_num == i
@@ -114,20 +114,20 @@ function newtons_method!(
     end
 
     # initial error
-    e::Vector{Float64} = zeros(MN)
+    e::Vector{Float64} = zeros(dim_newton)
     error::Float64 = 1.0
 
     while error > NEPS
-        for i in 1:VN
+        for i in 1:n_variable
             if fix_num == i
-                idx_param = VN - i
-                p[BP] = (idx_param == 0) ? x[fix_num] : vx[idx_param]
+                idx_param = n_variable - i
+                p[bifparam] = (idx_param == 0) ? x[fix_num] : vx[idx_param]
                 for j in eachindex(u)
                     idx = j - i
                     if idx == 0
                         u[j] = x[fix_num]
                     elseif idx < 0
-                        u[j] = vx[VN+idx]
+                        u[j] = vx[n_variable+idx]
                     else
                         u[j] = vx[idx]
                     end
@@ -151,20 +151,20 @@ function newtons_method!(
         end
 
         # s = [dF-F]
-        for i in 1:VN
+        for i in 1:n_variable
             if fix_num == i
-                for k in 1:SN
-                    for j in 1:SN
+                for k in 1:n_state
+                    for j in 1:n_state
                         idx = i + j
-                        if idx == VN
+                        if idx == n_variable
                             s[k, j] = dFdp[k]
-                        elseif idx > VN
-                            s[k, j] = dFdx[k, idx-VN]
+                        elseif idx > n_variable
+                            s[k, j] = dFdx[k, idx-n_variable]
                         else
                             s[k, j] = dFdx[k, idx]
                         end
                     end
-                    s[k, VN] = -F[k]
+                    s[k, n_variable] = -F[k]
                 end
                 break
             else
@@ -172,7 +172,7 @@ function newtons_method!(
             end
         end
 
-        gaussian_elimination!(s, e, MN)
+        gaussian_elimination!(s, e, dim_newton)
 
         # update error
         error = 0.0
@@ -211,18 +211,22 @@ function new_curve!(
         get_derivatives::Function,
         get_steady_state::Function;
         direction::Bool=false,
-        BP::Int, SN::Int, PN::Int=1, VN::Int = SN + 1, MN::Int = SN)
-    # BP : name(index) of bifurcation parameter
-    # SN : num of state variables
-    # PN : num of parameters
-    # VN : num of variables
-    # MN : dim of Newton's method
+        bifparam::Int,
+        n_state::Int,
+        n_param::Int=1,
+        n_variable::Int=n_state + 1,
+        dim_newton::Int=n_state)
+    # bifparam : name(index) of bifurcation parameter
+    # n_state : num of state variables
+    # n_param : num of parameters
+    # n_variable : num of variables
+    # dim_newton : dim of Newton's method
     count::Int = 1
-    x::Vector{Float64} = zeros(VN)
-    dx::Vector{Float64} = zeros(VN)
+    x::Vector{Float64} = zeros(n_variable)
+    dx::Vector{Float64} = zeros(n_variable)
 
-    real_part::Vector{Float64} = zeros(SN)
-    imaginary_part::Vector{Float64} = zeros(SN)
+    real_part::Vector{Float64} = zeros(n_state)
+    imaginary_part::Vector{Float64} = zeros(n_state)
 
     # file
     if !isdir(model_path * "/data")
@@ -237,19 +241,19 @@ function new_curve!(
     FOUT2 = open(model_path * "/data/ev.dat", "w")  # file for eigenvalues
 
     # initial condition
-    x[1:SN] = get_steady_state(p)
-    x[end] = p[BP]  # x-axis
+    x[1:n_state] = get_steady_state(p)
+    x[end] = p[bifparam]  # x-axis
 
     # initial fixed
     fix_val::Float64 = x[end]
-    fix_num::Int = VN
+    fix_num::Int = n_variable
     x[fix_num] = fix_val
 
     # first Newton's method
     successful::Bool = true
     newtons_method!(
         diffeq2, get_derivatives, x, real_part, imaginary_part, fix_num, p,
-        successful, BP, SN, MN, VN
+        successful, bifparam, n_state, dim_newton, n_variable
     )
 
     write(FOUT1, @sprintf("%d\t", count))
@@ -258,14 +262,14 @@ function new_curve!(
     end
     write(FOUT1, @sprintf("%d\n", fix_num))
     write(FOUT2, @sprintf("%d\t", count))
-    for i in 1:SN
+    for i in 1:n_state
         write(
             FOUT2, @sprintf(
                 "%10.8e\t%10.8e\t", real_part[i], imaginary_part[i]
             )
         )
     end
-    write(FOUT2, @sprintf("%10.8e\t%d\n", p[BP], fix_num))
+    write(FOUT2, @sprintf("%10.8e\t%d\n", p[bifparam], fix_num))
     count += 1
 
     # keep optimums
@@ -280,7 +284,7 @@ function new_curve!(
     while count <= MC && successful
         newtons_method!(
             diffeq2, get_derivatives, x, real_part, imaginary_part, fix_num, p,
-            successful, BP, SN, MN, VN
+            successful, bifparam, n_state, dim_newton, n_variable
         )
 
         # maximum variation
@@ -319,14 +323,14 @@ function new_curve!(
         end
         write(FOUT1, @sprintf("%d\n", fix_num))
         write(FOUT2, @sprintf("%d\t", count))
-        for i in 1:SN
+        for i in 1:n_state
             write(
                 FOUT2, @sprintf(
                     "%10.8e\t%10.8e\t", real_part[i], imaginary_part[i]
                 )
             )
         end
-        write(FOUT2, @sprintf("%10.8e\t%d\n", p[BP], fix_num))
+        write(FOUT2, @sprintf("%10.8e\t%d\n", p[bifparam], fix_num))
         count += 1
     end
 
@@ -335,10 +339,10 @@ function new_curve!(
 end
 
 
-function get_bistable_regime(ev::Matrix{Float64}, SN::Int)
+function get_bistable_regime(ev::Matrix{Float64}, n_state::Int)
     br::Vector{Int} = []
     for i in 1:size(ev, 1)
-        if maximum(ev[i, [2j for j in 1:SN]]) > 0.0
+        if maximum(ev[i, [2j for j in 1:n_state]]) > 0.0
             push!(br, i)
         end
     end
