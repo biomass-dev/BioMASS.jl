@@ -1,8 +1,8 @@
-## Bifurcation Analysis
+# Bifurcation Analysis
 
 A numerical study of the changes in the dynamics and stability of a system upon variations in its parameters.
 
-### Procedure for stability analysis at fixed points
+## Procedure for stability analysis at fixed points
 
 Consider the following system of ordinary differential equations: d***x***/dt = ***F***(***x***)
 1. Determine the fixed point vector, ***x***<sup>∗</sup>, solving ***F***(***x***<sup>∗</sup>) = **0**
@@ -13,5 +13,5 @@ Consider the following system of ordinary differential equations: d***x***/dt = 
     - At least one of the eigenvalues has a real part greater than zero
 → ***x***<sup>∗</sup> is unstable
 
-### Usage
-See examples/bifurcation
+## Usage
+See [examples/bifurcation](/examples/bifurcation).

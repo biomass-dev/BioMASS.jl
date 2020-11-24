@@ -17,6 +17,7 @@ makedocs(;
             "Parameter Estimation" => "usage/parameter_estimation.md",
             "Bifurcation Analysis" => "usage/bifurcation_analysis.md",
         ],
+        "References" => "references.md"
     ],
 )
 

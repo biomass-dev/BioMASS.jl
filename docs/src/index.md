@@ -4,10 +4,18 @@
 
 This module provides a Julia interface to the [BioMASS](https://github.com/okadalabipr/biomass) parameter estimation.
 
+## Installation
+
+```bash
+$ julia
+# Press ']' to enter the Pkg REPL mode.
+pkg> add https://github.com/himoto/BioMASS.jl  
+```
+
 ```@contents
     Pages = [
-          "usage/parameter_estimation.md",
-          "usage/bifurcation_analysis.md",
+        "usage/parameter_estimation.md",
+        "usage/bifurcation_analysis.md",
     ]
     Depth = 3
 ```
