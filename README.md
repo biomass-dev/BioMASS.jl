@@ -9,19 +9,12 @@ This module provides a Julia interface to the [BioMASS](https://github.com/okada
 
 ## Usage
 ```julia
-using Distributed
-addprocs(10); # add worker processes
-@everywhere using BioMASS
+using BioMASS
 
-@everywhere begin
-    model = load_model("./fos_model")
-    function optimize_parallel(i)
-        optimize(model, i, max_generation=20000, allowable_error=0.5)
-    end
-end
+model = load_model("./fos_model")
 
 # Estimate unknown model parameters against experimental observations.
-pmap(optimize_parallel, 1:10)
+optimize(model, 1, max_generation=20000, allowable_error=0.5)
 
 # Save simulation results to figure/ in the model folder
 visualize(model, viz_type="best", show_all=true)
