@@ -1,7 +1,7 @@
 name = "BioMASS"
 uuid = "324734c7-f323-4536-9335-775d9be9d101"
 authors = ["Hiroaki Imoto <himoto@protein.osaka-u.ac.jp>"]
-version = "0.2.1"
+version = "0.3.0"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
