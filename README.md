@@ -24,8 +24,10 @@ param2biomass("./fos_model")
 ```
 
 ## Installation
-```julia
-pkg> add https://github.com/himoto/BioMASS.jl  # Press ']' to enter the Pkg REPL mode.
+```bash
+$ julia
+# Press ']' to enter the Pkg REPL mode.
+pkg> add https://github.com/himoto/BioMASS.jl
 ```
 
 ## References
