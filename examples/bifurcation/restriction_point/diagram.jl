@@ -1,3 +1,9 @@
+#=
+Yao, G., Lee, T. J., Mori, S., Nevins, J. R. & You, L. A bistable Rb-E2F switch 
+underlies the restriction point. Nat. Cell Biol. 10, 476–482 (2008). 
+https://doi.org/10.1038/ncb1711
+=#
+
 include("./name2idx/parameters.jl")
 include("./name2idx/species.jl")
 include("./set_model.jl")

@@ -1,3 +1,9 @@
+#=
+Rata, S. et al. Two Interlinked Bistable Switches Govern Mitotic Control in 
+Mammalian Cells. Curr. Biol. 28, 3824-3832.e6 (2018).
+https://doi.org/10.1016/j.cub.2018.09.059
+=#
+
 include("./name2idx/parameters.jl")
 include("./name2idx/species.jl")
 include("./set_model.jl")

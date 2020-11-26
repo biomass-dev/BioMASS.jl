@@ -1,3 +1,9 @@
+#=
+Barr, A. R., Heldt, F. S., Zhang, T., Bakal, C. & Novák, B. A Dynamical 
+Framework for the All-or-None G1/S Transition. Cell Syst. 2, 27–37 (2016).
+https://doi.org/10.1016/j.cels.2016.01.001
+=#
+
 include("./name2idx/parameters.jl")
 include("./name2idx/species.jl")
 include("./set_model.jl")
