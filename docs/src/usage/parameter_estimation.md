@@ -63,7 +63,7 @@ end
 #!/bin/sh
 
 for i in $(seq 1 10); do
-    nohup julia main.jl $i > /dev/null 2>&1 &
+    nohup julia main.jl $i >> errout/$i.log  2>&1 &
 done
 
 # To terminate the process,
@@ -73,5 +73,6 @@ done
 Run optimize_parallel.sh
 
 ```bash
+$ mkdir errout
 $ sh optimize_parallel.sh
 ```
