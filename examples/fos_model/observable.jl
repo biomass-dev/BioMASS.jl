@@ -10,6 +10,8 @@ const observables = [
 ]
 
 function observables_index(observable_name::String)::Int
-
+    if !(observable_name in observables)
+        error("$observable_name is not defined in observables.")
+    end
     return findfirst(isequal(observable_name),observables)
 end
