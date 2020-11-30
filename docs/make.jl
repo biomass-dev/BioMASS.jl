@@ -13,6 +13,11 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Getting started with BioMASS.jl" => [
+            "Parameter Estimation" => "usage/parameter_estimation.md",
+            "Bifurcation Analysis" => "usage/bifurcation_analysis.md",
+        ],
+        "References" => "references.md"
     ],
 )
 

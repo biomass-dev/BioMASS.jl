@@ -14,7 +14,10 @@ export
     param2biomass,
     ExecModel,
     load_model,
-    visualize
+    visualize,
+    create_diffeq,
+    new_curve!,
+    get_bistable_regime
 
 function isinstalled(pymodule::String)::Bool
     try
@@ -45,4 +48,5 @@ else
         )
     end
 end
+include("continuation.jl")
 end # module

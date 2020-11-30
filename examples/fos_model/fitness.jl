@@ -20,6 +20,9 @@ end
 
 
 function conditions_index(condition_name::String)::Int
+    if !(condition_name in Sim.conditions)
+        error("$condition_name is not defined in Sim.conditions")
+    end
     return findfirst(isequal(condition_name), Sim.conditions)
 end
 

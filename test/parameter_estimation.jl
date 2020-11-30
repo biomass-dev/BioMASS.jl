@@ -1,6 +1,6 @@
 import BioMASS: isinstalled
 
-const model = load_model("../fos_model")
+const model = load_model("../examples/fos_model")
 
 output = []
 
@@ -24,7 +24,7 @@ output = []
     if isinstalled("matplotlib")
         @testset "visualization" begin
             visualize(model, viz_type="best")
-            files = readdir("../fos_model/figure/simulation/best")
+            files = readdir("../examples/fos_model/figure/simulation/best")
             n_pdf = 0
             for file in files
                 if occursin(".pdf", file)
@@ -42,6 +42,6 @@ output = []
         end
     end
     for dir in output
-        rm("../fos_model/$dir", recursive=true, force=true)
+        rm("../examples/fos_model/$dir", recursive=true, force=true)
     end
 end
