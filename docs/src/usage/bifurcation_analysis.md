@@ -4,7 +4,11 @@ A numerical study of the changes in the dynamics and stability of a system upon 
 
 ## Procedure for stability analysis at fixed points
 
-Consider the following system of ordinary differential equations: ``\dfrac{dx}{dt} = F(x)``
+Consider the following system of ordinary differential equations:
+
+```math
+\dfrac{dx}{dt} = F(x)
+```
 
 1. Determine the fixed point vector, ``x^*``, solving ``F(x^*) = 0``
 
