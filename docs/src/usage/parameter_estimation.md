@@ -3,15 +3,15 @@
 **load_model**(```path_to_model```::String)
 - Loads a BioMASS model. The model must include the following files:
 
-    |Name|Content|
-    |---|---|
-    |`name2idx/`|Names of model parameters and species|
-    |`set_model.jl`|Differential equation, parameters and initial condition|
-    |`observalbe.jl`|Model observables for correlating simulation results with experimental observations|
-    |`simulation.jl`|Simulation condition|
-    |`experimental_data.jl`|Experimental measurements for determining parameters|
-    |`set_search_param.jl`|Model parameters to optimize and search region|
-    |`fitness.jl`|An objective function to be minimized, i.e., the distance between model simulation and experimental data|
+|Name|Content|
+|:--|:--|
+|`name2idx/`|Names of model parameters and species|
+|`set_model.jl`|Differential equation, parameters and initial condition|
+|`observalbe.jl`|Model observables for correlating simulation results with experimental observations|
+|`simulation.jl`|Simulation condition|
+|`experimental_data.jl`|Experimental measurements for determining parameters|
+|`set_search_param.jl`|Model parameters to optimize and search region|
+|`fitness.jl`|An objective function to be minimized, i.e., the distance between model simulation and experimental data|
 
 **optimize**(```model```::ExecModel, ```index_of_parameter_set```::Int; ```max_generation```::Int=10000, ```allowable_error```::Float64=0.0)
 - Finds a parameter set that reproduces experimental observations.

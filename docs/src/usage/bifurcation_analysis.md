@@ -10,8 +10,7 @@ Consider the following system of ordinary differential equations: d***x***/dt = 
 1. Compute eigenvalues of __*J*__(***x***<sup>∗</sup>): det |__*J*__(***x***<sup>∗</sup>) − *λ*__*E*__| = 0
 1. Conclude on stability or instability of ***x***<sup>∗</sup> based on the real parts of eigenvalues
     - All eigenvalues have real parts less than zero → ***x***<sup>∗</sup> is stable
-    - At least one of the eigenvalues has a real part greater than zero
-→ ***x***<sup>∗</sup> is unstable
+    - At least one of the eigenvalues has a real part greater than zero → ***x***<sup>∗</sup> is unstable
 
 ## Usage
-See [examples/bifurcation](/examples/bifurcation).
+See [examples/bifurcation](https://github.com/himoto/BioMASS.jl/tree/master/examples/bifurcation).
