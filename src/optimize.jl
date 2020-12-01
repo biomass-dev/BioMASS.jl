@@ -6,6 +6,12 @@ function optimize(
         allowable_error::Float64=0.0,
         local_search_method::String="mutation")
     
+    if local_search_method == "Powell" && !isinstalled("scipy.optimize")
+        error(
+            "Cannnot import scipy.optimize functions. Use mutation for local search."
+        )
+    end
+    
     for dir in ["/fitparam", "/logs"]
         if !isdir(strip(model.path, '/') * dir)
             mkdir(strip(model.path, '/') * dir)
@@ -53,6 +59,12 @@ function optimize_continue(
         allowable_error::Float64=0.0,
         p0_bounds::Vector{Float64}=[0.1, 10.0],
         local_search_method::String="mutation")
+
+    if local_search_method == "Powell" && !isinstalled("scipy.optimize")
+        error(
+            "Cannnot import scipy.optimize functions. Use mutaion for local search."
+        )
+    end
 
     search_rgn::Matrix{Float64} = model.search_region()
 

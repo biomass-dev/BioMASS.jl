@@ -1,7 +1,6 @@
-#import Optim
-if isinstalled("scipy")
-    include("scipy_minimize.jl")
-    using .SciPyMinimize
+if isinstalled("scipy.optimize")
+    include("scipy_optimize.jl")
+    using .ScipyOptimize
 end
 
 function local_search!(
@@ -38,7 +37,7 @@ function local_search!(
         for i in 1:n_gene+1
             @inbounds population[ip[1],i] = family[1,i]  # Best
         end
-    elseif method == "Powell" && isinstalled("scipy")
+    elseif method == "Powell"
         population = fmin_powell(objective, n_gene, population, ip)
     else
         error("$method: invalid method.")

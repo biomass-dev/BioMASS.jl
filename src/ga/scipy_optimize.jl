@@ -1,4 +1,4 @@
-module SciPyMinimize
+module SciPyOptimize
 
 export fmin_powell
 
