@@ -30,7 +30,7 @@ function converging!(
         population[ip[2],i] = family[ic2,i]  # Random
     end
 
-    if !isfinite(population[ip[2],end])
+    if 10.0^100 <= population[ip[2],end]
         population[ip[2],end] = objective(population[ip[2],1:n_gene])
     end
 
@@ -46,7 +46,7 @@ function crossover(parents::Matrix{Float64}, n_gene::Int64)::Vector{Float64}
         @inbounds child[i] = clamp(child[i], 0.0, 1.0)
     end
 
-    child[end] = Inf
+    child[end] = 10.0^100
 
     return child
 end

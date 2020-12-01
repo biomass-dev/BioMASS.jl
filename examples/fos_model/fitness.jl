@@ -89,6 +89,6 @@ function objective(indiv_gene::Vector{Float64})::Float64
         end
         return sum(error)
     else
-        return Inf
+        return 10.0^100
     end
 end

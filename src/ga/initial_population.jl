@@ -10,7 +10,7 @@ function get_initial_population(
         Inf, (n_population, n_gene + 1)
     )
     @inbounds @simd for i = 1:n_population
-        while !isfinite(population[i, end])
+        while 10.0^100 <= population[i, end]
             for j = 1:n_gene
                 population[i, j] = rand()
             end
@@ -51,7 +51,7 @@ function get_initial_population_continue(
         Inf, (n_population, n_gene + 1)
     )
     @inbounds @simd for i = 1:n_population
-        while !isfinite(population[i, end])
+        while 10.0^100 <= population[i, end]
             for gene_idx = 1:n_gene
                 population[i, gene_idx] = model.bestIndivVal2randGene(
                     gene_idx, best_indiv, p0_bounds
