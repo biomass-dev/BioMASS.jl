@@ -1,36 +1,48 @@
+#import Optim
+if isinstalled("scipy")
+    include("scipy_minimize.jl")
+    using .SciPyMinimize
+end
+
 function local_search!(
         objective::Function,
         ip::Vector{Int64},
         population::Matrix{Float64},
         n_population::Int64,
         n_children::Int64,
-        n_gene::Int64)::Matrix{Float64}
-    idx::BitArray{1} = trues(n_population)
-    idx[ip[1]] = false
+        n_gene::Int64;
+        method::String)::Matrix{Float64}
+    if method == "mutation"
+        idx::BitArray{1} = trues(n_population)
+        idx[ip[1]] = false
 
-    children::Matrix{Float64} = zeros(n_children, n_gene+1)
+        children::Matrix{Float64} = zeros(n_children, n_gene+1)
 
-    for i in 1:n_children
-        ip[2:end] = sample(
-            collect(1:n_population)[idx], n_gene+1, replace=false
-        )
-        children[i,:] = mutation(objective, population[ip,:], n_gene)
-    end
-
-    family::Matrix{Float64} = zeros(n_children+1, n_gene+1)
-    @inbounds for i in 1:n_gene+1
-        @simd for j in 1:n_children
-            family[j,i] = children[j,i]
+        for i in 1:n_children
+            ip[2:end] = sample(
+                collect(1:n_population)[idx], n_gene+1, replace=false
+            )
+            children[i,:] = mutation(objective, population[ip,:], n_gene)
         end
-        family[n_children+1,i] = population[ip[1],i]
+
+        family::Matrix{Float64} = zeros(n_children+1, n_gene+1)
+        @inbounds for i in 1:n_gene+1
+            @simd for j in 1:n_children
+                family[j,i] = children[j,i]
+            end
+            family[n_children+1,i] = population[ip[1],i]
+        end
+
+        family = sortslices(family, dims=1, by=x->x[end])
+
+        for i in 1:n_gene+1
+            @inbounds population[ip[1],i] = family[1,i]  # Best
+        end
+    elseif method == "Powell" && isinstalled("scipy")
+        population = fmin_powell(objective, n_gene, population, ip)
+    else
+        error("$method: invalid method.")
     end
-
-    family = sortslices(family, dims=1, by=x->x[end])
-
-    for i in 1:n_gene+1
-        @inbounds population[ip[1],i] = family[1,i]  # Best
-    end
-
     population = sortslices(population, dims=1, by=x->x[end])
 
     return population

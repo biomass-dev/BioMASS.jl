@@ -5,7 +5,8 @@ function ga_v2(
         n_population::Int64,
         n_children::Int64,
         n_gene::Int64,
-        allowable_error::Float64)
+        allowable_error::Float64,
+        local_search_method::String)
     
     #=
         1. Initialization
@@ -21,7 +22,7 @@ function ga_v2(
         3. Generation of offsprings
             Generate Nc children by applying ENDX to the selected parents.
             This algorithm assigns the worst objective value to the children.
-        4. Local Search (NDM/MGG)
+        4. Local Search
             Apply the local search method to the best individual in a family
             consisting of the two parents, i.e., p1 and p2, and their children.
             Note here that the children are assumed to have the worst objective
@@ -110,7 +111,8 @@ function ga_v2(
             model.obj_func, ip, population, n_population, n_gene
         )
         population = local_search!(
-            model.obj_func, ip, population, n_population, n_children, n_gene
+            model.obj_func, ip, population, n_population, n_children, n_gene,
+            method=local_search_method
         )
         if N_iter > 1
             for _ in 1:N_iter
@@ -181,7 +183,8 @@ function ga_v2_continue(
         n_children::Int64,
         n_gene::Int64,
         allowable_error::Float64, 
-        p0_bounds::Vector{Float64})
+        p0_bounds::Vector{Float64},
+        local_search_method::String)
     if n_population < n_gene + 2
         error("n_population must be larger than $(n_gene+2)")
     end
@@ -240,7 +243,8 @@ function ga_v2_continue(
             model.obj_func, ip, population, n_population, n_gene
         )
         population = local_search!(
-            model.obj_func, ip, population, n_population, n_children, n_gene
+            model.obj_func, ip, population, n_population, n_children, n_gene,
+            method=local_search_method
         )
         if N_iter > 1
             for _ in 1:N_iter
