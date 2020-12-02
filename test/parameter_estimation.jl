@@ -6,7 +6,7 @@ output = []
 
 @testset "Parameter Estimation" begin
     @testset "optimization" begin
-        optimize(model, 1, max_generation=10)
+        optimize(model, 1, max_generation=10, local_search_method="mutation")
         lines = open(model.path * "/logs/1.log", "r") do f
             readlines(f)
         end
@@ -15,7 +15,7 @@ output = []
         push!(output, "fitparam")
     end
     @testset "optimization_continue" begin
-        optimize_continue(model, 1, max_generation=20)
+        optimize_continue(model, 1, max_generation=20, local_search_method="Powell")
         lines = open(model.path * "/logs/1.log", "r") do f
             readlines(f)
         end

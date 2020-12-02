@@ -1,6 +1,6 @@
 if isinstalled("scipy.optimize")
     include("scipy_optimize.jl")
-    using .ScipyOptimize
+    using .SciPyOptimize
 end
 
 function local_search!(

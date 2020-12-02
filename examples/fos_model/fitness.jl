@@ -87,8 +87,8 @@ function objective(indiv_gene::Vector{Float64})::Float64
                 )
             end
         end
-        return sum(error)
+        return sum(error) # < 1e12
     else
-        return 10.0^100
+        return 1e12
     end
 end

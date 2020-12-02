@@ -30,7 +30,7 @@ function converging!(
         population[ip[2],i] = family[ic2,i]  # Random
     end
 
-    if 10.0^100 <= population[ip[2],end]
+    if 1e12 <= population[ip[2],end]
         population[ip[2],end] = objective(population[ip[2],1:n_gene])
     end
 

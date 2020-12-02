@@ -27,7 +27,7 @@ function __init__()
             objective,
             population[ip[0], :n_gene],
             method='Powell',
-            bounds=[(lb, ub) for lb, ub in zip(lower, upper)],
+            bounds=tuple(zip(lower, upper)),
             options={
                 'maxiter' : 10,
                 'maxfev' : 100,
