@@ -15,7 +15,15 @@ output = []
         push!(output, "fitparam")
     end
     @testset "optimization_continue" begin
-        optimize_continue(model, 1, max_generation=20, local_search_method="Powell")
+        if isinstalled("scipy.optimize")
+            optimize_continue(
+                model, 1, max_generation=20, local_search_method="Powell"
+            )
+        else
+            optimize_continue(
+                model, 1, max_generation=20, local_search_method="mutation"
+            )
+        end
         lines = open(model.path * "/logs/1.log", "r") do f
             readlines(f)
         end
