@@ -1,3 +1,17 @@
+function check_method(local_search_method::String)
+    if !(local_search_method in ["mutation", "powell"])
+        error(
+            "\"$local_search_method\": Invalid local_search_method. "
+            * "Should be one of [\"mutaion\", \"powell\"]"
+        )
+    elseif local_search_method == "Powell" && !isinstalled("scipy.optimize")
+        error(
+            "Cannnot import scipy.optimize functions. Use \"mutation\" for local search."
+        )
+    end
+end
+
+
 function optimize(
         model::ExecModel,
         nth_param_set::Int64;
@@ -5,12 +19,7 @@ function optimize(
         max_generation::Int64=10000,
         allowable_error::Float64=0.0,
         local_search_method::String="mutation")
-    
-    if local_search_method == "Powell" && !isinstalled("scipy.optimize")
-        error(
-            "Cannnot import scipy.optimize functions. Use mutation for local search."
-        )
-    end
+    check_method(local_search_method)
     
     for dir in ["/fitparam", "/logs"]
         if !isdir(strip(model.path, '/') * dir)
@@ -59,12 +68,7 @@ function optimize_continue(
         allowable_error::Float64=0.0,
         p0_bounds::Vector{Float64}=[0.1, 10.0],
         local_search_method::String="mutation")
-
-    if local_search_method == "Powell" && !isinstalled("scipy.optimize")
-        error(
-            "Cannnot import scipy.optimize functions. Use mutaion for local search."
-        )
-    end
+    check_method(local_search_method)
 
     search_rgn::Matrix{Float64} = model.search_region()
 

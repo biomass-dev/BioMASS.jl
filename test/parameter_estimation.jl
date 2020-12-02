@@ -17,7 +17,7 @@ output = []
     @testset "optimization_continue" begin
         if isinstalled("scipy.optimize")
             optimize_continue(
-                model, 1, max_generation=20, local_search_method="Powell"
+                model, 1, max_generation=20, local_search_method="powell"
             )
         else
             optimize_continue(

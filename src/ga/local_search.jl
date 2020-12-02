@@ -37,10 +37,8 @@ function local_search!(
         for i in 1:n_gene+1
             @inbounds population[ip[1],i] = family[1,i]  # Best
         end
-    elseif method == "Powell"
+    elseif method == "powell"
         population = fmin_powell(objective, n_gene, population, ip)
-    else
-        error("$method: invalid method.")
     end
     population = sortslices(population, dims=1, by=x->x[end])
 
