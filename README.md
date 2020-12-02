@@ -7,7 +7,12 @@
 
 This module provides a Julia interface to the [BioMASS](https://github.com/okadalabipr/biomass) parameter estimation.
 
+## Features
+
+- Parameter estimation
+- Bifurcation analysis
 ## Usage
+
 ```julia
 using BioMASS
 
@@ -24,6 +29,7 @@ param2biomass("./fos_model")
 ```
 
 ## Installation
+
 ```bash
 $ julia
 # Press ']' to enter the Pkg REPL mode.
@@ -31,6 +37,7 @@ pkg> add https://github.com/himoto/BioMASS.jl
 ```
 
 ## References
+
 - Nakakuki, T. *et al.* Ligand-specific c-Fos expression emerges from the spatiotemporal control of ErbB network dynamics. *Cell* **141**, 884–896 (2010). https://doi.org/10.1016/j.cell.2010.03.054
 
 - Yao, G., Lee, T. J., Mori, S., Nevins, J. R. & You, L. A bistable Rb-E2F switch underlies the restriction point. *Nat. Cell Biol.* **10**, 476–482 (2008). https://doi.org/10.1038/ncb1711
