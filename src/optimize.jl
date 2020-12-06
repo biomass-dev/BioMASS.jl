@@ -15,9 +15,10 @@ end
 function optimize(
         model::ExecModel,
         nth_param_set::Int64;
-        n_children::Int64=50,
+        popsize::Int64=5,
         max_generation::Int64=10000,
         allowable_error::Float64=0.0,
+        n_children::Int64=50,
         local_search_method::String="mutation")
     check_method(local_search_method)
     
@@ -32,7 +33,7 @@ function optimize(
             strip(model.path, '/') * "/fitparam/$nth_param_set"
         )
         for file in files
-            if occursin(".dat",file)
+            if occursin(".dat", file)
                 rm(
                     strip(model.path, '/') * "/fitparam/$nth_param_set/$file"
                 )
@@ -44,7 +45,7 @@ function optimize(
 
     search_rgn::Matrix{Float64} = model.search_region()
 
-    n_population::Int64 = 5*size(search_rgn, 2)
+    n_population::Int64 = popsize * size(search_rgn, 2)
     n_gene::Int64 = size(search_rgn, 2)
     
     ga_v2(
@@ -63,16 +64,17 @@ end
 function optimize_continue(
         model::ExecModel,
         nth_param_set::Int64;
-        n_children::Int64=50,
+        popsize::Int64=5,
         max_generation::Int64=10000,
         allowable_error::Float64=0.0,
         p0_bounds::Vector{Float64}=[0.1, 10.0],
+        n_children::Int64=50,
         local_search_method::String="mutation")
     check_method(local_search_method)
 
     search_rgn::Matrix{Float64} = model.search_region()
 
-    n_population::Int64 = 5*size(search_rgn, 2)
+    n_population::Int64 = popsize * size(search_rgn, 2)
     n_gene::Int64 = size(search_rgn, 2)
 
     if !isdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
