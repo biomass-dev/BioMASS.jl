@@ -11,12 +11,13 @@ This module provides a Julia interface to the [BioMASS](https://github.com/okada
 
 - Parameter estimation
 - Bifurcation analysis
+
 ## Usage
 
 ```julia
 using BioMASS
 
-model = load_model("./fos_model")
+model = load_model("./examples/fos_model")
 
 # Estimate unknown model parameters against experimental observations.
 optimize(model, 1, max_generation=20000, allowable_error=0.5)
@@ -25,7 +26,7 @@ optimize(model, 1, max_generation=20000, allowable_error=0.5)
 visualize(model, viz_type="best", show_all=true)
 
 # Convert optimized parameters into BioMASS format.
-param2biomass("./fos_model")
+param2biomass("./examples/fos_model")
 ```
 
 ## Installation
@@ -38,10 +39,10 @@ pkg> add https://github.com/himoto/BioMASS.jl
 
 ## References
 
-- Nakakuki, T. *et al.* Ligand-specific c-Fos expression emerges from the spatiotemporal control of ErbB network dynamics. *Cell* **141**, 884–896 (2010). https://doi.org/10.1016/j.cell.2010.03.054
+- Nakakuki, T. _et al._ Ligand-specific c-Fos expression emerges from the spatiotemporal control of ErbB network dynamics. _Cell_ **141**, 884–896 (2010). https://doi.org/10.1016/j.cell.2010.03.054
 
-- Yao, G., Lee, T. J., Mori, S., Nevins, J. R. & You, L. A bistable Rb-E2F switch underlies the restriction point. *Nat. Cell Biol.* **10**, 476–482 (2008). https://doi.org/10.1038/ncb1711
+- Yao, G., Lee, T. J., Mori, S., Nevins, J. R. & You, L. A bistable Rb-E2F switch underlies the restriction point. _Nat. Cell Biol._ **10**, 476–482 (2008). https://doi.org/10.1038/ncb1711
 
-- Barr, A. R., Heldt, F. S., Zhang, T., Bakal, C. & Novák, B. A Dynamical Framework for the All-or-None G1/S Transition. *Cell Syst.* **2**, 27–37 (2016). https://doi.org/10.1016/j.cels.2016.01.001
+- Barr, A. R., Heldt, F. S., Zhang, T., Bakal, C. & Novák, B. A Dynamical Framework for the All-or-None G1/S Transition. _Cell Syst._ **2**, 27–37 (2016). https://doi.org/10.1016/j.cels.2016.01.001
 
-- Rata, S. *et al.* Two Interlinked Bistable Switches Govern Mitotic Control in Mammalian Cells. *Curr. Biol.* **28**, 3824-3832.e6 (2018). https://doi.org/10.1016/j.cub.2018.09.059
+- Rata, S. _et al._ Two Interlinked Bistable Switches Govern Mitotic Control in Mammalian Cells. _Curr. Biol._ **28**, 3824-3832.e6 (2018). https://doi.org/10.1016/j.cub.2018.09.059
