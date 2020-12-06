@@ -29,8 +29,8 @@ function __init__()
             method='Powell',
             bounds=tuple(zip(lower, upper)),
             options={
-                'maxiter' : 10,
-                'maxfev' : 100,
+                'xtol' : 0.1,
+                'maxiter' : 2,
                 'direc' : direc,
             }
         )
@@ -47,7 +47,7 @@ function fmin_powell(
         population::Matrix{Float64},
         ip::Vector{Int}
 )::Matrix{Float64}
-    return py"modified_powell"(objective, n_gene, population, ip.-1)
+    return py"modified_powell"(objective, n_gene, population, ip .- 1)
 end
 
 end # module
