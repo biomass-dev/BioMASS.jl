@@ -2,7 +2,7 @@
 
 ## Core functions
 
-### load_model(`path_to_model`::String)
+#### load_model(`path_to_model`::String)
 
 ---
 
@@ -18,81 +18,85 @@ Load a BioMASS model. The model must include the following files:
 | `set_search_param.jl`  | Model parameters to optimize and search region                                                           |
 | `fitness.jl`           | An objective function to be minimized, i.e., the distance between model simulation and experimental data |
 
-#### Parameters
+- **Parameters**
 
-- `path_to_model`::String
-  - The model folder to read.
+  - `path_to_model`::String
+    - The model folder to read.
 
-### optimize(`model`::ExecModel, `index_of_parameter_set`::Int; `popsize`::Int=5, `max_generation`::Int=10000, `allowable_error`::Float64=0.0, `n_children`::Int=50, `local_search_method`::String="mutation")
+- **Returns**
+  - `model`::ExecModel
+    - The executable model in BioMASS.
+
+#### optimize(`model`::ExecModel, `index_of_parameter_set`::Int; `popsize`::Int=5, `max_generation`::Int=10000, `allowable_error`::Float64=0.0, `n_children`::Int=50, `local_search_method`::String="mutation")
 
 ---
 
 Find a parameter set that reproduces experimental observations.
 
-#### Parameters
+- **Parameters**
 
-- `model`::ExecModel
+  - `model`::ExecModel
 
-  - The model read by `load_model` function.
+    - The model read by `load_model` function.
 
-- `index_of_parameter_set`::Int
+  - `index_of_parameter_set`::Int
 
-  - Index of parameter sets.
+    - Index of parameter sets.
 
-- `popsize`::Int (default: 5)
+  - `popsize`::Int (default: 5)
 
-  - A multiplier for setting the total population size. The population has popsize \* len(search_param) individuals.
+    - A multiplier for setting the total population size. The population has popsize \* len(search_param) individuals.
 
-- `max_generation`::Int (default: 10000)
+  - `max_generation`::Int (default: 10000)
 
-  - The maximum number of generations over which the entire population is evolved.
+    - The maximum number of generations over which the entire population is evolved.
 
-- `allowable_error`::Float64 (default: 0.0)
+  - `allowable_error`::Float64 (default: 0.0)
 
-  - Optimization stops when Best Fitness <= allowable_error.
+    - Optimization stops when Best Fitness <= allowable_error.
 
-- `n_children`::Int (default: 50)
-  - The number of children used for local search NDM/MGG ("mutation").
+  - `n_children`::Int (default: 50)
+    - The number of children used for local search NDM/MGG ("mutation").
 
-`local_search_method`::String (default: `"mutation"`)
+  `local_search_method`::String (default: `"mutation"`)
 
-- Local search method used in GA. Should be one of
-  - `"mutation"` : NDM/MGG
-  - `"powell"` : Modified Powell method
+  - Local search method used in GA. Should be one of
+    - `"mutation"` : NDM/MGG
+    - `"powell"` : Modified Powell method
 
-### visualize(`model`::ExecModel, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
+#### visualize(`model`::ExecModel, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
 
 ---
 
 Save simulation results with optimized parameter values.
 
-#### Parameters
+- **Parameters**
 
-- `viz_type`::String
+  - `viz_type`::String
 
-  - `"average"`
-  - `"best"`
-  - `"original"`
-  - `"experiment"`
+    - `"average"`
+    - `"best"`
+    - `"original"`
+    - `"experiment"`
 
-- `show_all`::Bool (default: `false`)
+  - `show_all`::Bool (default: `false`)
 
-  - Whether to show all simulation results.
+    - Whether to show all simulation results.
 
-- `stdev`::Bool (default: `false`)
-  - If True, the standard deviation of simulated values will be shown
-    (only available for `"average"` visualization type).
+  - `stdev`::Bool (default: `false`)
+    - If True, the standard deviation of simulated values will be shown
+      (only available for `"average"` visualization type).
 
-### param2biomass(`path_to_model`::String)
+#### param2biomass(`path_to_model`::String)
 
 ---
 
 Convert optimized parameters (`fitparam/`) and optimization process (`logs/`) into BioMASS format (`out/`).
 
-#### Parameters
+- **Parameters**
 
-- `path_to_model`::String
-  - The model folder including optimization results.
+  - `path_to_model`::String
+    - The model folder including optimization results.
 
 ## Estimate unknown model parameters against experimental observations
 
