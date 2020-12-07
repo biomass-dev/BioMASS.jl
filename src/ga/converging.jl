@@ -46,7 +46,7 @@ function crossover(parents::Matrix{Float64}, n_gene::Int64)::Vector{Float64}
         @inbounds child[i] = clamp(child[i], 0.0, 1.0)
     end
 
-    child[end] = 10.0^100
+    child[end] = 1e12
 
     return child
 end
@@ -55,7 +55,7 @@ end
 # Extended Normal Distribution Xover
 function ENDX(parents::Matrix{Float64}, n_gene::Int64)::Vector{Float64}
     child::Vector{Float64} = zeros(n_gene+1)
-    
+
     ALPHA::Float64 = sqrt((1.0-2.0*0.35^2.0)) / 2.0
     BETA::Float64 = 0.35 / sqrt(n_gene-1)
 
