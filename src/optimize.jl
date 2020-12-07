@@ -4,7 +4,7 @@ function check_method(local_search_method::String)
             "\"$local_search_method\": Invalid local_search_method. "
             * "Should be one of [\"mutaion\", \"powell\"]"
         )
-    elseif local_search_method == "Powell" && !isinstalled("scipy.optimize")
+    elseif local_search_method == "powell" && !isinstalled("scipy.optimize")
         error(
             "Cannnot import scipy.optimize functions. Use \"mutation\" for local search."
         )
@@ -21,7 +21,7 @@ function optimize(
         n_children::Int64=50,
         local_search_method::String="mutation")
     check_method(local_search_method)
-    
+
     for dir in ["/fitparam", "/logs"]
         if !isdir(strip(model.path, '/') * dir)
             mkdir(strip(model.path, '/') * dir)
@@ -47,7 +47,7 @@ function optimize(
 
     n_population::Int64 = popsize * size(search_rgn, 2)
     n_gene::Int64 = size(search_rgn, 2)
-    
+
     ga_v2(
         model,
         nth_param_set,
@@ -79,7 +79,7 @@ function optimize_continue(
 
     if !isdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
         mkdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
-        
+
         ga_v2(
             model,
             nth_param_set,
