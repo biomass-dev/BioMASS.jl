@@ -36,8 +36,10 @@ function __init__()
                 'direc' : direc,
             }
         )
-        population[ip[0], :n_gene] = res.x
-        population[ip[0], -1] = objective(res.x)
+        obj_val = objective(res.x)
+        if obj_val < 1e12:
+            population[ip[0], :n_gene] = res.x
+            population[ip[0], -1] = obj_val
 
         return population
     """
