@@ -32,6 +32,7 @@ function __init__()
                 'xtol' : 1e-1,
                 'ftol' : 1e-2,
                 'maxiter' : 5,
+                'maxfev' : 100 * n_gene,
                 'direc' : direc,
             }
         )
