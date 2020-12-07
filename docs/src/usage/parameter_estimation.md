@@ -56,13 +56,14 @@ Find a parameter set that reproduces experimental observations.
     - Optimization stops when Best Fitness <= allowable_error.
 
   - `n_children`::Int (default: 50)
+
     - The number of children used for local search NDM/MGG ("mutation").
 
-  `local_search_method`::String (default: `"mutation"`)
+  - `local_search_method`::String (default: `"mutation"`)
 
-  - Local search method used in GA. Should be one of
-    - `"mutation"` : NDM/MGG
-    - `"powell"` : Modified Powell method
+    - Local search method used in GA. Should be one of
+      - `"mutation"` : NDM/MGG
+      - `"powell"` : Modified Powell method
 
 **visualize**(`model`::ExecModel, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
 
