@@ -29,8 +29,9 @@ function __init__()
             method='Powell',
             bounds=tuple(zip(lower, upper)),
             options={
-                'xtol' : 0.1,
-                'maxiter' : 2,
+                'xtol' : 1e-1,
+                'ftol' : 1e-2,
+                'maxiter' : 5,
                 'direc' : direc,
             }
         )
