@@ -2,7 +2,7 @@
 
 ## Core functions
 
-#### load_model(`path_to_model`::String)
+**load_model**(`path_to_model`::String)
 
 ---
 
@@ -27,7 +27,7 @@ Load a BioMASS model. The model must include the following files:
   - `model`::ExecModel
     - The executable model in BioMASS.
 
-#### optimize(`model`::ExecModel, `index_of_parameter_set`::Int; `popsize`::Int=5, `max_generation`::Int=10000, `allowable_error`::Float64=0.0, `n_children`::Int=50, `local_search_method`::String="mutation")
+**optimize**(`model`::ExecModel, `index_of_parameter_set`::Int; `popsize`::Int=5, `max_generation`::Int=10000, `allowable_error`::Float64=0.0, `n_children`::Int=50, `local_search_method`::String="mutation")
 
 ---
 
@@ -64,7 +64,7 @@ Find a parameter set that reproduces experimental observations.
     - `"mutation"` : NDM/MGG
     - `"powell"` : Modified Powell method
 
-#### visualize(`model`::ExecModel, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
+**visualize**(`model`::ExecModel, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
 
 ---
 
@@ -87,7 +87,7 @@ Save simulation results with optimized parameter values.
     - If True, the standard deviation of simulated values will be shown
       (only available for `"average"` visualization type).
 
-#### param2biomass(`path_to_model`::String)
+**param2biomass**(`path_to_model`::String)
 
 ---
 
