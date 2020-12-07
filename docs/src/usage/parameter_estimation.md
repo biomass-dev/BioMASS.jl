@@ -98,7 +98,7 @@ Convert optimized parameters (`fitparam/`) and optimization process (`logs/`) in
   - `path_to_model`::String
     - The model folder including optimization results.
 
-## Estimate unknown model parameters against experimental observations
+## Estimate unknown model parameters
 
 ```julia
 using BioMASS
