@@ -20,6 +20,7 @@ Sundials = "c3572dad-4567-51f8-b174-8c6c989267f4"
 
 [compat]
 DataFrames = "0.22"
+CSV = "0.8"
 ForwardDiff = "0.10"
 PyCall = "1.92"
 PyPlot = "2.9"
