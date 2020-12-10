@@ -9,13 +9,13 @@ import BioMASS: isinstalled
             MODEL_PATH = "../examples/bifurcation/" * model
             create_diffeq(MODEL_PATH)
             include(MODEL_PATH * "/diagram.jl")
-            calc_fixed_point_vec(MODEL_PATH)
+            fp, br = calc_fixed_point_vec(MODEL_PATH)
             for file in ["/data/fp.dat", "/data/ev.dat"]
                 @test isfile(MODEL_PATH * file)
             end
             if isinstalled("matplotlib")
                 using PyPlot
-                bifurcation_diagram(MODEL_PATH)
+                bifurcation_diagram(MODEL_PATH, fp, br)
                 @test isfile(MODEL_PATH * "/bifurcation_diagram.pdf")
             end
             rm(MODEL_PATH * "/forwarddiff.jl")
