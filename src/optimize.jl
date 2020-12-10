@@ -20,7 +20,9 @@ function optimize(
         allowable_error::Float64=0.0,
         n_children::Int64=50,
         local_search_method::String="mutation")
-    check_method(local_search_method)
+    check_method(
+        lowercase(local_search_method)
+    )
 
     for dir in ["/fitparam", "/logs"]
         if !isdir(strip(model.path, '/') * dir)
@@ -56,7 +58,7 @@ function optimize(
         n_children,
         n_gene,
         allowable_error,
-        local_search_method
+        lowercase(local_search_method)
     )
 end
 
@@ -70,7 +72,9 @@ function optimize_continue(
         p0_bounds::Vector{Float64}=[0.1, 10.0],
         n_children::Int64=50,
         local_search_method::String="mutation")
-    check_method(local_search_method)
+    check_method(
+        lowercase(local_search_method)
+    )
 
     search_rgn::Matrix{Float64} = model.search_region()
 
@@ -88,7 +92,7 @@ function optimize_continue(
             n_children,
             n_gene,
             allowable_error,
-            local_search_method
+            lowercase(local_search_method)
         )
     else
         ga_v2_continue(
@@ -100,7 +104,7 @@ function optimize_continue(
             n_gene,
             allowable_error,
             p0_bounds,
-            local_search_method
+            lowercase(local_search_method)
         )
     end
 end
