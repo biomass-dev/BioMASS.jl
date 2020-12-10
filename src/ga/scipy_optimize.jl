@@ -28,16 +28,20 @@ function __init__()
             population[ip[0], :n_gene],
             method='Powell',
             bounds=tuple(zip(lower, upper)),
+            callback=lambda xk: True
+            if objective(xk) < objective(population[ip[0], :n_gene])
+            else False,
             options={
-                'xtol' : 1e-1,
-                'ftol' : 1e-2,
-                'maxiter' : 5,
-                'maxfev' : 100 * n_gene,
-                'direc' : direc,
+                #'disp': True,
+                'xtol': 1.0,
+                'ftol': 1.0,
+                'maxiter': 5,
+                'maxfev': 100 * n_gene,
+                'direc': direc,
             }
         )
         obj_val = objective(res.x)
-        if obj_val < 1e12:
+        if obj_val < objective(population[ip[0], :n_gene]):
             population[ip[0], :n_gene] = res.x
             population[ip[0], -1] = obj_val
 
