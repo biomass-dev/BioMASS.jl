@@ -58,7 +58,7 @@ function __init__()
             ((0.0, 1.0),) * n_gene,
             strategy='best2bin',
             mutation=(0, 1),
-            maxiter=30,
+            maxiter=10,
             popsize=1,
             polish=False,
             init=population[ip, :n_gene],
