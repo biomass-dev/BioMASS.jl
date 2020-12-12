@@ -8,9 +8,9 @@ function local_search!(
         ip::Vector{Int64},
         population::Matrix{Float64},
         n_population::Int64,
-        n_children::Int64,
         n_gene::Int64;
-        method::String)::Matrix{Float64}
+        method::String,
+        n_children::Int64)::Matrix{Float64}
     if method == "mutation"
         idx::BitArray{1} = trues(n_population)
         idx[ip[1]] = false
@@ -39,6 +39,8 @@ function local_search!(
         end
     elseif method == "powell"
         population = fmin_powell(objective, n_gene, population, ip)
+    elseif method == "de"
+        population = fmin_de(objective, n_gene, population, ip)
     end
     population = sortslices(population, dims=1, by=x -> x[end])
 

@@ -1,10 +1,10 @@
 function check_method(local_search_method::String)
-    if !(local_search_method in ["mutation", "powell"])
+    if !(local_search_method in ["mutation", "powell", "de"])
         error(
             "\"$local_search_method\": Invalid local_search_method. "
-            * "Should be one of [\"mutaion\", \"powell\"]"
+            * "Should be one of [\"mutaion\", \"Powell\", \"DE\"]"
         )
-    elseif local_search_method == "powell" && !isinstalled("scipy.optimize")
+    elseif local_search_method in ["powell", "de"] && !isinstalled("scipy.optimize")
         error(
             "Cannnot import scipy.optimize functions. Use \"mutation\" for local search."
         )
@@ -51,14 +51,14 @@ function optimize(
     n_gene::Int64 = size(search_rgn, 2)
 
     ga_v2(
-        model,
-        nth_param_set,
-        max_generation,
-        n_population,
-        n_children,
-        n_gene,
-        allowable_error,
-        lowercase(local_search_method)
+        model=model,
+        nth_param_set=nth_param_set,
+        max_generation=max_generation,
+        n_population=n_population,
+        n_gene=n_gene,
+        allowable_error=allowable_error,
+        local_search_method=lowercase(local_search_method),
+        n_children=n_children
     )
 end
 
@@ -69,9 +69,9 @@ function optimize_continue(
         popsize::Int64=5,
         max_generation::Int64=10000,
         allowable_error::Float64=0.0,
-        p0_bounds::Vector{Float64}=[0.1, 10.0],
         n_children::Int64=50,
-        local_search_method::String="mutation")
+        local_search_method::String="mutation",
+        p0_bounds::Vector{Float64}=[0.1, 10.0])
     check_method(
         lowercase(local_search_method)
     )
@@ -85,26 +85,26 @@ function optimize_continue(
         mkdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
 
         ga_v2(
-            model,
-            nth_param_set,
-            max_generation,
-            n_population,
-            n_children,
-            n_gene,
-            allowable_error,
-            lowercase(local_search_method)
+            model=model,
+            nth_param_set=nth_param_set,
+            max_generation=max_generation,
+            n_population=n_population,
+            n_gene=n_gene,
+            allowable_error=allowable_error,
+            local_search_method=lowercase(local_search_method),
+            n_children=n_children
         )
     else
         ga_v2_continue(
-            model,
-            nth_param_set,
-            max_generation,
-            n_population,
-            n_children,
-            n_gene,
-            allowable_error,
-            p0_bounds,
-            lowercase(local_search_method)
+            model=model,
+            nth_param_set=nth_param_set,
+            max_generation=max_generation,
+            n_population=n_population,
+            n_gene=n_gene,
+            allowable_error=allowable_error,
+            local_search_method=lowercase(local_search_method),
+            n_children=n_children,
+            p0_bounds=p0_bounds
         )
     end
 end

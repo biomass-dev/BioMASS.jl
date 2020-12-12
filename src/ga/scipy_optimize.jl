@@ -1,6 +1,6 @@
 module SciPyOptimize
 
-export fmin_powell
+export fmin_powell, fmin_de
 
 using PyCall
 
@@ -8,7 +8,7 @@ function __init__()
     py"""
     import warnings
     import numpy as np
-    from scipy.optimize import minimize
+    from scipy.optimize import minimize, differential_evolution
     from typing import Callable
 
 
@@ -44,10 +44,33 @@ function __init__()
         if obj_val < objective(population[ip[0], :n_gene]):
             population[ip[0], :n_gene] = res.x
             population[ip[0], -1] = obj_val
+        return population
+    
 
+    def de_best2bin(
+            objective: Callable,
+            n_gene: int,
+            population: np.ndarray,
+            ip: np.ndarray
+    ) -> np.ndarray:
+        res = differential_evolution(
+            objective,
+            ((0.0, 1.0),) * n_gene,
+            strategy='best2bin',
+            mutation=(0, 1),
+            maxiter=30,
+            popsize=1,
+            polish=False,
+            init=population[ip, :n_gene],
+        )
+        obj_val = objective(res.x)
+        if obj_val < objective(population[ip[0], :n_gene]):
+            population[ip[0], :n_gene] = res.x
+            population[ip[0], -1] = obj_val
         return population
     """
 end
+
 
 function fmin_powell(
         objective::Function,
@@ -56,6 +79,16 @@ function fmin_powell(
         ip::Vector{Int}
 )::Matrix{Float64}
     return py"modified_powell"(objective, n_gene, population, ip .- 1)
+end
+
+
+function fmin_de(
+        objective::Function,
+        n_gene::Int,
+        population::Matrix{Float64},
+        ip::Vector{Int}
+)::Matrix{Float64}
+    return py"de_best2bin"(objective, n_gene, population, ip .- 1)
 end
 
 end # module

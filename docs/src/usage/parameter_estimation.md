@@ -63,7 +63,8 @@ Find a parameter set that reproduces experimental observations.
 
     - Local search method used in GA. Should be one of
       - `"mutation"` : NDM/MGG
-      - `"powell"` : Modified Powell method
+      - `"Powell"` : Modified Powell method
+      - `"DE"` : Differential Evolution (strategy: `best2bin`)
 
 ---
 

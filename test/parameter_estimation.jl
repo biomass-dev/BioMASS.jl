@@ -6,28 +6,44 @@ output = []
 
 @testset "Parameter Estimation" begin
     @testset "optimization" begin
-        optimize(model, 1, max_generation=10, local_search_method="mutation")
+        optimize(
+            model, 1, max_generation=3, popsize=3,
+            local_search_method="mutation", n_children=15
+        )
         lines = open(model.path * "/logs/1.log", "r") do f
             readlines(f)
         end
-        @test lines[end][1:14] == "Generation10: "
+        @test lines[end][1:13] == "Generation3: "
         push!(output, "logs")
         push!(output, "fitparam")
     end
     @testset "optimization_continue" begin
         if isinstalled("scipy.optimize")
             optimize_continue(
-                model, 1, max_generation=20, local_search_method="powell"
+                model, 1, max_generation=6, popsize=3,
+                local_search_method="Powell"
             )
         else
             optimize_continue(
-                model, 1, max_generation=20, local_search_method="mutation"
+                model, 1, max_generation=6, popsize=3,
+                local_search_method="mutation", n_children=15
             )
         end
         lines = open(model.path * "/logs/1.log", "r") do f
             readlines(f)
         end
-        @test lines[end][1:14] == "Generation20: "
+        @test lines[end][1:13] == "Generation6: "
+        # test differential_evolution
+        if isinstalled("scipy.optimize")
+            optimize_continue(
+                model, 1, max_generation=9, popsize=3,
+                local_search_method="DE"
+            )
+            lines = open(model.path * "/logs/1.log", "r") do f
+                readlines(f)
+            end
+            @test lines[end][1:13] == "Generation9: "
+        end
     end
     if isinstalled("matplotlib")
         @testset "visualization" begin
