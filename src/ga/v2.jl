@@ -1,14 +1,14 @@
-function ga_v2(
+function ga_v2(;
         model::ExecModel,
         nth_param_set::Int64,
         max_generation::Int64,
         n_population::Int64,
-        n_children::Int64,
         n_gene::Int64,
         allowable_error::Float64,
-        local_search_method::String)
+        local_search_method::String,
+        n_children::Int64)
     
-    #=
+    #= 
         1. Initialization
             As an initial population, create np individuals randomly.
             ga_v2 also represents individuals as n-dimensional real number
@@ -65,14 +65,13 @@ function ga_v2(
             generations, Niter <- 2 * Niter. Otherwise, set Niter to 1.
         8. Termination
             Stop if the halting criteria are satisfied.
-            Otherwise, Generation <- Generation + 1, and return to the step 2.
-    =#
+            Otherwise, Generation <- Generation + 1, and return to the step 2. =#
     if n_population < n_gene + 2
-        error("n_population must be larger than $(n_gene+2)")
+        error("n_population must be larger than $(n_gene + 2)")
     end
 
     N_iter::Int64 = 1
-    N0::Vector{Float64} = zeros(3*n_population)
+    N0::Vector{Float64} = zeros(3 * n_population)
 
     population::Matrix{Float64} = get_initial_population(
         model, nth_param_set, n_population, n_gene
@@ -106,24 +105,24 @@ function ga_v2(
 
     generation::Int64 = 2
     while generation <= max_generation
-        ip = randperm(n_population)[1:n_gene+2]
+        ip = randperm(n_population)[1:n_gene + 2]
         population = converging!(
             model.obj_func, ip, population, n_population, n_gene
         )
         population = local_search!(
-            model.obj_func, ip, population, n_population, n_children, n_gene,
-            method=local_search_method
+            model.obj_func, ip, population, n_population, n_gene,
+            method=local_search_method, n_children=n_children
         )
         if N_iter > 1
             for _ in 1:N_iter
-                ip = randperm(n_population)[1:n_gene+2]
+                ip = randperm(n_population)[1:n_gene + 2]
                 population = converging!(
                     model.obj_func, ip, population, n_population, n_gene
                 )
             end
         end
 
-        if generation%length(N0) == 0
+        if generation % length(N0) == 0
             N0[end] = population[1, end]
             if N0[1] == N0[end]
                 N_iter *= 2
@@ -131,7 +130,7 @@ function ga_v2(
                 N_iter = 1
             end
         else
-            N0[generation%length(N0)] = population[1, end]
+            N0[generation % length(N0)] = population[1, end]
         end
         open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
             write(f,
@@ -175,22 +174,22 @@ function ga_v2(
 end
 
 
-function ga_v2_continue(
+function ga_v2_continue(;
         model::ExecModel,
         nth_param_set::Int64,
         max_generation::Int64,
         n_population::Int64,
-        n_children::Int64,
         n_gene::Int64,
         allowable_error::Float64, 
-        p0_bounds::Vector{Float64},
-        local_search_method::String)
+        local_search_method::String,
+        n_children::Int64,
+        p0_bounds::Vector{Float64})
     if n_population < n_gene + 2
-        error("n_population must be larger than $(n_gene+2)")
+        error("n_population must be larger than $(n_gene + 2)")
     end
     
     N_iter::Int64 = 1
-    N0::Vector{Float64} = zeros(3*n_population)
+    N0::Vector{Float64} = zeros(3 * n_population)
 
     count::Int64 = readdlm(
         strip(model.path, '/') * "/fitparam/$nth_param_set/count_num.dat"
@@ -216,7 +215,7 @@ function ga_v2_continue(
         best_indiv = model.gene2val(population[1, 1:n_gene])
         best_fitness = population[1, end]
         open(strip(model.path, '/') * "/fitparam/$nth_param_set/fit_param$count.dat", "w") do f
-            for i=1:n_gene
+            for i = 1:n_gene
                 write(f, @sprintf("%.6e", best_indiv[i]))
             end
         end
@@ -238,24 +237,24 @@ function ga_v2_continue(
 
     generation::Int64 = 2 + count
     while generation <= max_generation
-        ip = randperm(n_population)[1:n_gene+2]
+        ip = randperm(n_population)[1:n_gene + 2]
         population = converging!(
             model.obj_func, ip, population, n_population, n_gene
         )
         population = local_search!(
-            model.obj_func, ip, population, n_population, n_children, n_gene,
-            method=local_search_method
+            model.obj_func, ip, population, n_population, n_gene,
+            method=local_search_method, n_children=n_children
         )
         if N_iter > 1
             for _ in 1:N_iter
-                ip = randperm(n_population)[1:n_gene+2]
+                ip = randperm(n_population)[1:n_gene + 2]
                 population = converging!(
                     model.obj_func, ip, population, n_population, n_gene
                 )
             end
         end
 
-        if generation%length(N0) == 0
+        if generation % length(N0) == 0
             N0[end] = population[1, end]
             if N0[1] == N0[end]
                 N_iter *= 2
@@ -263,7 +262,7 @@ function ga_v2_continue(
                 N_iter = 1
             end
         else
-            N0[generation%length(N0)] = population[1, end]
+            N0[generation % length(N0)] = population[1, end]
         end
         open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
             write(f,
