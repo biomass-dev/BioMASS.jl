@@ -33,7 +33,7 @@ function __init__()
             else False,
             options={
                 #'disp': True,
-                'xtol': 1.0,
+                'xtol': 0.1,
                 'ftol': 1.0,
                 'maxiter': 5,
                 'maxfev': 100 * n_gene,
