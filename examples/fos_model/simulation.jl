@@ -11,11 +11,10 @@ using Sundials
 using SteadyStateDiffEq
 
 # Options for ODE solver
-const ABSTOL = 1e-9
-const RELTOL = 1e-9
-const DTMIN = 1e-8
+const ABSTOL = 1e-8
+const RELTOL = 1e-8
 
-normalization = Dict{String, Dict{}}()
+normalization = Dict{String,Dict{}}()
 for observable in observables
     normalization[observable] = Dict(
         "timepoint" => nothing,
@@ -37,13 +36,13 @@ function solveode(
         f::Function,
         u0::Vector{Float64},
         t::Vector{Float64},
-        p::Vector{Float64})::Union{ODESolution{}, Nothing}
+        p::Vector{Float64})::Union{ODESolution{},Nothing}
     local sol::ODESolution{}, is_successful::Bool
     try
-        prob = ODEProblem(f,u0,(t[1],t[end]),p)
+        prob = ODEProblem(f, u0, (t[1], t[end]), p)
         sol = solve(
             prob,CVODE_BDF(),
-            abstol=ABSTOL,reltol=RELTOL,dtmin=DTMIN,saveat=dt,verbose=false
+            abstol=ABSTOL,reltol=RELTOL,saveat=dt,verbose=false
         )
         is_successful = ifelse(sol.retcode === :Success, true, false)
     catch
@@ -63,14 +62,14 @@ function get_steady_state(
         p::Vector{Float64})::Vector{Float64}
     local sol::SteadyStateSolution{}, is_successful::Bool
     try
-        prob = ODEProblem(diffeq,u0,(0.0,Inf),p)
+        prob = ODEProblem(diffeq, u0, (0.0, Inf), p)
         prob = SteadyStateProblem(prob)
         sol = solve(
             prob,
             DynamicSS(
                 CVODE_BDF();abstol=ABSTOL,reltol=RELTOL
             ),
-            dt=dt,dtmin=DTMIN,verbose=false
+            dt=dt,verbose=false
         )
         is_successful = ifelse(sol.retcode === :Success, true, false)
     catch
@@ -84,21 +83,21 @@ function get_steady_state(
 end
 
 
-function simulate!(p::Vector{Float64}, u0::Vector{Float64})::Union{Bool, Nothing}
+function simulate!(p::Vector{Float64}, u0::Vector{Float64})::Union{Bool,Nothing}
     # get steady state
     p[C.Ligand] = p[C.no_ligand]
-    u0 = get_steady_state(diffeq,u0,p)
+    u0 = get_steady_state(diffeq, u0, p)
     if isempty(u0)
         return false
     end
     # add ligand
-    for (i,condition) in enumerate(conditions)
+    for (i, condition) in enumerate(conditions)
         if condition == "EGF"
             p[C.Ligand] = p[C.EGF]
         elseif condition == "HRG"
             p[C.Ligand] = p[C.HRG]
         end
-        sol = solveode(diffeq,u0,t,p)
+        sol = solveode(diffeq, u0, t, p)
         if sol === nothing
             return false
         else
@@ -110,10 +109,10 @@ function simulate!(p::Vector{Float64}, u0::Vector{Float64})::Union{Bool, Nothing
                     sol.u[j][V.pERKc] + sol.u[j][V.ppERKc]
                 )
                 simulations[observables_index("Phosphorylated_RSKw"),j,i] = (
-                    sol.u[j][V.pRSKc] + sol.u[j][V.pRSKn]*(p[C.Vn]/p[C.Vc])
+                    sol.u[j][V.pRSKc] + sol.u[j][V.pRSKn] * (p[C.Vn] / p[C.Vc])
                 )
                 simulations[observables_index("Phosphorylated_CREBw"),j,i] = (
-                    sol.u[j][V.pCREBn]*(p[C.Vn]/p[C.Vc])
+                    sol.u[j][V.pCREBn] * (p[C.Vn] / p[C.Vc])
                 )
                 simulations[observables_index("dusp_mRNA"),j,i] = (
                     sol.u[j][V.duspmRNAc]
@@ -122,11 +121,11 @@ function simulate!(p::Vector{Float64}, u0::Vector{Float64})::Union{Bool, Nothing
                     sol.u[j][V.cfosmRNAc]
                 )
                 simulations[observables_index("cFos_Protein"),j,i] = (
-                    (sol.u[j][V.pcFOSn] + sol.u[j][V.cFOSn])*(p[C.Vn]/p[C.Vc])
+                    (sol.u[j][V.pcFOSn] + sol.u[j][V.cFOSn]) * (p[C.Vn] / p[C.Vc])
                     + sol.u[j][V.cFOSc] + sol.u[j][V.pcFOSc]
                 )
                 simulations[observables_index("Phosphorylated_cFos"),j,i] = (
-                    sol.u[j][V.pcFOSn]*(p[C.Vn]/p[C.Vc]) + sol.u[j][V.pcFOSc]
+                    sol.u[j][V.pcFOSn] * (p[C.Vn] / p[C.Vc]) + sol.u[j][V.pcFOSc]
                 )
             end
         end
