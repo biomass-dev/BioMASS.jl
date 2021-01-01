@@ -7,6 +7,8 @@
 
 This module provides a Julia interface to the [BioMASS](https://github.com/okadalabipr/biomass) parameter estimation.
 
+![](docs/src/assets/result.png)
+
 ## Features
 
 - Parameter estimation
@@ -24,8 +26,13 @@ optimize(model, 1, max_generation=20000, allowable_error=0.5)
 
 # Save simulation results to figure/ in the model folder
 visualize(model, viz_type="best", show_all=true)
+```
 
-# Convert optimized parameters into BioMASS format.
+## Convert optimized parameters into BioMASS format.
+
+![](docs/src/assets/conversion.png)
+
+```julia
 param2biomass("./examples/fos_model")
 ```
 
