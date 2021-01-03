@@ -1,5 +1,7 @@
 # Parameter Estimation
 
+![](../assets/result.png)
+
 ## Core functions
 
 ---
@@ -180,6 +182,8 @@ visualize(model, viz_type="best", show_all=true)
 ```
 
 ## Conversion of optimized parameters into BioMASS format
+
+![](../assets/conversion.png)
 
 The converted items will be saved in `path2model/dat2npy/out/`.
 

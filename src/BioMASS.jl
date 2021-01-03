@@ -2,7 +2,6 @@ module BioMASS
 
 using Printf
 using LinearAlgebra
-using Random
 using StatsBase
 using Statistics
 using DelimitedFiles
