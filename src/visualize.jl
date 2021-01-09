@@ -1,11 +1,24 @@
 using PyPlot
+if isinstalled("seaborn")
+    import Seaborn
+end
 
 function get_indiv(model::ExecModel, paramset::Int)::Vector{Float64}
     best_generation::Int64 = readdlm(
-        strip(model.path, '/') * "/fitparam/$paramset/generation.dat"
+        joinpath(
+            model.path,
+            "fitparam",
+            "$paramset",
+            "generation.dat"
+        )
     )[1,1]
     best_indiv::Vector{Float64} = readdlm(
-        strip(model.path, '/') * "/fitparam/$paramset/fit_param$best_generation.dat",
+        joinpath(
+            model.path,
+            "fitparam",
+            "$paramset",
+            "fit_param$best_generation.dat"
+        ),
     )[:,1]
     return best_indiv
 end
@@ -15,35 +28,47 @@ function load_param(
         model::ExecModel,
         paramset::Int)::Tuple{Array{Float64,1},Array{Float64,1}}
     best_indiv::Vector{Float64} = get_indiv(model, paramset)
-    (p,u0) = update_param(best_indiv)
+    (p, u0) = update_param(best_indiv)
     return p, u0
 end
 
 
 function get_executable(model::ExecModel)::Vector{Int}
     n_file::Vector{Int} = []
-    fitparam_files::Vector{String} = readdir(strip(model.path, '/') * "/fitparam")
+    fitparam_files::Vector{String} = readdir(
+        joinpath(
+            model.path,
+            "fitparam"
+        )
+    )
     for file in fitparam_files
-        if occursin(r"\d",file)
-            push!(n_file, parse(Int64,file))
+        if occursin(r"\d", file)
+            push!(n_file, parse(Int64, file))
         end
     end
     empty_folder::Vector{Int} = []
-    for (i,nth_param_set) in enumerate(n_file)
-        if !isfile(strip(model.path, '/') * "/fitparam/$nth_param_set/generation.dat")
-            push!(empty_folder,i)
+    for (i, nth_param_set) in enumerate(n_file)
+        if !isfile(
+            joinpath(
+                model.path,
+                "fitparam",
+                "$nth_param_set",
+                "generation.dat"
+            )
+        )
+            push!(empty_folder, i)
         end
     end
     for i in sort(empty_folder, rev=true)
-        deleteat!(n_file,i)
+        deleteat!(n_file, i)
     end
     return n_file
 end
 
 
 function validate!(model::ExecModel, nth_param_set::Int64)
-    (p,u0) = load_param(model, nth_param_set)
-    if Sim.simulate!(p,u0) isa Nothing
+    (p, u0) = load_param(model, nth_param_set)
+    if Sim.simulate!(p, u0) isa Nothing
         return model, true
     else
         print("Simulation failed. #$nth_param_set\n")
@@ -87,8 +112,22 @@ function plot_timecourse(
         show_all::Bool,
         stdev::Bool,
         simulations_all::Array{Float64,4})
-    if !isdir(strip(model.path, '/') * "/figure/simulation/$viz_type")
-        mkpath(strip(model.path, '/') * "/figure/simulation/$viz_type")
+    if !isdir(
+        joinpath(
+            model.path,
+            "figure",
+            "simulation",
+            "$viz_type"
+        )
+    )
+        mkpath(
+            joinpath(
+            model.path,
+            "figure",
+            "simulation",
+            "$viz_type"
+        )
+        )
     end
     
     cmap = [
@@ -100,15 +139,15 @@ function plot_timecourse(
     ]
 
     # rcParams
-    rc("figure",figsize = (4,3))
-    rc("font",size = 18)
-    rc("axes",linewidth = 1.5)
-    rc("xtick.major",width = 1.5)
-    rc("ytick.major",width = 1.5)
-    rc("lines",linewidth = 1.8)
-    rc("lines",markersize = 12)
+    rc("figure", figsize=(4, 3))
+    rc("font", size=18)
+    rc("axes", linewidth=1.5)
+    rc("xtick.major", width=1.5)
+    rc("ytick.major", width=1.5)
+    rc("lines", linewidth=1.8)
+    rc("lines", markersize=12)
 
-    for (i,obs_name) in enumerate(observables)
+    for (i, obs_name) in enumerate(observables)
         gca().spines["right"].set_visible(false)
         gca().spines["top"].set_visible(false)
         gca().yaxis.set_ticks_position("left")
@@ -118,9 +157,9 @@ function plot_timecourse(
             if show_all
                 for j in eachindex(n_file)
                     if length(Sim.normalization) > 0
-                        norm_max = get_norm_max(i,j,obs_name,simulations_all)
+                        norm_max = get_norm_max(i, j, obs_name, simulations_all)
                     end
-                    for (l,condition) in enumerate(Sim.conditions)
+                    for (l, condition) in enumerate(Sim.conditions)
                         plot(
                             Sim.t,
                             simulations_all[i,j,:,l] ./ ifelse(
@@ -141,7 +180,7 @@ function plot_timecourse(
                 )
                 @inbounds for j in eachindex(n_file)
                     if length(Sim.normalization) > 0
-                        norm_max = get_norm_max(i,j,obs_name,simulations_all)
+                        norm_max = get_norm_max(i, j, obs_name, simulations_all)
                     end
                     @simd for l in eachindex(Sim.conditions)
                         normalized[i,j,:,l] = (
@@ -177,7 +216,7 @@ function plot_timecourse(
                         end
                     end
                 end
-                for (l,condition) in enumerate(Sim.conditions)
+                for (l, condition) in enumerate(Sim.conditions)
                     plot(
                         Sim.t,[
                             mean(
@@ -191,7 +230,7 @@ function plot_timecourse(
                     )
                 end
                 if stdev
-                    for (l,condition) in enumerate(Sim.conditions)
+                    for (l, condition) in enumerate(Sim.conditions)
                         y_mean = [
                             mean(
                                 filter(
@@ -208,7 +247,7 @@ function plot_timecourse(
                         ]
                         fill_between(
                             Sim.t,
-                            y_mean-y_std,y_mean+y_std,
+                            y_mean - y_std, y_mean + y_std,
                             color=cmap[l],
                             lw=0,alpha=0.1
                         )
@@ -230,7 +269,7 @@ function plot_timecourse(
                         ]
                     )
                 )
-                for (l,condition) in enumerate(Sim.conditions)
+                for (l, condition) in enumerate(Sim.conditions)
                     plot(
                         Sim.t,
                         Sim.simulations[i,:,l] ./ ifelse(
@@ -245,10 +284,10 @@ function plot_timecourse(
             end
         end
 
-        if isassigned(Exp.experiments,i)
+        if isassigned(Exp.experiments, i)
             exp_t = Exp.get_timepoint(obs_name)
-            if isassigned(Exp.error_bars,i)
-                for (l,condition) in enumerate(Sim.conditions)
+            if isassigned(Exp.error_bars, i)
+                for (l, condition) in enumerate(Sim.conditions)
                     if condition in keys(Exp.experiments[i])
                         exp_data = errorbar(
                             exp_t,
@@ -271,7 +310,7 @@ function plot_timecourse(
                     end
                 end
             else
-                for (l,condition) in enumerate(Sim.conditions)
+                for (l, condition) in enumerate(Sim.conditions)
                     if condition in keys(Exp.experiments[i])
                         plot(
                             exp_t,
@@ -289,7 +328,13 @@ function plot_timecourse(
         xlabel("Time")
         ylabel(replace(obs_name, "_" => " "))
         savefig(
-            strip(model.path, '/') * "/figure/simulation/$viz_type/$obs_name.pdf",
+            joinpath(
+                model.path,
+                "figure",
+                "simulation",
+                "$viz_type",
+                "$obs_name.pdf"
+            ),
             bbox_inches="tight"
         )
         close()
@@ -297,18 +342,69 @@ function plot_timecourse(
 end
 
 
+function save_param_range(model::ExecModel, n_file::Vector{Int})
+    search_idx::Tuple{Array{Int64,1},Array{Int64,1}} = model.search_idx()
+    popt::Matrix{Float64} = zeros(length(n_file), length(search_idx[1]))
+    @inbounds for (i, nth_param_set) in enumerate(n_file)
+        best_indiv = get_indiv(model, nth_param_set)
+        popt[i, :] = best_indiv[1:length(search_idx[1])]
+    end
+
+    # fig, ax = subplots(figsize=(4, length(search_idx[1]) / 5))
+    # fig, ax = subplots(figsize=(8, 75))
+    # rcParams
+    rc("figure", figsize=(4, length(search_idx[1]) / 5))
+    rc("font", size=6)
+
+    # sns.despine()
+    gca().spines["right"].set_visible(false)
+    gca().spines["top"].set_visible(false)
+    gca().yaxis.set_ticks_position("left")
+    gca().xaxis.set_ticks_position("bottom")
+
+    ax = Seaborn.boxplot(
+        data=popt, orient="h", linewidth=0.5, fliersize=1, palette="Set2"
+    )
+
+    ax.set_xlabel("Parameter value")
+    ax.set_ylabel("")
+    ax.set_yticklabels([model.parameters.NAMES[i] for i in search_idx[1]])
+    ax.set_xscale("log")
+
+    savefig(
+        joinpath(
+            model.path,
+            "figure",
+            "param_range.pdf"
+        ),
+        bbox_inches="tight"
+    )
+    close()
+end
+
+
 function visualize(
         model::ExecModel;
         viz_type::String,
-        show_all::Bool = false,
-        stdev::Bool = false)
-    if !isdir(strip(model.path, '/') * "/figure")
-        mkdir(strip(model.path, '/') * "/figure")
+        show_all::Bool=false,
+        stdev::Bool=false)
+    if !isdir(
+        joinpath(
+            model.path,
+            "figure"
+        )
+    )
+        mkdir(
+            joinpath(
+                model.path,
+                "figure"
+            )
+        )
     end
 
     if !(viz_type in ["best","average","original","experiment"])
         try
-            parse(Int64,viz_type)
+            parse(Int64, viz_type)
         catch
             error(
                 "Avairable viz_type are: 'best','average','original','experiment','n(=1,2,...)'"
@@ -319,51 +415,67 @@ function visualize(
     n_file::Vector{Int} = viz_type in ["original", "experiment"] ? [] : get_executable(model)
 
     simulaitons_all::Array{Float64,4} = fill(
-        NaN,(
-            length(observables),
+        NaN,
+        (length(observables),
             length(n_file),
             length(Sim.t),
-            length(Sim.conditions)
-        )
+            length(Sim.conditions))
     )
     if viz_type != "experiment"
         if length(n_file) > 0
             if length(n_file) == 1 && viz_type == "average"
                 error("viz_type should be best, not $viz_type")
             end
-            for (i,nth_param_set) in enumerate(n_file)
-                (model,is_successful) = validate!(model, nth_param_set)
+            for (i, nth_param_set) in enumerate(n_file)
+                (model, is_successful) = validate!(model, nth_param_set)
                 if is_successful
                     for j in eachindex(observables)
                         @inbounds simulaitons_all[j,i,:,:] = Sim.simulations[j,:,:]
                     end
                 end
             end
-            best_fitness_all::Vector{Float64} = fill(Inf,length(n_file))
-            for (i,nth_param_set) in enumerate(n_file)
-                if isfile(strip(model.path, '/') * "/fitparam/$nth_param_set/best_fitness.dat")
+            best_fitness_all::Vector{Float64} = fill(Inf, length(n_file))
+            for (i, nth_param_set) in enumerate(n_file)
+                if isfile(
+                    joinpath(
+                        model.path,
+                        "fitparam",
+                        "$nth_param_set",
+                        "best_fitness.dat"
+                    )
+                )
                     best_fitness_all[i] = readdlm(
-                        strip(model.path, '/') * "/fitparam/$nth_param_set/best_fitness.dat"
+                        joinpath(
+                            model.path,
+                            "fitparam",
+                            "$nth_param_set",
+                            "best_fitness.dat"
+                        )
                     )[1,1]
                 end
             end
             best_param_set::Int = n_file[argmin(best_fitness_all)]
             if viz_type == "best"
-                model,_ = validate!(model, best_param_set)
-            elseif viz_type != "average" && parse(Int64,viz_type) <= length(n_file)
-                model,_ = validate!(model, parse(Int64,viz_type))
-            elseif viz_type != "average" && parse(Int64,viz_type) > length(n_file)
+                model, _ = validate!(model, best_param_set)
+            elseif viz_type != "average" && parse(Int64, viz_type) <= length(n_file)
+                model, _ = validate!(model, parse(Int64, viz_type))
+            elseif viz_type != "average" && parse(Int64, viz_type) > length(n_file)
                 error(
                     @sprintf(
                         "n (%d) must be smaller than n_fitparam (%d)",
-                        parse(Int64,viz_type), length(n_file)
+                        parse(Int64, viz_type), length(n_file)
                     )
                 )
             end
+
+            if isinstalled("seaborn") && length(n_file) > 1
+                save_param_range(model, n_file)
+            end
+
         else
             p::Vector{Float64} = param_values()
             u0::Vector{Float64} = initial_values()
-            if Sim.simulate!(p,u0) !== nothing
+            if Sim.simulate!(p, u0) !== nothing
                 error(
                     "Simulation failed."
                 )

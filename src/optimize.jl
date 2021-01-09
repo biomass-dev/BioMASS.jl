@@ -19,6 +19,7 @@ function optimize(
         max_generation::Int64=10000,
         allowable_error::Float64=0.0,
         n_children::Int64=50,
+        maxiter::Int64=10,
         local_search_method::String="mutation")
     check_method(
         lowercase(local_search_method)
@@ -58,7 +59,8 @@ function optimize(
         n_gene=n_gene,
         allowable_error=allowable_error,
         local_search_method=lowercase(local_search_method),
-        n_children=n_children
+        n_children=n_children,
+        maxiter=maxiter
     )
 end
 
@@ -70,6 +72,7 @@ function optimize_continue(
         max_generation::Int64=10000,
         allowable_error::Float64=0.0,
         n_children::Int64=50,
+        maxiter::Int64=10,
         local_search_method::String="mutation",
         p0_bounds::Vector{Float64}=[0.1, 10.0])
     check_method(
@@ -92,7 +95,8 @@ function optimize_continue(
             n_gene=n_gene,
             allowable_error=allowable_error,
             local_search_method=lowercase(local_search_method),
-            n_children=n_children
+            n_children=n_children,
+            maxiter=maxiter
         )
     else
         ga_v2_continue(
@@ -104,6 +108,7 @@ function optimize_continue(
             allowable_error=allowable_error,
             local_search_method=lowercase(local_search_method),
             n_children=n_children,
+            maxiter=maxiter,
             p0_bounds=p0_bounds
         )
     end

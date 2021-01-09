@@ -61,6 +61,10 @@ Find a parameter set that reproduces experimental observations.
 
     - The number of children used for local search NDM/MGG ("mutation").
 
+  - `maxiter`::Int (default: 10)
+
+    - The maximum number of iterations over which the entire population is evolved. This is used for the local search methods: "Powell" or "DE".
+
   - `local_search_method`::String (default: `"mutation"`)
 
     - Local search method used in GA. Should be one of

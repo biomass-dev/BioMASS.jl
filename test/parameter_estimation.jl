@@ -21,7 +21,7 @@ output = []
         if isinstalled("scipy.optimize")
             optimize_continue(
                 model, 1, max_generation=6, popsize=3,
-                local_search_method="Powell"
+                local_search_method="Powell", maxiter=5
             )
         else
             optimize_continue(
@@ -37,7 +37,7 @@ output = []
         if isinstalled("scipy.optimize")
             optimize_continue(
                 model, 1, max_generation=9, popsize=3,
-                local_search_method="DE"
+                local_search_method="DE", maxiter=10
             )
             lines = open(model.path * "/logs/1.log", "r") do f
                 readlines(f)
