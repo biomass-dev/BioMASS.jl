@@ -6,7 +6,8 @@ function ga_v2(;
         n_gene::Int64,
         allowable_error::Float64,
         local_search_method::String,
-        n_children::Int64)
+        n_children::Int64,
+        maxiter::Int64)
     """
         1. Initialization
             As an initial population, create np individuals randomly.
@@ -141,7 +142,7 @@ function ga_v2(;
         )
         population .= local_search!(
             model.obj_func, ip, population, n_population, n_gene,
-            method=local_search_method, n_children=n_children
+            method=local_search_method, n_children=n_children, maxiter=maxiter
         )
         if n_iter > 1
             for _ in 1:n_iter
@@ -247,6 +248,7 @@ function ga_v2_continue(;
         allowable_error::Float64, 
         local_search_method::String,
         n_children::Int64,
+        maxiter::Int64,
         p0_bounds::Vector{Float64})
     if n_population < n_gene + 2
         error("n_population must be larger than $(n_gene + 2)")
@@ -337,7 +339,7 @@ function ga_v2_continue(;
         )
         population .= local_search!(
             model.obj_func, ip, population, n_population, n_gene,
-            method=local_search_method, n_children=n_children
+            method=local_search_method, n_children=n_children, maxiter=maxiter
         )
         if n_iter > 1
             for _ in 1:n_iter

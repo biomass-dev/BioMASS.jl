@@ -18,7 +18,8 @@ function __init__()
             objective: Callable,
             n_gene: int,
             population: np.ndarray,
-            ip: np.ndarray
+            ip: np.ndarray,
+            maxiter: int,
     ) -> np.ndarray:
         lower = np.min(population[ip, :n_gene], axis=0)
         upper = np.max(population[ip, :n_gene], axis=0)
@@ -35,7 +36,7 @@ function __init__()
                 #'disp': True,
                 'xtol': 0.1,
                 'ftol': 1.0,
-                'maxiter': 5,
+                'maxiter': maxiter,
                 'maxfev': 100 * n_gene,
                 'direc': direc,
             }
@@ -51,14 +52,15 @@ function __init__()
             objective: Callable,
             n_gene: int,
             population: np.ndarray,
-            ip: np.ndarray
+            ip: np.ndarray,
+            maxiter: int,
     ) -> np.ndarray:
         res = differential_evolution(
             objective,
             ((0.0, 1.0),) * n_gene,
             strategy='best2bin',
             mutation=(0, 1),
-            maxiter=10,
+            maxiter=maxiter,
             popsize=1,
             polish=False,
             init=population[ip, :n_gene],
@@ -76,9 +78,10 @@ function fmin_powell(
         objective::Function,
         n_gene::Int,
         population::Matrix{Float64},
-        ip::Vector{Int}
+        ip::Vector{Int},
+        maxiter::Int
 )::Matrix{Float64}
-    return py"modified_powell"(objective, n_gene, population, ip .- 1)
+    return py"modified_powell"(objective, n_gene, population, ip .- 1, maxiter)
 end
 
 
@@ -86,9 +89,10 @@ function fmin_de(
         objective::Function,
         n_gene::Int,
         population::Matrix{Float64},
-        ip::Vector{Int}
+        ip::Vector{Int},
+        maxiter::Int
 )::Matrix{Float64}
-    return py"de_best2bin"(objective, n_gene, population, ip .- 1)
+    return py"de_best2bin"(objective, n_gene, population, ip .- 1, maxiter)
 end
 
 end # module
