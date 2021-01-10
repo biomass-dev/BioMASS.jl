@@ -25,25 +25,50 @@ function optimize(
         lowercase(local_search_method)
     )
 
-    for dir in ["/fitparam", "/logs"]
-        if !isdir(strip(model.path, '/') * dir)
-            mkdir(strip(model.path, '/') * dir)
+    for dir in ["fitparam", "logs"]
+        if !isdir(
+            joinpath(
+                model.path,
+                dir
+            )
+        )
+            mkdir(
+                joinpath(
+                    model.path,
+                    dir
+                )
+            )
         end
     end
 
     try
         files = readdir(
-            strip(model.path, '/') * "/fitparam/$nth_param_set"
+            joinpath(
+                model.path,
+                "fitparam",
+                "$nth_param_set"
+            )
         )
         for file in files
             if occursin(".dat", file)
                 rm(
-                    strip(model.path, '/') * "/fitparam/$nth_param_set/$file"
+                    joinpath(
+                        model.path,
+                        "fitparam",
+                        "$nth_param_set",
+                        "$file"
+                    )
                 )
             end
         end
     catch
-        mkdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
+        mkdir(
+            joinpath(
+                model.path,
+                "fitparam",
+                "$nth_param_set"
+            )
+        )
     end
 
     search_rgn::Matrix{Float64} = model.search_region()
@@ -84,8 +109,20 @@ function optimize_continue(
     n_population::Int64 = popsize * size(search_rgn, 2)
     n_gene::Int64 = size(search_rgn, 2)
 
-    if !isdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
-        mkdir(strip(model.path, '/') * "/fitparam/$nth_param_set")
+    if !isdir(
+        joinpath(
+            model.path,
+            "fitparam",
+            "$nth_param_set"
+        )
+    )
+        mkdir(
+            joinpath(
+                model.path,
+                "fitparam",
+                "$nth_param_set"
+            )
+        )
 
         ga_v2(
             model=model,
