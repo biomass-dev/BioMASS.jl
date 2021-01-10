@@ -19,11 +19,12 @@ SteadyStateDiffEq = "9672c7b4-1e72-59bd-8a11-6ac3964bc41f"
 Sundials = "c3572dad-4567-51f8-b174-8c6c989267f4"
 
 [compat]
-DataFrames = "0.22"
 CSV = "0.8"
+DataFrames = "0.22"
 ForwardDiff = "0.10"
 PyCall = "1.92"
 PyPlot = "2.9"
+Seaborn = "0.4"
 StatsBase = "0.33"
 SteadyStateDiffEq = "1.5"
 Sundials = "4.3"
