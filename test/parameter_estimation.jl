@@ -62,6 +62,9 @@ output = []
     if isinstalled("numpy")
         @testset "conversion" begin
             @test param2biomass(model.path) === nothing
+            @test isdir(
+                "../examples/fos_model/dat2npy/out/1/"
+            )
             push!(output, "dat2npy")
         end
     end
