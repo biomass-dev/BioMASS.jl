@@ -21,7 +21,7 @@ BioMASS.jl supports:
 ```julia
 using BioMASS
 
-model = load_model("./examples/fos_model")
+model = load_model("./examples/fos_model");
 
 # Estimate unknown model parameters against experimental observations.
 optimize(model, 1, max_generation=20000, allowable_error=0.5)
@@ -40,10 +40,16 @@ param2biomass("./examples/fos_model")
 
 ## Installation
 
-```bash
-$ julia
-# Press ']' to enter the Pkg REPL mode.
-pkg> add https://github.com/himoto/BioMASS.jl
+The package is a registered package, and can be installed with `Pkg.add`.
+
+```julia
+julia> using Pkg; Pkg.add("BioMASS")
+```
+
+or through the `pkg` REPL mode by typing
+
+```
+] add BioMASS
 ```
 
 ## References
