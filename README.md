@@ -13,7 +13,7 @@ This module provides a Julia interface to the [BioMASS](https://github.com/okada
 
 BioMASS.jl supports:
 
-- Parameter Estimation of ODE models
+- Parameter Estimation of ODE/DDE models
 - Bifurcation Analysis
 
 ## Usage
@@ -55,6 +55,8 @@ or through the `pkg` REPL mode by typing
 ## References
 
 - Nakakuki, T. _et al._ Ligand-specific c-Fos expression emerges from the spatiotemporal control of ErbB network dynamics. _Cell_ **141**, 884–896 (2010). https://doi.org/10.1016/j.cell.2010.03.054
+
+- Inoue, K. _et al._ Oscillation dynamics underlie functional switching of NF-κB for B-cell activation. _npj Syst. Biol. Appl._ **2**, 16024 (2016). https://doi.org/10.1038/npjsba.2016.24
 
 - Yao, G., Lee, T. J., Mori, S., Nevins, J. R. & You, L. A bistable Rb-E2F switch underlies the restriction point. _Nat. Cell Biol._ **10**, 476–482 (2008). https://doi.org/10.1038/ncb1711
 
