@@ -53,7 +53,7 @@ import BioMASS: isinstalled
     end
     if isinstalled("matplotlib")
         @testset "visualization" begin
-            visualize(model_ode, viz_type="best")
+            @test visualize(model_ode, viz_type="best") === nothing
             files = readdir(
                 joinpath(model_ode.path, "figure", "simulation", "best")
             )
