@@ -60,6 +60,7 @@ function __init__()
             ((0.0, 1.0),) * n_gene,
             strategy='best2bin',
             mutation=0.1,
+            recombination=0.9,
             maxiter=maxiter,
             popsize=1,
             polish=False,

@@ -13,10 +13,8 @@ This module provides a Julia interface to the [BioMASS](https://github.com/okada
 
 ## Installation
 
-```bash
-$ julia
-# Press ']' to enter the Pkg REPL mode.
-pkg> add https://github.com/himoto/BioMASS.jl
+```
+] add BioMASS
 ```
 
 ```@contents

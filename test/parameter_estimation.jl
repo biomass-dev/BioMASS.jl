@@ -1,16 +1,16 @@
 import BioMASS: isinstalled
 
-const model = load_model("../examples/fos_model")
-
-output = []
-
 @testset "Parameter Estimation" begin
+    model_ode = load_model("../examples/fos_model")
+    output = []
     @testset "optimization" begin
         optimize(
-            model, 1, max_generation=3, popsize=3,
+            model_ode, 1, max_generation=3, popsize=3,
             local_search_method="mutation", n_children=15
         )
-        lines = open(model.path * "/logs/1.log", "r") do f
+        lines = open(
+            joinpath(model_ode.path, "logs", "1.log"), "r"
+        ) do f
             readlines(f)
         end
         @test lines[end][1:13] == "Generation3: "
@@ -20,35 +20,43 @@ output = []
     @testset "optimization_continue" begin
         if isinstalled("scipy.optimize")
             optimize_continue(
-                model, 1, max_generation=6, popsize=3,
+                model_ode, 1, max_generation=6, popsize=3,
                 local_search_method="Powell", maxiter=5
             )
         else
             optimize_continue(
-                model, 1, max_generation=6, popsize=3,
+                model_ode, 1, max_generation=6, popsize=3,
                 local_search_method="mutation", n_children=15
             )
         end
-        lines = open(model.path * "/logs/1.log", "r") do f
+        lines = open(
+            joinpath(model_ode.path, "logs", "1.log"),"r"
+        ) do f
             readlines(f)
         end
         @test lines[end][1:13] == "Generation6: "
         # test differential_evolution
         if isinstalled("scipy.optimize")
-            optimize_continue(
-                model, 1, max_generation=9, popsize=3,
-                local_search_method="DE", maxiter=10
-            )
-            lines = open(model.path * "/logs/1.log", "r") do f
-                readlines(f)
+            @testset "Differential evolution" begin
+                optimize_continue(
+                    model_ode, 1, max_generation=9, popsize=3,
+                    local_search_method="DE", maxiter=10
+                )
+                lines = open(
+                    joinpath(model_ode.path, "logs", "1.log"), "r"
+                ) do f
+                    readlines(f)
+                end
+                @test lines[end][1:13] == "Generation9: "
             end
-            @test lines[end][1:13] == "Generation9: "
         end
     end
     if isinstalled("matplotlib")
         @testset "visualization" begin
-            visualize(model, viz_type="best")
-            files = readdir("../examples/fos_model/figure/simulation/best")
+            @test visualize(model_ode, viz_type="best") === nothing
+            files = readdir(
+                joinpath(model_ode.path, "figure", "simulation", "best")
+            )
             n_pdf = 0
             for file in files
                 if occursin(".pdf", file)
@@ -61,11 +69,14 @@ output = []
     end
     if isinstalled("numpy")
         @testset "conversion" begin
-            @test param2biomass(model.path) === nothing
+            @test param2biomass(model_ode.path) === nothing
+            @test isdir(
+                joinpath(model_ode.path, "dat2npy", "out", "1")
+            )
             push!(output, "dat2npy")
         end
     end
     for dir in output
-        rm("../examples/fos_model/$dir", recursive=true, force=true)
+        rm(joinpath(model_ode.path, "$dir"), recursive=true, force=true)
     end
 end

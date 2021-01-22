@@ -8,7 +8,7 @@ const NEPS = 1e-12          # eps of Newton's method
 
 function create_diffeq(model_path::String)
     lines::Vector{String} = []
-    open(model_path * "/set_model.jl", "r") do f
+    open(joinpath(model_path, "set_model.jl"), "r") do f
         append!(lines, readlines(f))
     end
     for (i, line) in enumerate(lines)
@@ -20,7 +20,7 @@ function create_diffeq(model_path::String)
             break
         end
     end
-    open(model_path * "/forwarddiff.jl", "w") do f
+    open(joinpath(model_path, "forwarddiff.jl"), "w") do f
         for line in lines
             write(f, line * "\n")
         end
@@ -30,12 +30,12 @@ end
 
 # matrix transformation (large diagonal elements move to upper)
 function pivoting!(s::Matrix{Float64}, pivot::Int, dim_newton::Int)
-    v0::Vector{Float64} = zeros(dim_newton+1)
-    v1::Vector{Float64} = zeros(dim_newton+1)
+    v0::Vector{Float64} = zeros(dim_newton + 1)
+    v1::Vector{Float64} = zeros(dim_newton + 1)
     possess::Int = 0
     max_element::Float64 = 0.0
 
-    for i in pivot:size(s,1)
+    for i in pivot:size(s, 1)
         current_element = abs(s[i, pivot])
         if max_element <= current_element
             max_element = current_element
@@ -43,12 +43,12 @@ function pivoting!(s::Matrix{Float64}, pivot::Int, dim_newton::Int)
         end
     end
 
-    for j in 1:size(s,2)
+    for j in 1:size(s, 2)
         v0[j] = s[possess, j]
         v1[j] = s[pivot, j]
     end
 
-    for j in 1:size(s,2)
+    for j in 1:size(s, 2)
         s[possess, j] = v1[j]
         s[pivot, j] = v0[j]
     end
@@ -60,17 +60,17 @@ function gaussian_elimination!(s::Matrix{Float64}, e::Vector{Float64}, dim_newto
         pivoting!(s, i, dim_newton)
     end
     # forward
-    for k in 1:size(s,1)
+    for k in 1:size(s, 1)
         w = (s[k, k] != 0.0) ? 1.0 / s[k, k] : 1.0
-        for j in k:size(s,2)
+        for j in k:size(s, 2)
             s[k, j] *= w
-            for i in k:size(s,1)
+            for i in k:size(s, 1)
                 s[i, j] -= s[i, k] * s[k, j]
             end
         end
     end
     # backward
-    for i in size(s,1):-1:1
+    for i in size(s, 1):-1:1
         sum = 0.0
         for j in i:length(e)
             sum += s[i, j] * e[j]
@@ -96,7 +96,7 @@ function newtons_method!(
         n_variable::Int)
     u::Vector{Float64} = zeros(n_state)
     vx::Vector{Float64} = zeros(dim_newton)
-    s::Matrix{Float64} = zeros(dim_newton, dim_newton+1)
+    s::Matrix{Float64} = zeros(dim_newton, dim_newton + 1)
 
     for i in eachindex(x)
         if fix_num == i
@@ -127,7 +127,7 @@ function newtons_method!(
                     if idx == 0
                         u[j] = x[fix_num]
                     elseif idx < 0
-                        u[j] = vx[n_variable+idx]
+                        u[j] = vx[n_variable + idx]
                     else
                         u[j] = vx[idx]
                     end
@@ -144,7 +144,7 @@ function newtons_method!(
 
         F::Vector{Float64} = diffeq2(u)
 
-        eigenvalues::Array{Complex{Float64}, 1} = eigvals(dFdx)
+        eigenvalues::Array{Complex{Float64},1} = eigvals(dFdx)
         for (i, eigenvalue) in enumerate(eigenvalues)
             real_part[i] = real(eigenvalue)
             imaginary_part[i] = imag(eigenvalue)
@@ -159,7 +159,7 @@ function newtons_method!(
                         if idx == n_variable
                             s[k, j] = dFdp[k]
                         elseif idx > n_variable
-                            s[k, j] = dFdx[k, idx-n_variable]
+                            s[k, j] = dFdx[k, idx - n_variable]
                         else
                             s[k, j] = dFdx[k, idx]
                         end
@@ -205,7 +205,7 @@ end
 
 
 function new_curve!(
-        model_path::Union{String, SubString{String}},
+        model_path::Union{String,SubString{String}},
         p::Vector{Float64},
         diffeq2::Function,
         get_derivatives::Function,
@@ -229,16 +229,38 @@ function new_curve!(
     imaginary_part::Vector{Float64} = zeros(n_state)
 
     # file
-    if !isdir(model_path * "/data")
-        mkdir(model_path * "/data")
+    if !isdir(
+        joinpath(
+            model_path,
+            "data",
+        )
+    )
+        mkdir(
+            joinpath(
+                model_path,
+                "data",
+            )
+        )
     else
-        files::Vector{String} = readdir(model_path * "/data")
+        files::Vector{String} = readdir(
+            joinpath(
+                model_path,
+                "data",
+            )
+        )
         for file in files
-            rm(model_path * "/data/$file")
+            rm(
+                joinpath(
+                    model_path,
+                    "data",
+                    "$file",
+                )
+            )
         end
     end
-    FOUT1 = open(model_path * "/data/fp.dat", "w")  # file for fixed point
-    FOUT2 = open(model_path * "/data/ev.dat", "w")  # file for eigenvalues
+    
+    FOUT1 = open(joinpath(model_path, "data", "fp.dat"), "w") # file for fixed point
+    FOUT2 = open(joinpath(model_path, "data", "ev.dat"), "w") # file for eigenvalues
 
     # initial condition
     x[1:n_state] = get_steady_state(p)
