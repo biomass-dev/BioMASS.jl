@@ -9,6 +9,7 @@ This module provides a Julia interface to the [BioMASS](https://github.com/okada
 ## Features
 
 - Parameter estimation
+- Visualization of simulation results
 - Bifurcation analysis
 
 ## Installation
