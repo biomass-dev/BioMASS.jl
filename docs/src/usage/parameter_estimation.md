@@ -92,8 +92,12 @@ Save simulation results with optimized parameter values.
     - Whether to show all simulation results.
 
   - `stdev`::Bool (default: `false`)
+
     - If True, the standard deviation of simulated values will be shown
       (only available for `"average"` visualization type).
+
+  - `save_format`::String (default: `"pdf"`)
+    - Either "png" or "pdf", indicating whether to save figures as png or pdf format.
 
 ---
 

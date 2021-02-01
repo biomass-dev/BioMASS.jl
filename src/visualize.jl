@@ -111,7 +111,8 @@ function plot_timecourse(
         viz_type::String,
         show_all::Bool,
         stdev::Bool,
-        simulations_all::Array{Float64,4})
+        simulations_all::Array{Float64,4},
+        save_format::String)
     if !isdir(
         joinpath(
             model.path,
@@ -333,8 +334,9 @@ function plot_timecourse(
                 "figure",
                 "simulation",
                 "$viz_type",
-                "$obs_name.pdf"
+                "$obs_name." * "$save_format"
             ),
+            dpi=save_format == "pdf" ? nothing : 600,
             bbox_inches="tight"
         )
         close()
@@ -342,7 +344,7 @@ function plot_timecourse(
 end
 
 
-function save_param_range(model::ExecModel, n_file::Vector{Int})
+function save_param_range(model::ExecModel, n_file::Vector{Int}, save_format::String)
     search_idx::Tuple{Array{Int64,1},Array{Int64,1}} = model.search_idx()
     popt::Matrix{Float64} = zeros(length(n_file), length(search_idx[1]))
     @inbounds for (i, nth_param_set) in enumerate(n_file)
@@ -375,8 +377,9 @@ function save_param_range(model::ExecModel, n_file::Vector{Int})
         joinpath(
             model.path,
             "figure",
-            "param_range.pdf"
+            "param_range." * "$save_format"
         ),
+        dpi=save_format == "pdf" ? nothing : 600,
         bbox_inches="tight"
     )
     close()
@@ -387,7 +390,8 @@ function visualize(
         model::ExecModel;
         viz_type::String,
         show_all::Bool=false,
-        stdev::Bool=false)
+        stdev::Bool=false,
+        save_format::String="pdf")
     if !isdir(
         joinpath(
             model.path,
@@ -469,7 +473,7 @@ function visualize(
             end
 
             if isinstalled("seaborn") && length(n_file) > 1
-                save_param_range(model, n_file)
+                save_param_range(model, n_file, save_format)
             end
 
         else
@@ -483,6 +487,6 @@ function visualize(
         end
     end
     plot_timecourse(
-        model,n_file,viz_type,show_all,stdev,simulaitons_all
+        model,n_file,viz_type,show_all,stdev,simulaitons_all, save_format
     )
 end
