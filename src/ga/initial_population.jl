@@ -3,8 +3,15 @@ function get_initial_population(
         nth_param_set::Int64,
         n_population::Int64,
         n_gene::Int64,
-        initial_threshold)::Matrix{Float64}
-    open(strip(model.path, '/') * "/logs/$nth_param_set.log", "w") do f
+        initial_threshold::Float64)::Matrix{Float64}
+    open(
+        joinpath(
+            model.path,
+            "logs",
+            "$nth_param_set.log"
+        ),
+        "w",
+    ) do f
         write(f, "Generating the initial population...\n\n")
     end
     population::Matrix{Float64} = fill(
@@ -17,11 +24,25 @@ function get_initial_population(
             end
             population[i, end] = model.obj_func(population[i, 1:n_gene])
         end
-        open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
+        open(
+            joinpath(
+                model.path,
+                "logs",
+                "$nth_param_set.log"
+            ),
+            "a",
+        ) do f
             write(f, @sprintf("%d / %d\n", i, n_population))
         end
     end
-    open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
+    open(
+        joinpath(
+            model.path,
+            "logs",
+            "$nth_param_set.log"
+        ),
+        "a"
+    ) do f
         write(f, "\n----------------------------------------\n")
     end
     population = sortslices(population, dims=1, by=x -> x[end])
@@ -38,12 +59,29 @@ function get_initial_population_continue(
         initial_threshold::Float64,
         p0_bounds::Vector{Float64})::Matrix{Float64}
     generation::Int64 = readdlm(
-        strip(model.path, '/') * "/fitparam/$nth_param_set/generation.dat"
+        joinpath(
+            model.path,
+            "fitparam",
+            "$nth_param_set",
+            "generation.dat"
+        )
     )[1, 1]
     best_indiv::Vector{Float64} = readdlm(
-        strip(model.path, '/') * "/fitparam/$nth_param_set/fit_param$generation.dat"
+        joinpath(
+            model.path,
+            "fitparam",
+            "$nth_param_set",
+            "fit_param$generation.dat"
+        )
     )[:, 1]
-    open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
+    open(
+        joinpath(
+            model.path,
+            "logs",
+            "$nth_param_set.log"
+        ),
+        "a"
+    ) do f
         write(f, 
             "\n----------------------------------------\n" *
             "Generating the initial population...\n"
@@ -66,11 +104,25 @@ function get_initial_population_continue(
             end
             population[i, end] = model.obj_func(population[i, 1:n_gene])
         end
-        open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
+        open(
+            joinpath(
+                model.path,
+                "logs",
+                "$nth_param_set.log"
+            ),
+            "a"
+        ) do f
             write(f, @sprintf("%d / %d\n", i, n_population))
         end
     end
-    open(strip(model.path, '/') * "/logs/$nth_param_set.log", "a") do f
+    open(
+        joinpath(
+            model.path,
+            "logs",
+            "$nth_param_set.log"
+        ),
+        "a"
+    ) do f
         write(f, "\n----------------------------------------\n")
     end
     population = sortslices(population, dims=1, by=x -> x[end])
