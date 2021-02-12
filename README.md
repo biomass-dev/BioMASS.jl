@@ -15,8 +15,9 @@ This module provides a Julia interface to the [BioMASS](https://github.com/okada
 
 BioMASS.jl supports:
 
-- Parameter Estimation of ODE/DDE models
-- Bifurcation Analysis
+- parameter estimation of ODE/DDE models
+- visualization of simulation results
+- bifurcation analysis
 
 ## Usage
 
@@ -32,7 +33,7 @@ optimize(model, 1, max_generation=20000, allowable_error=0.5)
 visualize(model, viz_type="best", show_all=true)
 ```
 
-## Convert optimized parameters into BioMASS format
+## Convert optimized parameters to BioMASS format
 
 ![](docs/src/assets/conversion.png)
 

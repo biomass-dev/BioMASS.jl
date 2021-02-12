@@ -23,7 +23,7 @@ for observable in observables
 end
 
 const dt = 1.0
-t = collect(0.0:dt:5400.0)  # 0, 1, 2, ..., 5400 [sec.]
+const t = collect(0.0:dt:5400.0)  # 0, 1, 2, ..., 5400 [sec.]
 
 const conditions = ["EGF", "HRG"]
 
@@ -42,7 +42,11 @@ function solveode(
         prob = ODEProblem(f, u0, (t[1], t[end]), p)
         sol = solve(
             prob,CVODE_BDF(),
-            abstol=ABSTOL,reltol=RELTOL,saveat=dt,verbose=false
+            abstol=ABSTOL,
+            reltol=RELTOL,
+            saveat=dt,
+            dtmin=eps(),
+            verbose=false
         )
         is_successful = ifelse(sol.retcode === :Success, true, false)
     catch
@@ -67,9 +71,13 @@ function get_steady_state(
         sol = solve(
             prob,
             DynamicSS(
-                CVODE_BDF();abstol=ABSTOL,reltol=RELTOL
+                CVODE_BDF();
+                abstol=ABSTOL,
+                reltol=RELTOL
             ),
-            dt=dt,verbose=false
+            dt=dt,
+            dtmin=eps(),
+            verbose=false
         )
         is_successful = ifelse(sol.retcode === :Success, true, false)
     catch

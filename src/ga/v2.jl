@@ -4,6 +4,7 @@ function ga_v2(;
         max_generation::Int64,
         n_population::Int64,
         n_gene::Int64,
+        initial_threshold::Float64,
         allowable_error::Float64,
         local_search_method::String,
         n_children::Int64,
@@ -75,7 +76,7 @@ function ga_v2(;
     N0::Vector{Float64} = zeros(3 * n_population)
 
     population::Matrix{Float64} = get_initial_population(
-        model, nth_param_set, n_population, n_gene
+        model, nth_param_set, n_population, n_gene, initial_threshold
     )
     N0[1] = population[1, end]
     open(
@@ -245,6 +246,7 @@ function ga_v2_continue(;
         max_generation::Int64,
         n_population::Int64,
         n_gene::Int64,
+        initial_threshold::Float64=1e12,
         allowable_error::Float64, 
         local_search_method::String,
         n_children::Int64,
@@ -285,7 +287,7 @@ function ga_v2_continue(;
     best_fitness::Float64 = objective(best_indiv_gene)
 
     population::Matrix{Float64} = get_initial_population_continue(
-        model, nth_param_set, n_population, n_gene, p0_bounds
+        model, nth_param_set, n_population, n_gene, initial_threshold, p0_bounds
     )
     if best_fitness < population[1, end]
         for i in 1:n_gene

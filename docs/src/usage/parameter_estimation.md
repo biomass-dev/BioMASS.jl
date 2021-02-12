@@ -53,6 +53,10 @@ Find a parameter set that reproduces experimental observations.
 
     - The maximum number of generations over which the entire population is evolved.
 
+  - `initial_threshold`::Float64 (default: 1e12)
+
+    - Allowable error used to generate initial population. Default is 1e12 (numerically solvable).
+
   - `allowable_error`::Float64 (default: 0.0)
 
     - Optimization stops when Best Fitness <= allowable_error.
@@ -92,8 +96,12 @@ Save simulation results with optimized parameter values.
     - Whether to show all simulation results.
 
   - `stdev`::Bool (default: `false`)
+
     - If True, the standard deviation of simulated values will be shown
       (only available for `"average"` visualization type).
+
+  - `save_format`::String (default: `"pdf"`)
+    - Either "png" or "pdf", indicating whether to save figures as png or pdf format.
 
 ---
 
