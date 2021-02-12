@@ -53,6 +53,10 @@ Find a parameter set that reproduces experimental observations.
 
     - The maximum number of generations over which the entire population is evolved.
 
+  - `initial_threshold`::Float64 (default: 1e12)
+
+    - Allowable error used to generate initial population. Default is 1e12 (numerically solvable).
+
   - `allowable_error`::Float64 (default: 0.0)
 
     - Optimization stops when Best Fitness <= allowable_error.
