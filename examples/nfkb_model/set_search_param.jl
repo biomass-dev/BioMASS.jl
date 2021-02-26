@@ -93,7 +93,7 @@ function get_search_region()::Matrix{Float64}
     u0::Vector{Float64} = initial_values()
 
     search_idx::Tuple{Array{Int64,1},Array{Int64,1}} = get_search_index()
-    search_param::Vector{Float64} = init_search_param(search_idx, p, u0)
+    search_param::Vector{Float64} = initialize_search_param(search_idx, p, u0)
 
     search_rgn::Matrix{Float64} = zeros(2, length(p) + length(u0))
 
@@ -116,7 +116,7 @@ function get_search_region()::Matrix{Float64}
     search_rgn[:, C.khillprodmrnaikbe] = [1.0, 2.0]
     search_rgn[:, C.khillprodmrnaa20] = [1.0, 2.0]
 
-    search_rgn = conv_lin2log!(search_rgn, search_idx)
+    search_rgn = convert_scale!(search_rgn, search_idx)
 
     return search_rgn
 end
@@ -189,26 +189,28 @@ function encode_bestIndivVal2randGene(
 end
 
 
-function init_search_param(
+function initialize_search_param(
         search_idx::Tuple{Array{Int64,1},Array{Int64,1}},
         p::Vector{Float64},
         u0::Vector{Float64})::Vector{Float64}
     duplicate::Vector{String} = []
     if length(search_idx[1]) != length(unique(search_idx[1]))
-        for idx in findall([count(x -> x == i, search_idx[1]) 
-                            for i in unique(search_idx[1])] .!= 1)
+        for idx in findall(
+            [count(x -> x == i, search_idx[1]) for i in unique(search_idx[1])] .!= 1
+        )
             push!(duplicate, C.NAMES[search_idx[1][idx]])
         end
         error(
             "Duplicate parameters (C.): $duplicate"
         )
     elseif length(search_idx[2]) != length(unique(search_idx[2]))
-        for idx in findall([count(x -> x == i, search_idx[2]) 
-                            for i in unique(search_idx[2])] .!= 1)
+        for idx in findall(
+            [count(x -> x == i, search_idx[2]) for i in unique(search_idx[2])] .!= 1
+        )
             push!(duplicate, V.NAMES[search_idx[2][idx]])
         end
         error(
-            "Duplicate species (V.): $duplicate"
+            "Duplicate initial conditions (V.): $duplicate"
         )   
     end
     search_param = zeros(
@@ -247,7 +249,7 @@ function init_search_param(
 end
 
 
-function conv_lin2log!(
+function convert_scale!(
         search_rgn::Matrix{Float64},
         search_idx::Tuple{Array{Int64,1},Array{Int64,1}})::Matrix{Float64}
     for i = 1:size(search_rgn, 2)
