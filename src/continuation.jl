@@ -1,4 +1,4 @@
-using ForwardDiff: jacobian
+using ForwardDiff:jacobian
 
 const MC = 100000           # maximum of counts
 const IVAL = 1e-2           # first variation
@@ -12,8 +12,8 @@ function create_diffeq(model_path::String)
         append!(lines, readlines(f))
     end
     for (i, line) in enumerate(lines)
-        if occursin("function diffeq", line)
-            lines[i] = "function diffeq2(u::Vector)\n    du = similar(u)\n\n"
+        if occursin("function diffeq!", line)
+            lines[i] = "function diffeq(u::Vector)\n    du = similar(u)\n\n"
         elseif line == "end"
             lines[i] = "    return du\nend"
             lines = lines[1:i]
@@ -82,7 +82,7 @@ end
 
 # Newton's method
 function newtons_method!(
-        diffeq2::Function,
+        diffeq::Function,
         get_derivatives::Function,
         x::Vector{Float64},
         real_part::Vector{Float64},
@@ -133,16 +133,16 @@ function newtons_method!(
                     end
                 end
                 break
-            else
+        else
                 continue
-            end
+        end
         end
 
         # initialization
-        dFdx::Matrix{Float64} = jacobian(diffeq2, u)
+        dFdx::Matrix{Float64} = jacobian(diffeq, u)
         dFdp::Vector{Float64} = get_derivatives(u, p)
-
-        F::Vector{Float64} = diffeq2(u)
+        
+        F::Vector{Float64} = diffeq(u)
 
         eigenvalues::Array{Complex{Float64},1} = eigvals(dFdx)
         for (i, eigenvalue) in enumerate(eigenvalues)
@@ -207,7 +207,7 @@ end
 function new_curve!(
         model_path::Union{String,SubString{String}},
         p::Vector{Float64},
-        diffeq2::Function,
+        diffeq::Function,
         get_derivatives::Function,
         get_steady_state::Function;
         direction::Bool=false,
@@ -274,7 +274,7 @@ function new_curve!(
     # first Newton's method
     successful::Bool = true
     newtons_method!(
-        diffeq2, get_derivatives, x, real_part, imaginary_part, fix_num, p,
+        diffeq, get_derivatives, x, real_part, imaginary_part, fix_num, p,
         successful, bifparam, n_state, dim_newton, n_variable
     )
 
@@ -305,13 +305,13 @@ function new_curve!(
 
     while count <= MC && successful
         newtons_method!(
-            diffeq2, get_derivatives, x, real_part, imaginary_part, fix_num, p,
+            diffeq, get_derivatives, x, real_part, imaginary_part, fix_num, p,
             successful, bifparam, n_state, dim_newton, n_variable
         )
 
         # maximum variation
         for (i, prev) in enumerate(px)
-            @inbounds dx[i] = x[i] - prev
+        @inbounds dx[i] = x[i] - prev
         end
         sum::Float64 = 0.0
         for i in eachindex(dx)
@@ -331,10 +331,10 @@ function new_curve!(
         for i in 2:length(dx)
             if abs(dx[fix_num]) < abs(dx[i])
                 fix_num = i
-            end
+        end
         end
 
-        # Stop calc.
+            # Stop calc.
         if x[end] <= 0.0
             successful = false
         end

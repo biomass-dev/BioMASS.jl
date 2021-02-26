@@ -1,4 +1,4 @@
-function diffeq(du,u,p,t)
+function diffeq!(du,u,p,t)
     Complex = p[C.B55tot] - u[V.PP2AB55]
     Wee1p = 1 - u[V.Wee1] - u[V.Wee1pp]
     Cdc25p = 1 - u[V.Cdc25] - u[V.Cdc25pp]
@@ -90,7 +90,7 @@ function get_steady_state(p::Vector{Float64})
     u0[V.Wee1] = 1.0
     u0[V.Cdc25] = 1.0
 
-    prob = ODEProblem(diffeq,u0,tspan,p)
+    prob = ODEProblem(diffeq!,u0,tspan,p)
     prob = SteadyStateProblem(prob)
     sol = solve(prob,DynamicSS(CVODE_BDF()),dt=1.0)
 

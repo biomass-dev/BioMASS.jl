@@ -1,7 +1,8 @@
-#= 
+"""
 Rata, S. et al. Two Interlinked Bistable Switches Govern Mitotic Control in 
 Mammalian Cells. Curr. Biol. 28, 3824-3832.e6 (2018).
-https://doi.org/10.1016/j.cub.2018.09.059 =#
+https://doi.org/10.1016/j.cub.2018.09.059
+"""
 
 include("./name2idx/parameters.jl")
 include("./name2idx/species.jl")
@@ -34,7 +35,7 @@ function calc_fixed_point_vec(model_path::String)::Tuple{Array,Array}
         end
 
         new_curve!(
-            model_path, p, diffeq2, get_derivatives, get_steady_state,
+            model_path, p, diffeq, get_derivatives, get_steady_state,
             direction=false, bifparam=BP, n_state=SN
         )
         push!(fp, readdlm(model_path * "/data/fp.dat", '\t', Float64, '\n'))

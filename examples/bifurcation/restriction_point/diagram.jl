@@ -1,7 +1,8 @@
-#= 
+"""
 Yao, G., Lee, T. J., Mori, S., Nevins, J. R. & You, L. A bistable Rb-E2F switch 
 underlies the restriction point. Nat. Cell Biol. 10, 476–482 (2008). 
-https://doi.org/10.1038/ncb1711 =#
+https://doi.org/10.1038/ncb1711
+"""
 
 include("./name2idx/parameters.jl")
 include("./name2idx/species.jl")
@@ -18,7 +19,7 @@ const VN = SN + PN  # num of variables
 function calc_fixed_point_vec(model_path::String)::Tuple{Array,Array}
     global p = param_values()
     new_curve!(
-        model_path, p, diffeq2, get_derivatives, get_steady_state,
+        model_path, p, diffeq, get_derivatives, get_steady_state,
         direction=false, bifparam=BP, n_state=SN
     )
     fp::Array = readdlm(model_path * "/data/fp.dat", '\t', Float64, '\n')

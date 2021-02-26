@@ -1,4 +1,4 @@
-function diffeq(du, u, p, t)
+function diffeq!(du, u, p, t)
     v = Dict{Int64,Float64}()
 
     v[1] = p[C.V1] * p[C.a] * u[V.ppMEKc] * u[V.ERKc] / ( p[C.Km1] * (1 + u[V.pERKc] / p[C.Km2]) + u[V.ERKc] )

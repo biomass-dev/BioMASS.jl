@@ -65,8 +65,8 @@ function get_steady_state(
         u0::Vector{Float64},
         p::Vector{Float64})::Vector{Float64}
     local sol::SteadyStateSolution{}, is_successful::Bool
-    try
-        prob = ODEProblem(diffeq, u0, (0.0, Inf), p)
+        try
+        prob = ODEProblem(f, u0, (0.0, Inf), p)
         prob = SteadyStateProblem(prob)
         sol = solve(
             prob,
@@ -94,7 +94,7 @@ end
 function simulate!(p::Vector{Float64}, u0::Vector{Float64})::Union{Bool,Nothing}
     # get steady state
     p[C.Ligand] = p[C.no_ligand]
-    u0 = get_steady_state(diffeq, u0, p)
+    u0 = get_steady_state(diffeq!, u0, p)
     if isempty(u0)
         return false
     end
@@ -105,7 +105,7 @@ function simulate!(p::Vector{Float64}, u0::Vector{Float64})::Union{Bool,Nothing}
         elseif condition == "HRG"
             p[C.Ligand] = p[C.HRG]
         end
-        sol = solveode(diffeq, u0, t, p)
+        sol = solveode(diffeq!, u0, t, p)
         if sol === nothing
             return false
         else

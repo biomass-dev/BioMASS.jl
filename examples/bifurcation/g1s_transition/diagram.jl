@@ -1,7 +1,8 @@
-#= 
+"""
 Barr, A. R., Heldt, F. S., Zhang, T., Bakal, C. & Novák, B. A Dynamical 
 Framework for the All-or-None G1/S Transition. Cell Syst. 2, 27–37 (2016).
-https://doi.org/10.1016/j.cels.2016.01.001 =#
+https://doi.org/10.1016/j.cels.2016.01.001
+"""
 
 include("./name2idx/parameters.jl")
 include("./name2idx/species.jl")
@@ -37,7 +38,7 @@ function calc_fixed_point_vec(model_path::String)::Tuple{Array,Array}
         end
 
         new_curve!(
-            model_path, p, diffeq2, get_derivatives, get_steady_state,
+            model_path, p, diffeq, get_derivatives, get_steady_state,
             direction=false, bifparam=BP, n_state=SN
         )
         push!(fp, readdlm(model_path * "/data/fp.dat", '\t', Float64, '\n'))
