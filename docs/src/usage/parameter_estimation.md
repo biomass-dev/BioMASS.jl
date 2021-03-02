@@ -121,7 +121,7 @@ using BioMASS
 
 model = load_model("./examples/fos_model")
 
-optimize(model, 1, popsize=3, allowable_error=0.35, local_search_method="powell")
+optimize(model, 1, popsize=3, allowable_error=0.35, local_search_method="DE")
 ```
 
 ## Simultaneous parameter optimization
@@ -136,7 +136,7 @@ addprocs(); # add worker processes
 @everywhere begin
     model = load_model("./examples/fos_model")
     function optimize_parallel(i)
-        optimize(model, 1, popsize=3, allowable_error=0.35, local_search_method="powell")
+        optimize(model, 1, popsize=3, allowable_error=0.35, local_search_method="DE")
     end
 end
 
@@ -153,7 +153,15 @@ using BioMASS
 model = load_model("./examples/fos_model")
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    optimize(model, 1, max_generation=20000, allowable_error=0.5)
+    optimize(
+        model,
+        parse(Int64, ARGS[1]),
+        max_generation=50,
+        allowable_error=0.35,
+        popsize=3,
+        local_search_method="DE",
+        maxiter=50,
+    )
 end
 ```
 
