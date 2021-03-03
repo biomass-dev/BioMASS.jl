@@ -22,3 +22,8 @@ ev.dat
 
 # Bifurcation diagram
 bifurcation_diagram.pdf
+
+# Test optimization
+/main.jl
+/optimize_parallel.sh
+/errout
