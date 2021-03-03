@@ -1,8 +1,8 @@
 function check_method(local_search_method::String)
-    if !(local_search_method in ["mutation", "powell", "de"])
+    if !(local_search_method in ["mutation", "powell", "de", "cmaes"])
         error(
             "\"$local_search_method\": Invalid local_search_method. "
-            * "Should be one of [\"mutaion\", \"Powell\", \"DE\"]"
+            * "Should be one of [\"mutaion\", \"Powell\", \"DE\", \"CMAES\"]"
         )
     elseif local_search_method in ["powell", "de"] && !isinstalled("scipy.optimize")
         error(
@@ -20,7 +20,7 @@ function optimize(
         initial_threshold::Float64=1e12,
         allowable_error::Float64=0.0,
         n_children::Int64=50,
-        maxiter::Int64=10,
+        maxiter::Int64=100,
         local_search_method::String="mutation")
     check_method(
         lowercase(local_search_method)
@@ -100,7 +100,7 @@ function optimize_continue(
         initial_threshold::Float64=1e12,
         allowable_error::Float64=0.0,
         n_children::Int64=50,
-        maxiter::Int64=10,
+        maxiter::Int64=100,
         local_search_method::String="mutation",
         p0_bounds::Vector{Float64}=[0.1, 10.0])
     check_method(

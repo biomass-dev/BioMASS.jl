@@ -55,7 +55,7 @@ Find a parameter set that reproduces experimental observations.
 
   - `initial_threshold`::Float64 (default: 1e12)
 
-    - Allowable error used to generate initial population. Default is 1e12 (numerically solvable).
+    - Allowable error used to generate initial population. Default value is 1e12 (numerically solvable).
 
   - `allowable_error`::Float64 (default: 0.0)
 
@@ -65,9 +65,9 @@ Find a parameter set that reproduces experimental observations.
 
     - The number of children used for local search NDM/MGG ("mutation").
 
-  - `maxiter`::Int (default: 10)
+  - `maxiter`::Int (default: 100)
 
-    - The maximum number of iterations over which the entire population is evolved. This is used for the local search methods: "Powell" or "DE".
+    - The maximum number of iterations over which the entire population is evolved. This is used for the local search methods: "Powell", "DE" or "CMAES".
 
   - `local_search_method`::String (default: `"mutation"`)
 
@@ -75,6 +75,7 @@ Find a parameter set that reproduces experimental observations.
       - `"mutation"` : NDM/MGG
       - `"Powell"` : Modified Powell method
       - `"DE"` : Differential Evolution (strategy: `best2bin`)
+      - `"CMAES"` : The CMA Evolution Strategy
 
 ---
 
@@ -159,8 +160,8 @@ if abspath(PROGRAM_FILE) == @__FILE__
         max_generation=50,
         allowable_error=0.35,
         popsize=3,
-        local_search_method="DE",
-        maxiter=50,
+        local_search_method="CMAES",
+        maxiter=1000,
     )
 end
 ```
@@ -171,8 +172,10 @@ end
 #!/bin/sh
 
 for i in $(seq 1 10); do
-    nohup julia main.jl $i >> errout/$i.log  2>&1 &
+    nohup julia -t 4 main.jl $i >> errout/$i.log  2>&1 &
 done
+
+# The number of execution threads is controlled by using the -t command line argument (local_search_method == "CMAES").
 
 # To terminate the process,
 # $ pgrep -f main.jl | xargs kill -9
