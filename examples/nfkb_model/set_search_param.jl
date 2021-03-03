@@ -139,7 +139,7 @@ function update_param(indiv::Vector{Float64})::Tuple{Array{Float64,1},Array{Floa
 end
 
 
-function decode_gene2val(indiv_gene::Vector{Float64})::Vector{Float64}
+function decode_gene2val(indiv_gene)::Vector{Float64}
     search_rgn::Matrix{Float64} = get_search_region()
     indiv::Vector{Float64} = zeros(length(indiv_gene))
 
