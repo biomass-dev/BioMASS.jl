@@ -1,7 +1,7 @@
 name = "BioMASS"
 uuid = "324734c7-f323-4536-9335-775d9be9d101"
 authors = ["Hiroaki Imoto <himoto@protein.osaka-u.ac.jp>"]
-version = "0.4.1"
+version = "0.4.2"
 
 [deps]
 CMAEvolutionStrategy = "8d3b24bd-414e-49e0-94fb-163cc3a3e411"
