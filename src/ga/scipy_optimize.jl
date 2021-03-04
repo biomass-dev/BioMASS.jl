@@ -21,8 +21,8 @@ function __init__()
             ip: np.ndarray,
             maxiter: int,
     ) -> np.ndarray:
-        lower = np.min(population[ip, :n_gene], axis=0)
-        upper = np.max(population[ip, :n_gene], axis=0)
+        lower = np.min(population[:, :n_gene], axis=0)
+        upper = np.max(population[:, :n_gene], axis=0)
         direc = np.identity(n_gene) * 0.3 * (upper - lower)
         res = minimize(
             objective,
@@ -55,9 +55,11 @@ function __init__()
             ip: np.ndarray,
             maxiter: int,
     ) -> np.ndarray:
+        lower = np.min(population[:, :n_gene], axis=0)
+        upper = np.max(population[:, :n_gene], axis=0)
         res = differential_evolution(
             objective,
-            ((0.0, 1.0),) * n_gene,
+            tuple(zip(lower, upper)),
             strategy='best2bin',
             mutation=0.1,
             recombination=0.9,
