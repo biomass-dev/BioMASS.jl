@@ -30,11 +30,11 @@ simulations = Array{Float64,3}(
 )
 
 function solvedde(
-        diffeq::Function,u0::Vector{Float64},history::Vector{Float64},
+        f::Function,u0::Vector{Float64},history::Vector{Float64},
         tspan::Tuple{Float64,Float64},p::Vector{Float64},tau::Float64)
     h(p, t) = history
     lags = [tau]
-    prob = DDEProblem(diffeq, u0, h, tspan, p; constant_lags=lags)
+    prob = DDEProblem(f, u0, h, tspan, p; constant_lags=lags)
     alg = MethodOfSteps(BS3())
     sol = solve(
         prob,alg,saveat=dt,abstol=1e-8,reltol=1e-8,verbose=false
@@ -51,7 +51,7 @@ function get_steady_state(
     history::Vector{Float64} = u0
     tspan::Tuple{Float64,Float64} = (0.0, sstime)
     try
-        sol = solvedde(diffeq, u0, history, tspan, p, tau)
+        sol = solvedde(diffeq!, u0, history, tspan, p, tau)
         if sol.retcode === :Success
             return sol[:, end]
         else
@@ -75,7 +75,7 @@ function get_time_course(
     history::Vector{Float64} = u1
     tspan::Tuple{Float64,Float64} = (0.0, t[end])
     try
-        sol = solvedde(diffeq, u1, history, tspan, p1, tau)
+        sol = solvedde(diffeq!, u1, history, tspan, p1, tau)
         return ifelse(sol.retcode === :Success, sol, nothing)
     catch
         return nothing

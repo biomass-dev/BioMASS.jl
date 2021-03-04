@@ -1,4 +1,4 @@
-function diffeq(du,u,p,t)
+function diffeq!(du,u,p,t)
     CycE = p[C.CycElevel] - u[V.CycEp27]
 
     Vdp27 = p[C.kd27] + (p[C.kd27e]*CycE)*u[V.Skp2]
@@ -83,7 +83,7 @@ function get_steady_state(p::Vector{Float64})
     tspan::Tuple{Float64,Float64} = (0.0,Inf)
     u0::Vector{Float64} = zeros(V.NUM)
 
-    prob = ODEProblem(diffeq,u0,tspan,p)
+    prob = ODEProblem(diffeq!,u0,tspan,p)
     prob = SteadyStateProblem(prob)
     sol = solve(prob,DynamicSS(CVODE_BDF()),dt=1.0)
 

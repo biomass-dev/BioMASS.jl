@@ -42,7 +42,7 @@ function libPulseDelay(t,X,term)
 end
 
 
-function diffeq(du,u,h,p,t)
+function diffeq!(du,u,h,p,t)
 
     #IKK activity
     IKKa = u[V.IKKp] + u[V.IKKpC] + u[V.IKKppC] + u[V.IKKpp]

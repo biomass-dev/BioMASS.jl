@@ -6,15 +6,11 @@ using StatsBase
 using Statistics
 using DelimitedFiles
 
-export
-    # Parameter Estimation
-    optimize,
+export optimize,
     optimize_continue,
     param2biomass,
-    ExecModel,
     load_model,
     visualize,
-    # Bifurcation Analysis
     create_diffeq,
     new_curve!,
     get_bistable_regime

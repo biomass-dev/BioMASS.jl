@@ -9,8 +9,6 @@ struct ExecModel
     val2gene::Function
     bestIndivVal2randGene::Function
 end
-
-
 function set_model_files(dir::String)
     for child in readdir(dir)
         # if isdir("$dir/$child")
@@ -29,11 +27,9 @@ function set_model_files(dir::String)
         end
     end
 end
-
-
-function load_model(model_path::String)
+function ExecModel(model_path::String)
     set_model_files(model_path)
-    return ExecModel(
+    ExecModel(
         model_path,
         C,
         V,
@@ -44,4 +40,12 @@ function load_model(model_path::String)
         encode_val2gene,
         encode_bestIndivVal2randGene
     )
+end
+
+function load_model(path_to_model::String)
+    if isdir(path_to_model)
+        return ExecModel(path_to_model)
+    else
+        error("$path_to_model: No such directory")
+    end
 end

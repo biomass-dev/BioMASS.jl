@@ -1,3 +1,5 @@
+using CMAEvolutionStrategy
+
 if isinstalled("scipy.optimize")
     include("scipy_optimize.jl")
     using .SciPyOptimize
@@ -42,6 +44,28 @@ function local_search!(
         population = fmin_powell(objective, n_gene, population, ip, maxiter)
     elseif method == "de"
         population = fmin_de(objective, n_gene, population, ip, maxiter)
+    elseif method == "cmaes"
+        x0 = [population[ip[1], i] for i in 1:n_gene]
+        lb = vec(minimum(population[:, 1:n_gene], dims=1))
+        ub = vec(maximum(population[:, 1:n_gene], dims=1))
+        s0 = 0.25 * median(ub - lb)
+        result = CMAEvolutionStrategy.minimize(
+            objective, x0, s0;
+            lower=lb,
+            upper=ub,
+            verbosity=0,
+            multi_threading=true,
+            maxiter=maxiter,
+            maxfevals=100 * n_gene,
+        )
+        x_best_fit = xbest(result)
+        obj_val = objective(x_best_fit)
+        if obj_val < objective(x0)
+            for i in 1:n_gene
+                @inbounds population[ip[1], i] = x_best_fit[i]
+            end
+            population[ip[1], end] = obj_val
+        end
     end
     population = sortslices(population, dims=1, by=x -> x[end])
 
@@ -68,8 +92,7 @@ function mutation(
     end
 
     @inbounds for i in 1:n_gene
-        child[i] = parents[1, i] + t2[i]
-        child[i] = clamp(child[i], 0.0, 1.0)
+        child[i] = clamp(parents[1, i] + t2[i], 0.0, 1.0)
     end
 
     child[end] = objective(child[1:n_gene])

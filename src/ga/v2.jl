@@ -8,7 +8,7 @@ function ga_v2(;
         allowable_error::Float64,
         local_search_method::String,
         n_children::Int64,
-        maxiter::Int64)
+        maxiter::Int64)::Nothing
     """
         1. Initialization
             As an initial population, create np individuals randomly.
@@ -218,10 +218,6 @@ function ga_v2(;
             write(f, @sprintf("%.6e", best_fitness))
         end
 
-        if population[1, end] <= allowable_error
-            break
-        end
-
         open(
             joinpath(
                 model.path,
@@ -231,6 +227,10 @@ function ga_v2(;
             ), "w"
         ) do f
             write(f, @sprintf("%d", generation))
+        end
+
+        if population[1, end] <= allowable_error
+            break
         end
 
         generation += 1
@@ -251,7 +251,7 @@ function ga_v2_continue(;
         local_search_method::String,
         n_children::Int64,
         maxiter::Int64,
-        p0_bounds::Vector{Float64})
+        p0_bounds::Vector{Float64})::Nothing
     if n_population < n_gene + 2
         error("n_population must be larger than $(n_gene + 2)")
     end
@@ -416,10 +416,6 @@ function ga_v2_continue(;
             write(f, @sprintf("%.6e", best_fitness))
         end
 
-        if population[1, end] <= allowable_error
-            break
-        end
-
         open(
             joinpath(
                 model.path,
@@ -429,6 +425,10 @@ function ga_v2_continue(;
             ), "w"
         ) do f
             write(f, @sprintf("%d", generation))
+        end
+
+        if population[1, end] <= allowable_error
+            break
         end
 
         generation += 1

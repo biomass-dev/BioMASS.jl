@@ -48,7 +48,7 @@ end
 
 
 # Define an objective function to be minimized.
-function objective(indiv_gene::Vector{Float64})::Float64    
+function objective(indiv_gene)::Float64    
     indiv::Vector{Float64} = decode_gene2val(indiv_gene)
 
     (p, u0) = update_param(indiv)
