@@ -61,10 +61,10 @@ function __init__()
             objective,
             tuple(zip(lower, upper)),
             strategy='best2bin',
-            mutation=0.1,
+            mutation=(0.0, 0.3),
             recombination=0.9,
             maxiter=maxiter,
-            popsize=1,
+            popsize=2,
             polish=False,
             init=population[ip, :n_gene],
         )
