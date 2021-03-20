@@ -284,7 +284,7 @@ function ga_v2_continue(;
         )
     )[:, 1]
     best_indiv_gene::Vector{Float64} = model.val2gene(best_indiv)
-    best_fitness::Float64 = objective(best_indiv_gene)
+    best_fitness::Float64 = model.obj_func(best_indiv_gene)
 
     population::Matrix{Float64} = get_initial_population_continue(
         model, nth_param_set, n_population, n_gene, initial_threshold, p0_bounds

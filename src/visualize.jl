@@ -28,7 +28,7 @@ function load_param(
         model::ExecModel,
         paramset::Int)::Tuple{Array{Float64,1},Array{Float64,1}}
     best_indiv::Vector{Float64} = get_indiv(model, paramset)
-    (p, u0) = update_param(best_indiv)
+    (p, u0) = model.update_param(best_indiv)
     return p, u0
 end
 
@@ -68,7 +68,7 @@ end
 
 function validate!(model::ExecModel, nth_param_set::Int64)
     (p, u0) = load_param(model, nth_param_set)
-    if Sim.simulate!(p, u0) isa Nothing
+    if model.sim.simulate!(p, u0) isa Nothing
         return model, true
     else
         print("Simulation failed. #$nth_param_set\n")
@@ -80,21 +80,21 @@ end
 
 function get_norm_max(
         i::Int, j::Int, obs_name::String, simulations_all::Array{Float64,4})::Float64
-    if length(Sim.normalization) > 0
+    if length(model.sim.normalization) > 0
         norm_max::Float64 = (
-            Sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
+            model.sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
                 simulations_all[
                     i,
                     j,
-                    Sim.normalization[obs_name]["timepoint"],
-                    [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
+                    model.sim.normalization[obs_name]["timepoint"],
+                    [model.cond2idx(c) for c in model.sim.normalization[obs_name]["condition"]]
                 ]
             ) : maximum(
                 simulations_all[
                     i,
                     j,
                     :,
-                    [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
+                    [model.cond2idx(c) for c in model.sim.normalization[obs_name]["condition"]]
                 ]
             )
         )
@@ -148,7 +148,7 @@ function plot_timecourse(
     rc("lines", linewidth=1.8)
     rc("lines", markersize=12)
 
-    for (i, obs_name) in enumerate(observables)
+    for (i, obs_name) in enumerate(model.observables)
         gca().spines["right"].set_visible(false)
         gca().spines["top"].set_visible(false)
         gca().yaxis.set_ticks_position("left")
@@ -157,14 +157,14 @@ function plot_timecourse(
         if viz_type != "experiment"
             if show_all
                 for j in eachindex(n_file)
-                    if length(Sim.normalization) > 0
+                    if length(model.sim.normalization) > 0
                         norm_max = get_norm_max(i, j, obs_name, simulations_all)
                     end
-                    for (l, condition) in enumerate(Sim.conditions)
+                    for (l, condition) in enumerate(model.sim.conditions)
                         plot(
-                            Sim.t,
+                            model.sim.t,
                             simulations_all[i,j,:,l] ./ ifelse(
-                                length(Sim.normalization) == 0 || maximum(simulations_all[i,j,:,l]) == 0.0,
+                                length(model.sim.normalization) == 0 || maximum(simulations_all[i,j,:,l]) == 0.0,
                                 1.0,
                                 norm_max
                             ),
@@ -177,23 +177,23 @@ function plot_timecourse(
             if viz_type == "average"
                 normalized = Array{Float64,4}(
                     undef,
-                    length(observables),length(n_file),length(Sim.t),length(Sim.conditions)
+                    length(model.observables),length(n_file),length(model.sim.t),length(model.sim.conditions)
                 )
                 @inbounds for j in eachindex(n_file)
-                    if length(Sim.normalization) > 0
+                    if length(model.sim.normalization) > 0
                         norm_max = get_norm_max(i, j, obs_name, simulations_all)
                     end
-                    @simd for l in eachindex(Sim.conditions)
+                    @simd for l in eachindex(model.sim.conditions)
                         normalized[i,j,:,l] = (
                             simulations_all[i,j,:,l] ./ ifelse(
-                                length(Sim.normalization) == 0 || maximum(simulations_all[i,j,:,l]) == 0.0,
+                                length(model.sim.normalization) == 0 || maximum(simulations_all[i,j,:,l]) == 0.0,
                                 1.0,
                                 norm_max
                             )
                         )
                     end
                 end
-                if length(Sim.normalization) > 0 && Sim.normalization[obs_name]["timepoint"] === nothing
+                if length(model.sim.normalization) > 0 && model.sim.normalization[obs_name]["timepoint"] === nothing
                     mean_norm_max::Float64 = maximum(
                         vcat(
                             [
@@ -202,14 +202,14 @@ function plot_timecourse(
                                         filter(
                                             !isnan,normalized[i,:,k,l]
                                         )
-                                    ) for k in eachindex(Sim.t)
-                                ] for l in eachindex(Sim.normalization[obs_name]["condition"])
+                                    ) for k in eachindex(model.sim.t)
+                                ] for l in eachindex(model.sim.normalization[obs_name]["condition"])
                             ]...
                         )
                     )
                     for j in eachindex(n_file)
-                        for k in eachindex(Sim.t)
-                            for l in eachindex(Sim.conditions)
+                        for k in eachindex(model.sim.t)
+                            for l in eachindex(model.sim.conditions)
                                 if !isnan(mean_norm_max) && mean_norm_max != 0.0
                                     @inbounds normalized[i,j,k,l] /= mean_norm_max
                                 end
@@ -217,37 +217,37 @@ function plot_timecourse(
                         end
                     end
                 end
-                for (l, condition) in enumerate(Sim.conditions)
+                for (l, condition) in enumerate(model.sim.conditions)
                     plot(
-                        Sim.t,[
+                        model.sim.t,[
                             mean(
                                 filter(
                                     !isnan,normalized[i,:,k,l]
                                 )
-                            ) for k in eachindex(Sim.t)
+                            ) for k in eachindex(model.sim.t)
                         ],
                         color=cmap[l],
                         label=condition
                     )
                 end
                 if stdev
-                    for (l, condition) in enumerate(Sim.conditions)
+                    for (l, condition) in enumerate(model.sim.conditions)
                         y_mean = [
                             mean(
                                 filter(
                                     !isnan,normalized[i,:,k,l]
                                 )
-                            ) for k in eachindex(Sim.t)
+                            ) for k in eachindex(model.sim.t)
                         ]
                         y_std = [
                             std(
                                 filter(
                                     !isnan,normalized[i,:,k,l]
                                 )
-                            ) for k in eachindex(Sim.t)
+                            ) for k in eachindex(model.sim.t)
                         ]
                         fill_between(
-                            Sim.t,
+                            model.sim.t,
                             y_mean - y_std, y_mean + y_std,
                             color=cmap[l],
                             lw=0,alpha=0.1
@@ -256,25 +256,25 @@ function plot_timecourse(
                 end
             else
                 norm_max = (
-                    Sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
-                        Sim.simulations[
+                    model.sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
+                        model.sim.simulations[
                             i,
-                            Sim.normalization[obs_name]["timepoint"],
-                            [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
+                            model.sim.normalization[obs_name]["timepoint"],
+                            [model.cond2idx(c) for c in model.sim.normalization[obs_name]["condition"]]
                         ]
                     ) : maximum(
-                        Sim.simulations[
+                        model.sim.simulations[
                             i,
                             :,
-                            [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
+                            [model.cond2idx(c) for c in model.sim.normalization[obs_name]["condition"]]
                         ]
                     )
                 )
-                for (l, condition) in enumerate(Sim.conditions)
+                for (l, condition) in enumerate(model.sim.conditions)
                     plot(
-                        Sim.t,
-                        Sim.simulations[i,:,l] ./ ifelse(
-                            length(Sim.normalization) == 0 || maximum(Sim.simulations[i,:,l]) == 0.0,
+                        model.sim.t,
+                        model.sim.simulations[i,:,l] ./ ifelse(
+                            length(model.sim.normalization) == 0 || maximum(model.sim.simulations[i,:,l]) == 0.0,
                             1.0,
                             norm_max
                         ),
@@ -285,15 +285,15 @@ function plot_timecourse(
             end
         end
 
-        if isassigned(Exp.experiments, i)
-            exp_t = Exp.get_timepoint(obs_name)
-            if isassigned(Exp.error_bars, i)
-                for (l, condition) in enumerate(Sim.conditions)
-                    if condition in keys(Exp.experiments[i])
+        if isassigned(model.exp.experiments, i)
+            exp_t = model.exp.get_timepoint(obs_name)
+            if isassigned(model.exp.error_bars, i)
+                for (l, condition) in enumerate(model.sim.conditions)
+                    if condition in keys(model.exp.experiments[i])
                         exp_data = errorbar(
                             exp_t,
-                            Exp.experiments[i][condition],
-                            yerr=Exp.error_bars[i][condition],
+                            model.exp.experiments[i][condition],
+                            yerr=model.exp.error_bars[i][condition],
                             lw=1,markerfacecolor="None",
                             color=cmap[l],
                             markeredgecolor=cmap[l],
@@ -311,11 +311,11 @@ function plot_timecourse(
                     end
                 end
             else
-                for (l, condition) in enumerate(Sim.conditions)
-                    if condition in keys(Exp.experiments[i])
+                for (l, condition) in enumerate(model.sim.conditions)
+                    if condition in keys(model.exp.experiments[i])
                         plot(
                             exp_t,
-                            Exp.experiments[i][condition],
+                            model.exp.experiments[i][condition],
                             shape[l],
                             color=cmap[l],
                             markerfacecolor="None",
@@ -420,10 +420,12 @@ function visualize(
 
     simulaitons_all::Array{Float64,4} = fill(
         NaN,
-        (length(observables),
+        (
+            length(model.observables),
             length(n_file),
-            length(Sim.t),
-            length(Sim.conditions))
+            length(model.sim.t),
+            length(model.sim.conditions)
+        )
     )
     if viz_type != "experiment"
         if length(n_file) > 0
@@ -433,8 +435,8 @@ function visualize(
             for (i, nth_param_set) in enumerate(n_file)
                 (model, is_successful) = validate!(model, nth_param_set)
                 if is_successful
-                    for j in eachindex(observables)
-                        @inbounds simulaitons_all[j,i,:,:] = Sim.simulations[j,:,:]
+                    for j in eachindex(model.observables)
+                        @inbounds simulaitons_all[j,i,:,:] = model.sim.simulations[j,:,:]
                     end
                 end
             end
@@ -479,7 +481,7 @@ function visualize(
         else
             p::Vector{Float64} = param_values()
             u0::Vector{Float64} = initial_values()
-            if Sim.simulate!(p, u0) !== nothing
+            if model.sim.simulate!(p, u0) !== nothing
                 error(
                     "Simulation failed."
                 )
