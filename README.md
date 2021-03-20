@@ -2,9 +2,9 @@
 
 [![Actions Status](https://github.com/himoto/BioMASS.jl/workflows/CI/badge.svg)](https://github.com/himoto/BioMASS.jl/actions)
 [![version](https://juliahub.com/docs/BioMASS/version.svg)](https://juliahub.com/ui/Packages/BioMASS/acq1V)
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://himoto.github.io/BioMASS.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://himoto.github.io/BioMASS.jl/dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
 
 This module provides a Julia interface to the [BioMASS](https://github.com/okadalabipr/biomass) parameter estimation.
