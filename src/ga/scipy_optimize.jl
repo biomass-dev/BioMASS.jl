@@ -64,7 +64,7 @@ function __init__()
             mutation=(0.0, 0.3),
             recombination=0.9,
             maxiter=maxiter,
-            popsize=2,
+            popsize=1,
             polish=False,
             init=population[ip, :n_gene],
         )
