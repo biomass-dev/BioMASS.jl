@@ -94,10 +94,10 @@ end
 
 include("convert.jl")
 include("optimize.jl")
-include("ga/initial_population.jl")
-include("ga/converging.jl")
-include("ga/local_search.jl")
-include("ga/v2.jl")
+include("estimation/initial_population.jl")
+include("estimation/converging.jl")
+include("estimation/local_search.jl")
+include("estimation/ga.jl")
 if isinstalled("matplotlib")
     include("visualize.jl")
 else
