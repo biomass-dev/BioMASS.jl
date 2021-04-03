@@ -2,10 +2,11 @@
 
 [![Actions Status](https://github.com/himoto/BioMASS.jl/workflows/CI/badge.svg)](https://github.com/himoto/BioMASS.jl/actions)
 [![version](https://juliahub.com/docs/BioMASS/version.svg)](https://juliahub.com/ui/Packages/BioMASS/acq1V)
-[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
+
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://himoto.github.io/BioMASS.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://himoto.github.io/BioMASS.jl/dev)
-[![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
 
 This module provides a Julia interface to the [BioMASS](https://github.com/okadalabipr/biomass) parameter estimation.
 
@@ -33,7 +34,7 @@ optimize(model, 1, max_generation=20000, allowable_error=0.5)
 visualize(model, viz_type="best", show_all=true)
 ```
 
-## Convert optimized parameters to BioMASS format
+### Conversion of optimized parameters into BioMASS format
 
 ![](docs/src/assets/conversion.png)
 
