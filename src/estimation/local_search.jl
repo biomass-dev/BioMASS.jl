@@ -56,7 +56,7 @@ function local_search!(
             verbosity=0,
             multi_threading=true,
             maxiter=maxiter,
-            maxfevals=100 * n_gene,
+            maxfevals=1000 * n_gene,
         )
         x_best_fit = xbest(result)
         obj_val = objective(x_best_fit)
