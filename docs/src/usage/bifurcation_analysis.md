@@ -2,6 +2,8 @@
 
 A numerical study of the changes in the dynamics and stability of a system upon variations in its parameters.
 
+![](../assets/Subp_1NMPP1.png)
+
 ## Procedure for stability analysis at fixed points
 
 Consider the following system of ordinary differential equations:

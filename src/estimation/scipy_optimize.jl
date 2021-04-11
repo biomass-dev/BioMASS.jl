@@ -37,7 +37,7 @@ function __init__()
                 'xtol': 0.1,
                 'ftol': 1.0,
                 'maxiter': maxiter,
-                'maxfev': 100 * n_gene,
+                'maxfev': 1000 * n_gene,
                 'direc': direc,
             }
         )
@@ -61,7 +61,7 @@ function __init__()
             objective,
             tuple(zip(lower, upper)),
             strategy='best2bin',
-            mutation=0.1,
+            mutation=(0.0, 0.3),
             recombination=0.9,
             maxiter=maxiter,
             popsize=1,
