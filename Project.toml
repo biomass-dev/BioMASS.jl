@@ -23,7 +23,7 @@ Sundials = "c3572dad-4567-51f8-b174-8c6c989267f4"
 [compat]
 CMAEvolutionStrategy = "0.1, 0.2"
 CSV = "0.8"
-DataFrames = "0.22"
+DataFrames = "0.22, 1.0"
 DelayDiffEq = "5.28"
 ForwardDiff = "0.10"
 PyCall = "1.92"
