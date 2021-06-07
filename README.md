@@ -1,8 +1,8 @@
 # The BioMASS module for Julia
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://himoto.github.io/BioMASS.jl/stable)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://himoto.github.io/BioMASS.jl/dev)
-[![Actions Status](https://github.com/himoto/BioMASS.jl/workflows/CI/badge.svg)](https://github.com/himoto/BioMASS.jl/actions)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://biomass-dev.github.io/BioMASS.jl/stable)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://biomass-dev.github.io/BioMASS.jl/dev)
+[![Actions Status](https://github.com/biomass-dev/BioMASS.jl/workflows/CI/badge.svg)](https://github.com/biomass-dev/BioMASS.jl/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 This module provides a Julia interface to the [BioMASS](https://github.com/okadalabipr/biomass) parameter estimation.
@@ -67,4 +67,4 @@ or through the `pkg` REPL mode by typing
 
 ## License
 
-[MIT](https://github.com/himoto/BioMASS.jl/blob/master/LICENSE)
+[MIT](https://github.com/biomass-dev/BioMASS.jl/blob/master/LICENSE)
