@@ -255,7 +255,7 @@ function plot_timecourse(
                     end
                 end
             else
-                norm_max = (
+                norm_max = length(model.sim.normalization) > 0 ? (
                     model.sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
                         model.sim.simulations[
                             i,
@@ -269,7 +269,7 @@ function plot_timecourse(
                             [model.cond2idx(c) for c in model.sim.normalization[obs_name]["condition"]]
                         ]
                     )
-                )
+                ) : 1.0
                 for (l, condition) in enumerate(model.sim.conditions)
                     plot(
                         model.sim.t,
@@ -386,7 +386,7 @@ function save_param_range(model::ExecModel, n_file::Vector{Int}, save_format::St
 end
 
 
-function visualize(
+function run_simulation(
         model::ExecModel;
         viz_type::String,
         show_all::Bool=false,

@@ -79,7 +79,7 @@ Find a parameter set that reproduces experimental observations.
 
 ---
 
-**visualize**(`model`::ExecModel, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
+**run_simulation**(`model`::ExecModel, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
 
 Save simulation results with optimized parameter values.
 
@@ -201,7 +201,7 @@ $ tail examples/fos_model/logs/1.log
 The simulation results will be saved in `figure/`.
 
 ```julia
-visualize(model, viz_type="best", show_all=true)
+run_simulation(model, viz_type="best", show_all=true)
 ```
 
 ## Conversion of optimized parameters into BioMASS format

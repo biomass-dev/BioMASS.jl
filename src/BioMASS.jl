@@ -10,7 +10,7 @@ export load_model,
     optimize,
     optimize_continue,
     param2biomass,
-    visualize,
+    run_simulation,
     create_diffeq,
     new_curve!,
     get_bistable_regime
@@ -74,14 +74,7 @@ function ExecModel(model_path::String, show_info::Bool)
         encode_bestIndivVal2randGene,
     )
 end
-
-function load_model(path_to_model::String; show_info::Bool=false)
-    if isdir(path_to_model)
-        ExecModel(path_to_model, show_info)
-    else
-        error("$path_to_model: No such directory")
-    end
-end
+load_model(path_to_model::String; show_info::Bool=false) = ExecModel(path_to_model, show_info)
 
 function isinstalled(pymodule::String)::Bool
     try
