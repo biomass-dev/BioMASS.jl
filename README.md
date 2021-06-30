@@ -19,10 +19,12 @@ BioMASS.jl supports:
 
 ## Usage
 
+### Parameter estimation
+
 ```julia
 using BioMASS
 
-model = load_model("./examples/fos_model");
+model = Model("./examples/fos_model");
 
 # Estimate unknown model parameters against experimental observations.
 optimize(model, 1, max_generation=20000, allowable_error=0.5)
@@ -32,8 +34,6 @@ run_simulation(model, viz_type="best", show_all=true)
 ```
 
 ### Conversion of optimized parameters into BioMASS format
-
-![](docs/src/assets/conversion.png)
 
 ```julia
 param2biomass("./examples/fos_model")
