@@ -6,7 +6,7 @@
 
 ---
 
-**load_model**(`path_to_model`::String)
+**Model**(`path_to_model`::String)
 
 Load a BioMASS model. The model must include the following files:
 
@@ -26,20 +26,20 @@ Load a BioMASS model. The model must include the following files:
     - The model folder to read.
 
 - **Returns**
-  - `model`::ExecModel
+  - `model`::Model
     - The executable model in BioMASS.
 
 ---
 
-**optimize**(`model`::ExecModel, `index_of_parameter_set`::Int; `popsize`::Int=5, `max_generation`::Int=10000, `allowable_error`::Float64=0.0, `n_children`::Int=50, `local_search_method`::String="mutation")
+**optimize**(`model`::Model, `index_of_parameter_set`::Int; `popsize`::Int=5, `max_generation`::Int=10000, `allowable_error`::Float64=0.0, `n_children`::Int=50, `local_search_method`::String="mutation")
 
 Find a parameter set that reproduces experimental observations.
 
 - **Parameters**
 
-  - `model`::ExecModel
+  - `model`::Model
 
-    - The model read by `load_model` function.
+    - The BioMASS model object.
 
   - `index_of_parameter_set`::Int
 
@@ -79,7 +79,7 @@ Find a parameter set that reproduces experimental observations.
 
 ---
 
-**run_simulation**(`model`::ExecModel, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
+**run_simulation**(`model`::Model, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
 
 Save simulation results with optimized parameter values.
 
@@ -120,7 +120,7 @@ Convert optimized parameters (`fitparam/`) and optimization process (`logs/`) in
 ```julia
 using BioMASS
 
-model = load_model("./examples/fos_model")
+model = Model("./examples/fos_model")
 
 optimize(model, 1, popsize=3, allowable_error=0.35, local_search_method="DE")
 ```
@@ -135,7 +135,7 @@ addprocs(); # add worker processes
 @everywhere using BioMASS
 
 @everywhere begin
-    model = load_model("./examples/fos_model")
+    model = Model("./examples/fos_model")
     function optimize_parallel(i)
         optimize(model, 1, popsize=3, allowable_error=0.35, local_search_method="DE")
     end
@@ -151,7 +151,7 @@ pmap(optimize_parallel, 1:10)
 ```julia
 using BioMASS
 
-model = load_model("./examples/fos_model")
+model = Model("./examples/fos_model")
 
 if abspath(PROGRAM_FILE) == @__FILE__
     optimize(
