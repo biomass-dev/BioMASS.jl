@@ -1,7 +1,7 @@
 import BioMASS:isinstalled
 
 @testset "Parameter Estimation" begin
-    model_ode = load_model("../examples/fos_model")
+    model_ode = Model("../examples/fos_model")
     output = []
     @testset "optimization" begin
         optimize(
