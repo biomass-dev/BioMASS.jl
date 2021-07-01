@@ -5,7 +5,7 @@
 [![Actions Status](https://github.com/biomass-dev/BioMASS.jl/workflows/CI/badge.svg)](https://github.com/biomass-dev/BioMASS.jl/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-This module provides a Julia interface to the [BioMASS](https://github.com/okadalabipr/biomass) parameter estimation.
+This module provides a Julia interface to the [BioMASS](https://github.com/biomass-dev/biomass) parameter estimation.
 
 ![](docs/src/assets/result.png)
 
