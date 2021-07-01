@@ -1,7 +1,7 @@
 import BioMASS:isinstalled
 
 @testset "Parameter Estimation" begin
-    model_ode = load_model("../examples/fos_model")
+    model_ode = Model("../examples/fos_model")
     output = []
     @testset "optimization" begin
         optimize(
@@ -50,7 +50,7 @@ import BioMASS:isinstalled
     end
     if isinstalled("matplotlib")
         @testset "visualization" begin
-            @test visualize(model_ode, viz_type="best") === nothing
+            @test run_simulation(model_ode, viz_type="best") === nothing
             files = readdir(joinpath(model_ode.path, "figure", "simulation", "best"))
             n_pdf = 0
             for file in files

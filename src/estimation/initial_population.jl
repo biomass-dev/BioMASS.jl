@@ -1,5 +1,5 @@
 function get_initial_population(
-        model::ExecModel,
+        model::Model,
         nth_param_set::Int64,
         n_population::Int64,
         n_gene::Int64,
@@ -52,7 +52,7 @@ end
 
 
 function get_initial_population_continue(
-        model::ExecModel,
+        model::Model,
         nth_param_set::Int64,
         n_population::Int64,
         n_gene::Int64,

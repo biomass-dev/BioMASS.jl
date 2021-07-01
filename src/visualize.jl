@@ -3,7 +3,7 @@ if isinstalled("seaborn")
     import Seaborn
 end
 
-function get_indiv(model::ExecModel, paramset::Int)::Vector{Float64}
+function get_indiv(model::Model, paramset::Int)::Vector{Float64}
     best_generation::Int64 = readdlm(
         joinpath(
             model.path,
@@ -25,7 +25,7 @@ end
 
 
 function load_param(
-        model::ExecModel,
+        model::Model,
         paramset::Int)::Tuple{Array{Float64,1},Array{Float64,1}}
     best_indiv::Vector{Float64} = get_indiv(model, paramset)
     (p, u0) = model.update_param(best_indiv)
@@ -33,7 +33,7 @@ function load_param(
 end
 
 
-function get_executable(model::ExecModel)::Vector{Int}
+function get_executable(model::Model)::Vector{Int}
     n_file::Vector{Int} = []
     fitparam_files::Vector{String} = readdir(
         joinpath(
@@ -66,7 +66,7 @@ function get_executable(model::ExecModel)::Vector{Int}
 end
 
 
-function validate!(model::ExecModel, nth_param_set::Int64)
+function validate!(model::Model, nth_param_set::Int64)
     (p, u0) = load_param(model, nth_param_set)
     if model.sim.simulate!(p, u0) isa Nothing
         return model, true
@@ -106,7 +106,7 @@ end
 
 
 function plot_timecourse(
-        model::ExecModel,
+        model::Model,
         n_file::Vector{Int},
         viz_type::String,
         show_all::Bool,
@@ -255,7 +255,7 @@ function plot_timecourse(
                     end
                 end
             else
-                norm_max = (
+                norm_max = length(model.sim.normalization) > 0 ? (
                     model.sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
                         model.sim.simulations[
                             i,
@@ -269,7 +269,7 @@ function plot_timecourse(
                             [model.cond2idx(c) for c in model.sim.normalization[obs_name]["condition"]]
                         ]
                     )
-                )
+                ) : 1.0
                 for (l, condition) in enumerate(model.sim.conditions)
                     plot(
                         model.sim.t,
@@ -344,7 +344,7 @@ function plot_timecourse(
 end
 
 
-function save_param_range(model::ExecModel, n_file::Vector{Int}, save_format::String)
+function save_param_range(model::Model, n_file::Vector{Int}, save_format::String)
     search_idx::Tuple{Array{Int64,1},Array{Int64,1}} = model.search_idx()
     popt::Matrix{Float64} = zeros(length(n_file), length(search_idx[1]))
     @inbounds for (i, nth_param_set) in enumerate(n_file)
@@ -386,8 +386,8 @@ function save_param_range(model::ExecModel, n_file::Vector{Int}, save_format::St
 end
 
 
-function visualize(
-        model::ExecModel;
+function run_simulation(
+        model::Model;
         viz_type::String,
         show_all::Bool=false,
         stdev::Bool=false,

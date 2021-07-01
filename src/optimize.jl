@@ -13,7 +13,7 @@ end
 
 
 function optimize(
-        model::ExecModel,
+        model::Model,
         nth_param_set::Int64;
         popsize::Int64=5,
         max_generation::Int64=10000,
@@ -93,7 +93,7 @@ end
 
 
 function optimize_continue(
-        model::ExecModel,
+        model::Model,
         nth_param_set::Int64;
         popsize::Int64=5,
         max_generation::Int64=10000,
