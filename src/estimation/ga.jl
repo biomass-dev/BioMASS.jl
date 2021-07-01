@@ -1,5 +1,5 @@
 function ga_v2(;
-        model::ExecModel,
+        model::Model,
         nth_param_set::Int64,
         max_generation::Int64,
         n_population::Int64,
@@ -241,7 +241,7 @@ end
 
 
 function ga_v2_continue(;
-        model::ExecModel,
+        model::Model,
         nth_param_set::Int64,
         max_generation::Int64,
         n_population::Int64,

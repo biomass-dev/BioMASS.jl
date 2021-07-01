@@ -23,4 +23,4 @@ Consider the following system of ordinary differential equations:
     - At least one of the eigenvalues has a real part greater than zero → ``x^*`` is unstable
 
 ## Usage
-See [examples/bifurcation](https://github.com/himoto/BioMASS.jl/tree/master/examples/bifurcation).
+See [examples/bifurcation](https://github.com/biomass-dev/BioMASS.jl/tree/master/examples/bifurcation).

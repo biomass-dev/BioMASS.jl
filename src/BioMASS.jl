@@ -6,11 +6,11 @@ using StatsBase
 using Statistics
 using DelimitedFiles
 
-export load_model,
+export Model,
     optimize,
     optimize_continue,
     param2biomass,
-    visualize,
+    run_simulation,
     create_diffeq,
     new_curve!,
     get_bistable_regime
@@ -27,7 +27,7 @@ const requirements = [
     "fitness.jl",
 ]
 
-struct ExecModel
+struct Model
     path::String
     parameters::Module
     species::Module
@@ -43,7 +43,7 @@ struct ExecModel
     val2gene::Function
     bestIndivVal2randGene::Function
 end
-function ExecModel(model_path::String, show_info::Bool)
+function Model(model_path::String, show_info::Bool=false)
     for req in requirements
         include(joinpath(model_path, req))
     end
@@ -57,7 +57,7 @@ function ExecModel(model_path::String, show_info::Bool)
             )
         )
     end
-    ExecModel(
+    Model(
         model_path,
         C,
         V,
@@ -75,13 +75,6 @@ function ExecModel(model_path::String, show_info::Bool)
     )
 end
 
-function load_model(path_to_model::String; show_info::Bool=false)
-    if isdir(path_to_model)
-        ExecModel(path_to_model, show_info)
-    else
-        error("$path_to_model: No such directory")
-    end
-end
 
 function isinstalled(pymodule::String)::Bool
     try
@@ -101,7 +94,7 @@ include("estimation/ga.jl")
 if isinstalled("matplotlib")
     include("visualize.jl")
 else
-    function visualize(model::ExecModel; kwargs...)
+    function visualize(model::Model; kwargs...)
         error(
             "The Python package matplotlib could not be imported by pyimport.\n"
             * "Usually this means that you did not install matplotlib in the "
