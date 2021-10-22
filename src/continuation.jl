@@ -331,7 +331,7 @@ function new_curve!(
         for i in 2:length(dx)
             if abs(dx[fix_num]) < abs(dx[i])
                 fix_num = i
-        end
+            end
         end
 
             # Stop calc.
