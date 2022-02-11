@@ -44,17 +44,12 @@ ES dissociates to E and P | kf=0.002, kr=0
 Convert the text into an executable model
 
 ```shell
-$ python
+$ python  # pasmopy requires Python 3.7+
 ```
 ```python
 >>> from pasmopy import Text2Model
 >>> description = Text2Model("michaelis_menten.txt", lang="julia")
 >>> description.convert()  # generate 'michaelis_menten_jl/'
-Model information
------------------
-2 reactions
-4 species
-4 parameters
 ```
 
 Simulate the model using BioMASS.jl
@@ -69,6 +64,7 @@ model = Model("./michaelis_menten_jl");
 run_simulation(model)
 ```
 
+![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
 ### Parameter estimation
 
 ```julia
@@ -85,6 +81,8 @@ run_simulation(model, viz_type="best", show_all=true)
 # Convert optimization results into BioMASS format
 param2biomass("./examples/fos_model")
 ```
+
+![estimated_parameter_sets](https://raw.githubusercontent.com/biomass-dev/biomass/master/docs/_static/img/estimated_parameter_sets.png)
 
 ## References
 
