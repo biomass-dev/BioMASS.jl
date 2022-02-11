@@ -21,7 +21,53 @@ or through the `pkg` REPL mode by typing
 ] add BioMASS
 ```
 
-## Usage
+## Example
+
+### Model development
+
+This example shows you how to build a simple Michaelis-Menten two-step enzyme catalysis model. [`pasmopy.Text2Model`](https://pasmopy.readthedocs.io/en/latest/model_development.html) allows you to build a BioMASS model from text. You simply describe biochemical reactions and the molecular mechanisms extracted from text are converted into an executable model.
+
+Prepare a text file describing the biochemical reactions (e.g., `michaelis_menten.txt`)
+```
+E binds S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
+ES dissociates to E and P | kf=0.002, kr=0
+
+@obs Substrate: u[S]
+@obs E_free: u[E]
+@obs E_total: u[E] + u[ES]
+@obs Product: u[P]
+@obs Complex: u[ES]
+
+@sim tspan: [0, 100]
+```
+
+Convert the text into an executable model
+
+```shell
+$ python
+```
+```python
+>>> from pasmopy import Text2Model
+>>> description = Text2Model("michaelis_menten.txt", lang="julia")
+>>> description.convert()  # generate 'michaelis_menten_jl/'
+Model information
+-----------------
+2 reactions
+4 species
+4 parameters
+```
+
+Simulate the model using BioMASS.jl
+
+```shell
+$ julia
+```
+```julia
+using BioMASS
+
+model = Model("./michaelis_menten_jl");
+run_simulation(model)
+```
 
 ### Parameter estimation
 
@@ -35,13 +81,16 @@ optimize(model, 1, max_generation=20000, allowable_error=0.5)
 
 # Save simulation results to figure/ in the model folder
 run_simulation(model, viz_type="best", show_all=true)
-```
 
-### Conversion of optimized parameters into BioMASS format
-
-```julia
+# Convert optimization results into BioMASS format
 param2biomass("./examples/fos_model")
 ```
+
+## References
+
+- Imoto, H., Zhang, S. & Okada, M. A Computational Framework for Prediction and Analysis of Cancer Signaling Dynamics from RNA Sequencing Data—Application to the ErbB Receptor Signaling Pathway. _Cancers_ **12**, 2878 (2020). https://doi.org/10.3390/cancers12102878
+
+- Imoto, H., Yamashiro, S. & Okada, M. A Text-Based Computational Framework for Patient-Specific Modeling for Classification of Cancers. Available at SSRN: https://ssrn.com/abstract=3965951 or http://dx.doi.org/10.2139/ssrn.3965951
 
 ## License
 
