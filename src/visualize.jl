@@ -388,7 +388,7 @@ end
 
 function run_simulation(
         model::Model;
-        viz_type::String,
+        viz_type::String="original",
         show_all::Bool=false,
         stdev::Bool=false,
         save_format::String="pdf")
