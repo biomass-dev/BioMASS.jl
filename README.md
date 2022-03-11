@@ -7,38 +7,6 @@
 
 This module provides a Julia interface to the [BioMASS](https://github.com/biomass-dev/biomass) parameter estimation.
 
-![](docs/src/assets/result.png)
-
-## Features
-
-BioMASS.jl supports:
-
-- parameter estimation of ODE/DDE models
-- visualization of simulation results
-- bifurcation analysis
-
-## Usage
-
-### Parameter estimation
-
-```julia
-using BioMASS
-
-model = Model("./examples/fos_model");
-
-# Estimate unknown model parameters against experimental observations.
-optimize(model, 1, max_generation=20000, allowable_error=0.5)
-
-# Save simulation results to figure/ in the model folder
-run_simulation(model, viz_type="best", show_all=true)
-```
-
-### Conversion of optimized parameters into BioMASS format
-
-```julia
-param2biomass("./examples/fos_model")
-```
-
 ## Installation
 
 The package is a registered package, and can be installed with `Pkg.add`.
@@ -53,17 +21,74 @@ or through the `pkg` REPL mode by typing
 ] add BioMASS
 ```
 
+## Example
+
+### Model development
+
+This example shows you how to build a simple Michaelis-Menten two-step enzyme catalysis model. [`pasmopy.Text2Model`](https://pasmopy.readthedocs.io/en/latest/model_development.html) allows you to build a BioMASS model from text. You simply describe biochemical reactions and the molecular mechanisms extracted from text are converted into an executable model.
+
+Prepare a text file describing the biochemical reactions (e.g., `michaelis_menten.txt`)
+```
+E binds S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
+ES dissociates to E and P | kf=0.002, kr=0
+
+@obs Substrate: u[S]
+@obs E_free: u[E]
+@obs E_total: u[E] + u[ES]
+@obs Product: u[P]
+@obs Complex: u[ES]
+
+@sim tspan: [0, 100]
+```
+
+Convert the text into an executable model
+
+```shell
+$ python  # pasmopy requires Python 3.7+
+```
+```python
+>>> from pasmopy import Text2Model
+>>> description = Text2Model("michaelis_menten.txt", lang="julia")
+>>> description.convert()  # generate 'michaelis_menten_jl/'
+```
+
+Simulate the model using BioMASS.jl
+
+```shell
+$ julia
+```
+```julia
+using BioMASS
+
+model = Model("./michaelis_menten_jl");
+run_simulation(model)
+```
+
+![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
+### Parameter estimation
+
+```julia
+using BioMASS
+
+model = Model("./examples/fos_model");
+
+# Estimate unknown model parameters against experimental observations.
+optimize(model, 1, max_generation=20000, allowable_error=0.5)
+
+# Save simulation results to figure/ in the model folder
+run_simulation(model, viz_type="best", show_all=true)
+
+# Convert optimization results into BioMASS format
+param2biomass("./examples/fos_model")
+```
+
+![estimated_parameter_sets](https://raw.githubusercontent.com/biomass-dev/biomass/master/docs/_static/img/estimated_parameter_sets.png)
+
 ## References
 
-- Nakakuki, T. _et al._ Ligand-specific c-Fos expression emerges from the spatiotemporal control of ErbB network dynamics. _Cell_ **141**, 884–896 (2010). https://doi.org/10.1016/j.cell.2010.03.054
+- Imoto, H., Zhang, S. & Okada, M. A Computational Framework for Prediction and Analysis of Cancer Signaling Dynamics from RNA Sequencing Data—Application to the ErbB Receptor Signaling Pathway. _Cancers_ **12**, 2878 (2020). https://doi.org/10.3390/cancers12102878
 
-- Inoue, K. _et al._ Oscillation dynamics underlie functional switching of NF-κB for B-cell activation. _npj Syst. Biol. Appl._ **2**, 16024 (2016). https://doi.org/10.1038/npjsba.2016.24
-
-- Yao, G., Lee, T. J., Mori, S., Nevins, J. R. & You, L. A bistable Rb-E2F switch underlies the restriction point. _Nat. Cell Biol._ **10**, 476–482 (2008). https://doi.org/10.1038/ncb1711
-
-- Barr, A. R., Heldt, F. S., Zhang, T., Bakal, C. & Novák, B. A Dynamical Framework for the All-or-None G1/S Transition. _Cell Syst._ **2**, 27–37 (2016). https://doi.org/10.1016/j.cels.2016.01.001
-
-- Rata, S. _et al._ Two Interlinked Bistable Switches Govern Mitotic Control in Mammalian Cells. _Curr. Biol._ **28**, 3824-3832.e6 (2018). https://doi.org/10.1016/j.cub.2018.09.059
+- Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. _iScience_ (2022). https://doi.org/10.1016/j.isci.2022.103944
 
 ## License
 

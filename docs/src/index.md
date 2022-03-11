@@ -6,12 +6,6 @@
 
 This module provides a Julia interface to the [BioMASS](https://github.com/biomass-dev/biomass) parameter estimation.
 
-## Features
-
-- Parameter estimation
-- Visualization of simulation results
-- Bifurcation analysis
-
 ## Installation
 
 ```
