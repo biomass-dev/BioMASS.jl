@@ -69,7 +69,7 @@ function objective(indiv_gene)::Float64
                             Sim.simulations[
                                 i,
                                 [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]],
-                                :
+                                :,
                             ]
                         )
                     )
