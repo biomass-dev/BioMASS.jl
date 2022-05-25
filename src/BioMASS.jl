@@ -85,7 +85,9 @@ function isinstalled(pymodule::String)::Bool
     end
 end
 
-include("pymodule.jl")
+if isinstalled("numpy") && isinstalled("scipy")
+    include("pyproject.jl")
+end
 include("optimize.jl")
 include("estimation/initial_population.jl")
 include("estimation/converging.jl")
