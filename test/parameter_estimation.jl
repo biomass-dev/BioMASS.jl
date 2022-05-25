@@ -48,20 +48,6 @@ import BioMASS:isinstalled
             end
         end
     end
-    if isinstalled("matplotlib")
-        @testset "visualization" begin
-            @test run_simulation(model_ode, viz_type="best") === nothing
-            files = readdir(joinpath(model_ode.path, "figure", "simulation", "best"))
-            n_pdf = 0
-            for file in files
-                if occursin(".pdf", file)
-                    n_pdf += 1
-                end
-            end
-            @test n_pdf == 8  # length(observables)
-            push!(output, "figure")
-        end
-    end
     if isinstalled("numpy")
         @testset "conversion" begin
             @test param2biomass(model_ode.path) === nothing

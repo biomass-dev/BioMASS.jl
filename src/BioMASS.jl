@@ -11,7 +11,6 @@ export Model,
     optimize_continue,
     scipy_differential_evolution,
     param2biomass,
-    run_simulation,
     create_diffeq,
     new_curve!,
     get_bistable_regime
@@ -92,16 +91,5 @@ include("estimation/initial_population.jl")
 include("estimation/converging.jl")
 include("estimation/local_search.jl")
 include("estimation/ga.jl")
-if isinstalled("matplotlib")
-    include("visualize.jl")
-else
-    function visualize(model::Model; kwargs...)
-        error(
-            "The Python package matplotlib could not be imported by pyimport.\n"
-            * "Usually this means that you did not install matplotlib in the "
-            * "Python version being used by PyCall."
-        )
-    end
-end
 include("continuation.jl")
 end # module
