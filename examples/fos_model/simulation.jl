@@ -28,20 +28,20 @@ const t = collect(0.0:dt:5400.0)  # 0, 1, 2, ..., 5400 [sec.]
 const conditions = ["EGF", "HRG"]
 
 simulations = Array{Float64,3}(
-    undef, length(observables), length(t), length(conditions)
+    undef, length(observables), length(conditions), length(t)
 )
 
 
 function solveode(
-        f::Function,
-        u0::Vector{Float64},
-        t::Vector{Float64},
-        p::Vector{Float64})::Union{ODESolution{},Nothing}
+    f::Function,
+    u0::Vector{Float64},
+    t::Vector{Float64},
+    p::Vector{Float64})::Union{ODESolution{},Nothing}
     local sol::ODESolution{}, is_successful::Bool
     try
         prob = ODEProblem(f, u0, (t[1], t[end]), p)
         sol = solve(
-            prob,CVODE_BDF(),
+            prob, CVODE_BDF(),
             abstol=ABSTOL,
             reltol=RELTOL,
             saveat=dt,
@@ -61,11 +61,11 @@ end
 
 
 function get_steady_state(
-        f::Function,
-        u0::Vector{Float64},
-        p::Vector{Float64})::Vector{Float64}
+    f::Function,
+    u0::Vector{Float64},
+    p::Vector{Float64})::Vector{Float64}
     local sol::SteadyStateSolution{}, is_successful::Bool
-        try
+    try
         prob = ODEProblem(f, u0, (0.0, Inf), p)
         prob = SteadyStateProblem(prob)
         sol = solve(
@@ -110,30 +110,30 @@ function simulate!(p::Vector{Float64}, u0::Vector{Float64})::Union{Bool,Nothing}
             return false
         else
             @inbounds @simd for j in eachindex(t)
-                simulations[observables_index("Phosphorylated_MEKc"),j,i] = (
-                    sol.u[j][V.ppMEKc]
+                simulations[observables_index("Phosphorylated_MEKc"), i, j] = (
+                    sol.u[i][V.ppMEKc]
                 )
-                simulations[observables_index("Phosphorylated_ERKc"),j,i] = (
-                    sol.u[j][V.pERKc] + sol.u[j][V.ppERKc]
+                simulations[observables_index("Phosphorylated_ERKc"), i, j] = (
+                    sol.u[i][V.pERKc] + sol.u[i][V.ppERKc]
                 )
-                simulations[observables_index("Phosphorylated_RSKw"),j,i] = (
-                    sol.u[j][V.pRSKc] + sol.u[j][V.pRSKn] * (p[C.Vn] / p[C.Vc])
+                simulations[observables_index("Phosphorylated_RSKw"), i, j] = (
+                    sol.u[i][V.pRSKc] + sol.u[i][V.pRSKn] * (p[C.Vn] / p[C.Vc])
                 )
-                simulations[observables_index("Phosphorylated_CREBw"),j,i] = (
-                    sol.u[j][V.pCREBn] * (p[C.Vn] / p[C.Vc])
+                simulations[observables_index("Phosphorylated_CREBw"), i, j] = (
+                    sol.u[i][V.pCREBn] * (p[C.Vn] / p[C.Vc])
                 )
-                simulations[observables_index("dusp_mRNA"),j,i] = (
-                    sol.u[j][V.duspmRNAc]
+                simulations[observables_index("dusp_mRNA"), i, j] = (
+                    sol.u[i][V.duspmRNAc]
                 )
-                simulations[observables_index("cfos_mRNA"),j,i] = (
-                    sol.u[j][V.cfosmRNAc]
+                simulations[observables_index("cfos_mRNA"), i, j] = (
+                    sol.u[i][V.cfosmRNAc]
                 )
-                simulations[observables_index("cFos_Protein"),j,i] = (
-                    (sol.u[j][V.pcFOSn] + sol.u[j][V.cFOSn]) * (p[C.Vn] / p[C.Vc])
-                    + sol.u[j][V.cFOSc] + sol.u[j][V.pcFOSc]
+                simulations[observables_index("cFos_Protein"), i, j] = (
+                    (sol.u[i][V.pcFOSn] + sol.u[i][V.cFOSn]) * (p[C.Vn] / p[C.Vc])
+                    + sol.u[i][V.cFOSc] + sol.u[i][V.pcFOSc]
                 )
-                simulations[observables_index("Phosphorylated_cFos"),j,i] = (
-                    sol.u[j][V.pcFOSn] * (p[C.Vn] / p[C.Vc]) + sol.u[j][V.pcFOSc]
+                simulations[observables_index("Phosphorylated_cFos"), i, j] = (
+                    sol.u[i][V.pcFOSn] * (p[C.Vn] / p[C.Vc]) + sol.u[i][V.pcFOSc]
                 )
             end
         end
