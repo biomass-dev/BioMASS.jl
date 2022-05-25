@@ -9,6 +9,7 @@ using DelimitedFiles
 export Model,
     optimize,
     optimize_continue,
+    scipy_differential_evolution,
     param2biomass,
     run_simulation,
     create_diffeq,
@@ -85,7 +86,7 @@ function isinstalled(pymodule::String)::Bool
     end
 end
 
-include("convert.jl")
+include("pymodule.jl")
 include("optimize.jl")
 include("estimation/initial_population.jl")
 include("estimation/converging.jl")
