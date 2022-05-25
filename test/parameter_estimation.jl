@@ -1,4 +1,4 @@
-import BioMASS:isinstalled
+import BioMASS: isinstalled
 
 @testset "Parameter Estimation" begin
     model_ode = Model("../examples/fos_model")
@@ -46,6 +46,20 @@ import BioMASS:isinstalled
                 end
                 @test lines[end][1:14] == "Generation12: "
             end
+        end
+    end
+    if isinstalled("matplotlib")
+        @testset "visualization" begin
+            @test run_simulation(model_ode, viz_type="best") === nothing
+            files = readdir(joinpath(model_ode.path, "figure", "simulation", "best"))
+            n_pdf = 0
+            for file in files
+                if occursin(".pdf", file)
+                    n_pdf += 1
+                end
+            end
+            @test n_pdf == 8  # length(observables)
+            push!(output, "figure")
         end
     end
     if isinstalled("numpy")

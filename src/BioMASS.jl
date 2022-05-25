@@ -10,6 +10,7 @@ export Model,
     optimize,
     optimize_continue,
     scipy_differential_evolution,
+    run_simulation,
     param2biomass,
     create_diffeq,
     new_curve!,
@@ -93,5 +94,8 @@ include("estimation/initial_population.jl")
 include("estimation/converging.jl")
 include("estimation/local_search.jl")
 include("estimation/ga.jl")
+if isinstalled("matplotlib")
+    include("visulalize.jl")
+end
 include("continuation.jl")
 end # module
