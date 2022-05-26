@@ -38,7 +38,7 @@ function diff_sim_and_exp(
 
     for (idx, condition) in enumerate(conditions)
         if condition in keys(exp_dict)
-            append!(sim_result, idx, sim_matrix[Int.(exp_timepoint .+ 1)])
+            append!(sim_result, sim_matrix[idx, Int.(exp_timepoint .+ 1)])
             append!(exp_result, exp_dict[condition])
         end
     end
