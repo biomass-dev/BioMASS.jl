@@ -96,7 +96,7 @@ function simulate!(
         else
             @inbounds @simd for j in eachindex(t)
                 simulations[observables_index("Nuclear_NFkB"), i, j] = (
-                    sol.u[i][V.NFKBn]
+                    sol.u[j][V.NFKBn]
                 )
             end
         end

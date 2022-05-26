@@ -111,29 +111,29 @@ function simulate!(p::Vector{Float64}, u0::Vector{Float64})::Union{Bool,Nothing}
         else
             @inbounds @simd for j in eachindex(t)
                 simulations[observables_index("Phosphorylated_MEKc"), i, j] = (
-                    sol.u[i][V.ppMEKc]
+                    sol.u[j][V.ppMEKc]
                 )
                 simulations[observables_index("Phosphorylated_ERKc"), i, j] = (
-                    sol.u[i][V.pERKc] + sol.u[i][V.ppERKc]
+                    sol.u[j][V.pERKc] + sol.u[j][V.ppERKc]
                 )
                 simulations[observables_index("Phosphorylated_RSKw"), i, j] = (
-                    sol.u[i][V.pRSKc] + sol.u[i][V.pRSKn] * (p[C.Vn] / p[C.Vc])
+                    sol.u[j][V.pRSKc] + sol.u[j][V.pRSKn] * (p[C.Vn] / p[C.Vc])
                 )
                 simulations[observables_index("Phosphorylated_CREBw"), i, j] = (
-                    sol.u[i][V.pCREBn] * (p[C.Vn] / p[C.Vc])
+                    sol.u[j][V.pCREBn] * (p[C.Vn] / p[C.Vc])
                 )
                 simulations[observables_index("dusp_mRNA"), i, j] = (
-                    sol.u[i][V.duspmRNAc]
+                    sol.u[j][V.duspmRNAc]
                 )
                 simulations[observables_index("cfos_mRNA"), i, j] = (
-                    sol.u[i][V.cfosmRNAc]
+                    sol.u[j][V.cfosmRNAc]
                 )
                 simulations[observables_index("cFos_Protein"), i, j] = (
-                    (sol.u[i][V.pcFOSn] + sol.u[i][V.cFOSn]) * (p[C.Vn] / p[C.Vc])
-                    + sol.u[i][V.cFOSc] + sol.u[i][V.pcFOSc]
+                    (sol.u[j][V.pcFOSn] + sol.u[j][V.cFOSn]) * (p[C.Vn] / p[C.Vc])
+                    + sol.u[j][V.cFOSc] + sol.u[j][V.pcFOSc]
                 )
                 simulations[observables_index("Phosphorylated_cFos"), i, j] = (
-                    sol.u[i][V.pcFOSn] * (p[C.Vn] / p[C.Vc]) + sol.u[i][V.pcFOSc]
+                    sol.u[j][V.pcFOSn] * (p[C.Vn] / p[C.Vc]) + sol.u[j][V.pcFOSc]
                 )
             end
         end
