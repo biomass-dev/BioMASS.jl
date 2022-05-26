@@ -444,5 +444,5 @@ if isinstalled("matplotlib")
         )
     end
 else
-    warn("run_simulation requires matplotlib.")
+    println("run_simulation requires matplotlib.")
 end

@@ -265,5 +265,5 @@ if isinstalled("numpy") && isinstalled("scipy")
         )
     end
 else
-    warn("scipy_differential_evolution requires both numpy and scipy.")
+    println("scipy_differential_evolution requires both numpy and scipy.")
 end
