@@ -248,7 +248,7 @@ end
 if isinstalled("numpy")
     param2biomass(model_path::String) = py"convert"(model_path)
 else
-    warn("param2biomass requires numpy.")
+    println("param2biomass requires numpy.")
 end
 
 if isinstalled("numpy") && isinstalled("scipy")
