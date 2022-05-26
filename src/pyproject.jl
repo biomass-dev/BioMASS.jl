@@ -249,6 +249,9 @@ end
 param2biomass(model_path::String) = py"convert"(model_path)
 
 
+numpy_load(path::String) = py"np.load"(path)
+
+
 function scipy_differential_evolution(
     model::Model,
     x_id::Int,

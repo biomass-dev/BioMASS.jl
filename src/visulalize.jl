@@ -1,22 +1,33 @@
 using PyPlot
 
 function get_indiv(model::Model, paramset::Int)::Vector{Float64}
-    best_generation::Int64 = readdlm(
-        joinpath(
-            model.path,
-            "fitparam",
-            "$paramset",
-            "generation.dat"
-        )
-    )[1, 1]
-    best_indiv::Vector{Float64} = readdlm(
-        joinpath(
-            model.path,
-            "fitparam",
-            "$paramset",
-            "fit_param$best_generation.dat"
-        ),
-    )[:, 1]
+    dirname = joinpath(
+        model.path,
+        "fitparam",
+        "$paramset",
+    )
+    if isfile(
+        local path_to_generation = joinpath(dirname, "generation.dat")
+    )
+        best_generation::Int64 = readdlm(
+            path_to_generation
+        )[1, 1]
+    else
+        best_generation = numpy_load(
+            joinpath(dirname, "generation.npy")
+        )[1, 1]
+    end
+    if isfile(
+        local path_to_fitparam = joinpath(dirname, "fit_param$best_generation.dat")
+    )
+        best_indiv::Vector{Float64} = readdlm(
+            path_to_fitparam
+        )[:, 1]
+    else
+        best_indiv = numpy_load(
+            joinpath(dirname, "fit_param$best_generation.npy")
+        )[:, 1]
+    end
     return best_indiv
 end
 
@@ -45,14 +56,13 @@ function get_executable(model::Model)::Vector{Int}
     end
     empty_folder::Vector{Int} = []
     for (i, nth_param_set) in enumerate(n_file)
-        if !isfile(
-            joinpath(
-                model.path,
-                "fitparam",
-                "$nth_param_set",
-                "generation.dat"
-            )
+        local filepath = joinpath(
+            model.path,
+            "fitparam",
+            "$nth_param_set",
+            "generation",
         )
+        if !isfile(filepath * ".dat") && !isfile(filepath * ".npy")
             push!(empty_folder, i)
         end
     end
@@ -76,7 +86,7 @@ end
 
 
 function get_norm_max(
-    i::Int, j::Int, obs_name::String, simulations_all::Array{Float64,4})::Float64
+    model::Model, i::Int, j::Int, obs_name::String, simulations_all::Array{Float64,4})::Float64
     if length(model.sim.normalization) > 0
         norm_max::Float64 = (
             model.sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
@@ -155,7 +165,7 @@ function plot_timecourse(
             if show_all
                 for j in eachindex(n_file)
                     if length(model.sim.normalization) > 0
-                        norm_max = get_norm_max(i, j, obs_name, simulations_all)
+                        norm_max = get_norm_max(model, i, j, obs_name, simulations_all)
                     end
                     for (k, condition) in enumerate(model.sim.conditions)
                         plot(
@@ -178,7 +188,7 @@ function plot_timecourse(
                 )
                 @inbounds for j in eachindex(n_file)
                     if length(model.sim.normalization) > 0
-                        norm_max = get_norm_max(i, j, obs_name, simulations_all)
+                        norm_max = get_norm_max(model, i, j, obs_name, simulations_all)
                     end
                     @simd for k in eachindex(model.sim.conditions)
                         normalized[i, j, k, :] = (
@@ -268,15 +278,15 @@ function plot_timecourse(
                         ]
                     )
                 ) : 1.0
-                for (k, condition) in enumerate(model.sim.conditions)
+                for (j, condition) in enumerate(model.sim.conditions)
                     plot(
                         model.sim.t,
-                        model.sim.simulations[i, :, k] ./ ifelse(
-                            length(model.sim.normalization) == 0 || maximum(model.sim.simulations[i, :, l]) == 0.0,
+                        model.sim.simulations[i, j, :] ./ ifelse(
+                            length(model.sim.normalization) == 0 || maximum(model.sim.simulations[i, j, :]) == 0.0,
                             1.0,
                             norm_max
                         ),
-                        color=cmap[k],
+                        color=cmap[j],
                         label=condition
                     )
                 end
@@ -379,8 +389,8 @@ if isinstalled("matplotlib")
             (
                 length(model.observables),
                 length(n_file),
+                length(model.sim.conditions),
                 length(model.sim.t),
-                length(model.sim.conditions)
             )
         )
         if viz_type != "experiment"
@@ -398,21 +408,19 @@ if isinstalled("matplotlib")
                 end
                 best_fitness_all::Vector{Float64} = fill(Inf, length(n_file))
                 for (i, nth_param_set) in enumerate(n_file)
-                    if isfile(
-                        joinpath(
-                            model.path,
-                            "fitparam",
-                            "$nth_param_set",
-                            "best_fitness.dat"
-                        )
+                    local filepath = joinpath(
+                        model.path,
+                        "fitparam",
+                        "$nth_param_set",
+                        "best_fitness",
                     )
+                    if isfile(filepath * ".dat")
                         best_fitness_all[i] = readdlm(
-                            joinpath(
-                                model.path,
-                                "fitparam",
-                                "$nth_param_set",
-                                "best_fitness.dat"
-                            )
+                            filepath * ".dat"
+                        )[1, 1]
+                    elseif isfile(filepath * ".npy")
+                        best_fitness_all[i] = numpy_load(
+                            filepath * ".npy"
                         )[1, 1]
                     end
                 end

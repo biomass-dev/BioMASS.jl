@@ -7,6 +7,7 @@ using Statistics
 using DelimitedFiles
 
 export Model,
+    numpy_load,
     optimize,
     optimize_continue,
     scipy_differential_evolution,
@@ -89,6 +90,7 @@ end
 if isinstalled("numpy") && isinstalled("scipy")
     include("pyproject.jl")
 end
+include("initpop.jl")
 include("optimize.jl")
 include("estimation/initial_population.jl")
 include("estimation/converging.jl")
