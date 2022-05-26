@@ -245,19 +245,25 @@ function __init__()
     """
 end
 
+if isinstalled("numpy")
+    param2biomass(model_path::String) = py"convert"(model_path)
+else
+    warn("param2biomass requires numpy.")
+end
 
-param2biomass(model_path::String) = py"convert"(model_path)
-
-
-function scipy_differential_evolution(
-    model::Model,
-    x_id::Int,
-    optimizer_options::Union{Dict,Nothing}=nothing
-)::Nothing
-    search_bounds::Matrix{Float64} = model.search_region()
-    n_search_param::Int = size(search_bounds)[2]
-    return py"optimize"(
-        model.path, model.obj_func, model.gene2val, n_search_param, x_id,
-        optimizer_options=optimizer_options
-    )
+if isinstalled("numpy") && isinstalled("scipy")
+    function scipy_differential_evolution(
+        model::Model,
+        x_id::Int,
+        optimizer_options::Union{Dict,Nothing}=nothing
+    )::Nothing
+        search_bounds::Matrix{Float64} = model.search_region()
+        n_search_param::Int = size(search_bounds)[2]
+        return py"optimize"(
+            model.path, model.obj_func, model.gene2val, n_search_param, x_id,
+            optimizer_options=optimizer_options
+        )
+    end
+else
+    warn("scipy_differential_evolution requires both numpy and scipy.")
 end

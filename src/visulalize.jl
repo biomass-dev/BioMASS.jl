@@ -8,7 +8,7 @@ function get_indiv(model::Model, paramset::Int)::Vector{Float64}
             "$paramset",
             "generation.dat"
         )
-    )[1,1]
+    )[1, 1]
     best_indiv::Vector{Float64} = readdlm(
         joinpath(
             model.path,
@@ -16,14 +16,14 @@ function get_indiv(model::Model, paramset::Int)::Vector{Float64}
             "$paramset",
             "fit_param$best_generation.dat"
         ),
-    )[:,1]
+    )[:, 1]
     return best_indiv
 end
 
 
 function load_param(
-        model::Model,
-        paramset::Int)::Tuple{Array{Float64,1},Array{Float64,1}}
+    model::Model,
+    paramset::Int)::Tuple{Array{Float64,1},Array{Float64,1}}
     best_indiv::Vector{Float64} = get_indiv(model, paramset)
     (p, u0) = model.update_param(best_indiv)
     return p, u0
@@ -76,7 +76,7 @@ end
 
 
 function get_norm_max(
-        i::Int, j::Int, obs_name::String, simulations_all::Array{Float64,4})::Float64
+    i::Int, j::Int, obs_name::String, simulations_all::Array{Float64,4})::Float64
     if length(model.sim.normalization) > 0
         norm_max::Float64 = (
             model.sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
@@ -91,7 +91,7 @@ function get_norm_max(
                     i,
                     j,
                     [model.cond2idx(c) for c in model.sim.normalization[obs_name]["condition"]],
-                     :,
+                    :,
                 ]
             )
         )
@@ -103,13 +103,13 @@ end
 
 
 function plot_timecourse(
-        model::Model,
-        n_file::Vector{Int},
-        viz_type::String,
-        show_all::Bool,
-        stdev::Bool,
-        simulations_all::Array{Float64,4},
-        save_format::String)
+    model::Model,
+    n_file::Vector{Int},
+    viz_type::String,
+    show_all::Bool,
+    stdev::Bool,
+    simulations_all::Array{Float64,4},
+    save_format::String)
     if !isdir(
         joinpath(
             model.path,
@@ -120,14 +120,14 @@ function plot_timecourse(
     )
         mkpath(
             joinpath(
-            model.path,
-            "figure",
-            "simulation",
-            "$viz_type"
-        )
+                model.path,
+                "figure",
+                "simulation",
+                "$viz_type"
+            )
         )
     end
-    
+
     cmap = [
         "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
         "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
@@ -160,13 +160,13 @@ function plot_timecourse(
                     for (k, condition) in enumerate(model.sim.conditions)
                         plot(
                             model.sim.t,
-                            simulations_all[i,j,k,:] ./ ifelse(
-                                length(model.sim.normalization) == 0 || maximum(simulations_all[i,j,k,:]) == 0.0,
+                            simulations_all[i, j, k, :] ./ ifelse(
+                                length(model.sim.normalization) == 0 || maximum(simulations_all[i, j, k, :]) == 0.0,
                                 1.0,
                                 norm_max
                             ),
                             color=cmap[k],
-                            lw=0.5,alpha=0.35
+                            lw=0.5, alpha=0.35
                         )
                     end
                 end
@@ -174,16 +174,16 @@ function plot_timecourse(
             if viz_type == "average"
                 normalized = Array{Float64,4}(
                     undef,
-                    length(model.observables),length(n_file),length(model.sim.t),length(model.sim.conditions)
+                    length(model.observables), length(n_file), length(model.sim.t), length(model.sim.conditions)
                 )
                 @inbounds for j in eachindex(n_file)
                     if length(model.sim.normalization) > 0
                         norm_max = get_norm_max(i, j, obs_name, simulations_all)
                     end
                     @simd for k in eachindex(model.sim.conditions)
-                        normalized[i,j,k,:] = (
-                            simulations_all[i,j,k,:] ./ ifelse(
-                                length(model.sim.normalization) == 0 || maximum(simulations_all[i,j,k,:]) == 0.0,
+                        normalized[i, j, k, :] = (
+                            simulations_all[i, j, k, :] ./ ifelse(
+                                length(model.sim.normalization) == 0 || maximum(simulations_all[i, j, k, :]) == 0.0,
                                 1.0,
                                 norm_max
                             )
@@ -197,7 +197,7 @@ function plot_timecourse(
                                 [
                                     mean(
                                         filter(
-                                            !isnan,normalized[i,:,k,l]
+                                            !isnan, normalized[i, :, k, l]
                                         )
                                     ) for l in eachindex(model.sim.t)
                                 ] for k in eachindex(model.sim.normalization[obs_name]["condition"])
@@ -208,7 +208,7 @@ function plot_timecourse(
                         for k in eachindex(model.sim.conditions)
                             for l in eachindex(model.sim.t)
                                 if !isnan(mean_norm_max) && mean_norm_max != 0.0
-                                    @inbounds normalized[i,j,k,l] /= mean_norm_max
+                                    @inbounds normalized[i, j, k, l] /= mean_norm_max
                                 end
                             end
                         end
@@ -216,10 +216,10 @@ function plot_timecourse(
                 end
                 for (k, condition) in enumerate(model.sim.conditions)
                     plot(
-                        model.sim.t,[
+                        model.sim.t, [
                             mean(
                                 filter(
-                                    !isnan,normalized[i,:,k,l]
+                                    !isnan, normalized[i, :, k, l]
                                 )
                             ) for l in eachindex(model.sim.t)
                         ],
@@ -232,14 +232,14 @@ function plot_timecourse(
                         y_mean = [
                             mean(
                                 filter(
-                                    !isnan,normalized[i,:,k,l]
+                                    !isnan, normalized[i, :, k, l]
                                 )
                             ) for l in eachindex(model.sim.t)
                         ]
                         y_std = [
                             std(
                                 filter(
-                                    !isnan,normalized[i,:,k,l]
+                                    !isnan, normalized[i, :, k, l]
                                 )
                             ) for l in eachindex(model.sim.t)
                         ]
@@ -271,8 +271,8 @@ function plot_timecourse(
                 for (k, condition) in enumerate(model.sim.conditions)
                     plot(
                         model.sim.t,
-                        model.sim.simulations[i,:,k] ./ ifelse(
-                            length(model.sim.normalization) == 0 || maximum(model.sim.simulations[i,:,l]) == 0.0,
+                        model.sim.simulations[i, :, k] ./ ifelse(
+                            length(model.sim.normalization) == 0 || maximum(model.sim.simulations[i, :, l]) == 0.0,
                             1.0,
                             norm_max
                         ),
@@ -292,7 +292,7 @@ function plot_timecourse(
                             exp_t,
                             model.exp.experiments[i][condition],
                             yerr=model.exp.error_bars[i][condition],
-                            lw=1,markerfacecolor="None",
+                            lw=1, markerfacecolor="None",
                             color=cmap[k],
                             markeredgecolor=cmap[k],
                             ecolor=cmap[k],
@@ -341,105 +341,108 @@ function plot_timecourse(
     end
 end
 
-
-function run_simulation(
+if isinstalled("matplotlib")
+    function run_simulation(
         model::Model;
         viz_type::String="original",
         show_all::Bool=false,
         stdev::Bool=false,
         save_format::String="pdf")
-    if !isdir(
-        joinpath(
-            model.path,
-            "figure"
-        )
-    )
-        mkdir(
+        if !isdir(
             joinpath(
                 model.path,
                 "figure"
             )
         )
-    end
-
-    if !(viz_type in ["best","average","original","experiment"])
-        try
-            parse(Int64, viz_type)
-        catch
-            error(
-                "Avairable viz_type are: 'best','average','original','experiment','n(=1,2,...)'"
+            mkdir(
+                joinpath(
+                    model.path,
+                    "figure"
+                )
             )
         end
-    end
 
-    n_file::Vector{Int} = viz_type in ["original", "experiment"] ? [] : get_executable(model)
-
-    simulaitons_all::Array{Float64,4} = fill(
-        NaN,
-        (
-            length(model.observables),
-            length(n_file),
-            length(model.sim.t),
-            length(model.sim.conditions)
-        )
-    )
-    if viz_type != "experiment"
-        if length(n_file) > 0
-            if length(n_file) == 1 && viz_type == "average"
-                error("viz_type should be best, not $viz_type")
+        if !(viz_type in ["best", "average", "original", "experiment"])
+            try
+                parse(Int64, viz_type)
+            catch
+                error(
+                    "Avairable viz_type are: 'best','average','original','experiment','n(=1,2,...)'"
+                )
             end
-            for (j, nth_param_set) in enumerate(n_file)
-                (model, is_successful) = validate!(model, nth_param_set)
-                if is_successful
-                    for i in eachindex(model.observables)
-                        @inbounds simulaitons_all[i,j,:,:] = model.sim.simulations[i,:,:]
+        end
+
+        n_file::Vector{Int} = viz_type in ["original", "experiment"] ? [] : get_executable(model)
+
+        simulaitons_all::Array{Float64,4} = fill(
+            NaN,
+            (
+                length(model.observables),
+                length(n_file),
+                length(model.sim.t),
+                length(model.sim.conditions)
+            )
+        )
+        if viz_type != "experiment"
+            if length(n_file) > 0
+                if length(n_file) == 1 && viz_type == "average"
+                    error("viz_type should be best, not $viz_type")
+                end
+                for (j, nth_param_set) in enumerate(n_file)
+                    (model, is_successful) = validate!(model, nth_param_set)
+                    if is_successful
+                        for i in eachindex(model.observables)
+                            @inbounds simulaitons_all[i, j, :, :] = model.sim.simulations[i, :, :]
+                        end
                     end
                 end
-            end
-            best_fitness_all::Vector{Float64} = fill(Inf, length(n_file))
-            for (i, nth_param_set) in enumerate(n_file)
-                if isfile(
-                    joinpath(
-                        model.path,
-                        "fitparam",
-                        "$nth_param_set",
-                        "best_fitness.dat"
-                    )
-                )
-                    best_fitness_all[i] = readdlm(
+                best_fitness_all::Vector{Float64} = fill(Inf, length(n_file))
+                for (i, nth_param_set) in enumerate(n_file)
+                    if isfile(
                         joinpath(
                             model.path,
                             "fitparam",
                             "$nth_param_set",
                             "best_fitness.dat"
                         )
-                    )[1,1]
+                    )
+                        best_fitness_all[i] = readdlm(
+                            joinpath(
+                                model.path,
+                                "fitparam",
+                                "$nth_param_set",
+                                "best_fitness.dat"
+                            )
+                        )[1, 1]
+                    end
+                end
+                best_param_set::Int = n_file[argmin(best_fitness_all)]
+                if viz_type == "best"
+                    model, _ = validate!(model, best_param_set)
+                elseif viz_type != "average" && parse(Int64, viz_type) <= length(n_file)
+                    model, _ = validate!(model, parse(Int64, viz_type))
+                elseif viz_type != "average" && parse(Int64, viz_type) > length(n_file)
+                    error(
+                        @sprintf(
+                            "n (%d) must be smaller than n_fitparam (%d)",
+                            parse(Int64, viz_type), length(n_file)
+                        )
+                    )
+                end
+            else
+                p::Vector{Float64} = param_values()
+                u0::Vector{Float64} = initial_values()
+                if model.sim.simulate!(p, u0) !== nothing
+                    error(
+                        "Simulation failed."
+                    )
                 end
             end
-            best_param_set::Int = n_file[argmin(best_fitness_all)]
-            if viz_type == "best"
-                model, _ = validate!(model, best_param_set)
-            elseif viz_type != "average" && parse(Int64, viz_type) <= length(n_file)
-                model, _ = validate!(model, parse(Int64, viz_type))
-            elseif viz_type != "average" && parse(Int64, viz_type) > length(n_file)
-                error(
-                    @sprintf(
-                        "n (%d) must be smaller than n_fitparam (%d)",
-                        parse(Int64, viz_type), length(n_file)
-                    )
-                )
-            end
-        else
-            p::Vector{Float64} = param_values()
-            u0::Vector{Float64} = initial_values()
-            if model.sim.simulate!(p, u0) !== nothing
-                error(
-                    "Simulation failed."
-                )
-            end
         end
+        plot_timecourse(
+            model, n_file, viz_type, show_all, stdev, simulaitons_all, save_format
+        )
     end
-    plot_timecourse(
-        model,n_file,viz_type,show_all,stdev,simulaitons_all, save_format
-    )
+else
+    warn("run_simulation requires matplotlib.")
 end
