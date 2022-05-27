@@ -289,7 +289,6 @@ function generate_initial_population(
             print("\r$i / $n_population")
         end
     end
-    println()
     population = sortslices(population, dims=1, by=x -> x[end])
     return population[:, 1:n_gene]
 end
