@@ -38,7 +38,7 @@ function diff_sim_and_exp(
 
     for (idx, condition) in enumerate(conditions)
         if condition in keys(exp_dict)
-            append!(sim_result, sim_matrix[Int.(exp_timepoint .+ 1),idx])
+            append!(sim_result, sim_matrix[idx, Int.(exp_timepoint .+ 1)])
             append!(exp_result, exp_dict[condition])
         end
     end
@@ -48,7 +48,7 @@ end
 
 
 # Define an objective function to be minimized.
-function objective(indiv_gene)::Float64    
+function objective(indiv_gene)::Float64
     indiv::Vector{Float64} = decode_gene2val(indiv_gene)
 
     (p, u0) = update_param(indiv)
@@ -59,32 +59,32 @@ function objective(indiv_gene)::Float64
             if isassigned(Exp.experiments, i)
                 if length(Sim.normalization) > 0
                     norm_max::Float64 = (
-                    Sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
-                        Sim.simulations[
-                            i,
-                            Sim.normalization[obs_name]["timepoint"],
-                            [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
-                        ]
-                    ) : maximum(
-                        Sim.simulations[
-                            i,
-                            :,
-                            [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]]
-                        ]
+                        Sim.normalization[obs_name]["timepoint"] !== nothing ? maximum(
+                            Sim.simulations[
+                                i,
+                                [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]],
+                                Sim.normalization[obs_name]["timepoint"]
+                            ]
+                        ) : maximum(
+                            Sim.simulations[
+                                i,
+                                [conditions_index(c) for c in Sim.normalization[obs_name]["condition"]],
+                                :,
+                            ]
+                        )
                     )
-                )
                 end
                 error[i] = compute_objval_rss(
-                diff_sim_and_exp(
-                    Sim.simulations[i,:,:],
-                    Exp.experiments[i],
-                    Exp.get_timepoint(obs_name),
-                    Sim.conditions,
-                    sim_norm_max=ifelse(
-                        length(Sim.normalization) == 0, 1.0, norm_max
-                    )
-                )...
-            )
+                    diff_sim_and_exp(
+                        Sim.simulations[i, :, :],
+                        Exp.experiments[i],
+                        Exp.get_timepoint(obs_name),
+                        Sim.conditions,
+                        sim_norm_max=ifelse(
+                            length(Sim.normalization) == 0, 1.0, norm_max
+                        )
+                    )...
+                )
             end
         end
         return sum(error) # < 1e12

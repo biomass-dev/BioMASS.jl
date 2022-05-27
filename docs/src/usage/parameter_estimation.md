@@ -196,6 +196,14 @@ The temporary result will be saved in `path_to_model/logs/n.log` after each iter
 $ tail examples/fos_model/logs/1.log
 ```
 
+## Visualization of simulation results
+
+The simulation results will be saved in `figure/`.
+
+```julia
+run_simulation(model, viz_type="best", show_all=true)
+```
+
 ## Conversion of optimized parameters into BioMASS format
 
 ![](../assets/conversion.png)

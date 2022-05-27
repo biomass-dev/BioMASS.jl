@@ -129,7 +129,7 @@ function __init__()
 
         def __init__(self, model_path: str, x_id: int):
             self.log = open(
-                os.path.join(model_path, "out", DIRNAME + str(x_id), "optimization.log"),
+                os.path.join(model_path, "fitparam", DIRNAME + str(x_id), "optimization.log"),
                 mode="w",
                 encoding="utf-8",
             )
@@ -152,7 +152,7 @@ function __init__()
             self.model_gene2val = model_gene2val
             self.x_id = x_id
 
-            self.savedir = os.path.join(self.model_path, "out", f"{self.x_id}")
+            self.savedir = os.path.join(self.model_path, "fitparam", f"{self.x_id}")
             if os.path.isdir(self.savedir):
                 raise ValueError(
                     f"out{os.sep}{self.x_id} already exists in {self.model_path}. "
@@ -160,7 +160,7 @@ function __init__()
                 )
             else:
                 os.makedirs(self.savedir)
-            os.makedirs(os.path.join(self.model_path, "out", DIRNAME + str(self.x_id)), exist_ok=True)
+            os.makedirs(os.path.join(self.model_path, "fitparam", DIRNAME + str(self.x_id)), exist_ok=True)
             self.default_stdout = sys.stdout
 
         def minimize(self, *args, **kwargs):
@@ -168,7 +168,7 @@ function __init__()
                 from scipy.optimize import differential_evolution
             except ImportError:
                 print("scipy: Not installed.")
-            os.makedirs(os.path.join(self.model_path, "out", DIRNAME + str(self.x_id)), exist_ok=True)
+            os.makedirs(os.path.join(self.model_path, "fitparam", DIRNAME + str(self.x_id)), exist_ok=True)
             try:
                 sys.stdout = _Logger(self.model_path, self.x_id)
                 with warnings.catch_warnings():
@@ -191,7 +191,7 @@ function __init__()
         def import_solution(self, x: Union[np.ndarray, List[float]], cleanup: bool = True) -> None:
 
             shutil.move(
-                os.path.join(self.model_path, "out", DIRNAME + str(self.x_id), "optimization.log"),
+                os.path.join(self.model_path, "fitparam", DIRNAME + str(self.x_id), "optimization.log"),
                 self.savedir,
             )
 
@@ -202,7 +202,7 @@ function __init__()
             np.save(os.path.join(self.savedir, "generation"), n_iter)
             np.save(os.path.join(self.savedir, f"fit_param{n_iter}"), x)
             if cleanup:
-                shutil.rmtree(os.path.join(self.model_path, "out", DIRNAME + str(self.x_id)))
+                shutil.rmtree(os.path.join(self.model_path, "fitparam", DIRNAME + str(self.x_id)))
 
 
     def optimize(
@@ -247,6 +247,9 @@ end
 
 
 param2biomass(model_path::String) = py"convert"(model_path)
+
+
+numpy_load(path::String) = py"np.load"(path)
 
 
 function scipy_differential_evolution(
