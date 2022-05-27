@@ -8,6 +8,7 @@ using DelimitedFiles
 
 export Model,
     numpy_load,
+    generate_initial_population,
     optimize,
     optimize_continue,
     scipy_differential_evolution,

@@ -264,3 +264,32 @@ function scipy_differential_evolution(
         optimizer_options=optimizer_options
     )
 end
+
+
+function generate_initial_population(
+    model::Model;
+    popsize::Int=3,
+    threshold::Float64=1e12,
+    show_progress::Bool=true
+)::Matrix{Float64}
+    search_bounds::Matrix{Float64} = model.search_region()
+    n_gene::Int = size(search_bounds)[2]
+    n_population::Int = popsize * n_gene
+    population::Matrix{Float64} = fill(
+        Inf, (n_population, n_gene + 1)
+    )
+    @inbounds @simd for i = 1:n_population
+        while threshold <= population[i, end]
+            for j = 1:n_gene
+                population[i, j] = rand()
+            end
+            population[i, end] = model.obj_func(population[i, 1:n_gene])
+        end
+        if show_progress
+            print("\r$i / $n_population")
+        end
+    end
+    println()
+    population = sortslices(population, dims=1, by=x -> x[end])
+    return population[:, 1:n_gene]
+end
