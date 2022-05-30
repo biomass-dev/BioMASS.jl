@@ -21,16 +21,26 @@ or through the `pkg` REPL mode by typing
 ] add BioMASS
 ```
 
+### Python package requirements:
+
+- numpy - https://numpy.org
+- scipy - https://scipy.org
+- matplotlib - https://matplotlib.org
+
 ## Example
 
 ### Model development
 
-This example shows you how to build a simple Michaelis-Menten two-step enzyme catalysis model. [`pasmopy.Text2Model`](https://pasmopy.readthedocs.io/en/latest/model_development.html) allows you to build a BioMASS model from text. You simply describe biochemical reactions and the molecular mechanisms extracted from text are converted into an executable model.
+This example shows you how to build a simple Michaelis-Menten two-step enzyme catalysis model.
+
+> E + S ⇄ ES → E + P
+
+[`pasmopy.Text2Model`](https://pasmopy.readthedocs.io/en/latest/model_development.html) allows you to build a BioMASS model from text. You simply describe biochemical reactions and the molecular mechanisms extracted from text are converted into an executable model.
 
 Prepare a text file describing the biochemical reactions (e.g., `michaelis_menten.txt`)
 ```
-E binds S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
-ES dissociates to E and P | kf=0.002, kr=0
+E + S ⇄ ES | kf=0.003, kr=0.001 | E=100, S=50
+ES → E + P | kf=0.002
 
 @obs Substrate: u[S]
 @obs E_free: u[E]
@@ -72,8 +82,8 @@ using BioMASS
 
 model = Model("./examples/fos_model");
 
-# Estimate unknown model parameters against experimental observations.
-optimize(model, 1, max_generation=20000, allowable_error=0.5)
+# Estimate unknown model parameters from experimental observations
+scipy_differential_evolution(model, 1)  # requires scipy package
 
 # Save simulation results to figure/ in the model folder
 run_simulation(model, viz_type="best", show_all=true)

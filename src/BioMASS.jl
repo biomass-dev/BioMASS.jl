@@ -7,10 +7,13 @@ using Statistics
 using DelimitedFiles
 
 export Model,
+    numpy_load,
+    generate_initial_population,
     optimize,
     optimize_continue,
-    param2biomass,
+    scipy_differential_evolution,
     run_simulation,
+    param2biomass,
     create_diffeq,
     new_curve!,
     get_bistable_regime
@@ -85,22 +88,16 @@ function isinstalled(pymodule::String)::Bool
     end
 end
 
-include("convert.jl")
+if isinstalled("numpy") && isinstalled("scipy")
+    include("pyproject.jl")
+end
 include("optimize.jl")
 include("estimation/initial_population.jl")
 include("estimation/converging.jl")
 include("estimation/local_search.jl")
 include("estimation/ga.jl")
 if isinstalled("matplotlib")
-    include("visualize.jl")
-else
-    function visualize(model::Model; kwargs...)
-        error(
-            "The Python package matplotlib could not be imported by pyimport.\n"
-            * "Usually this means that you did not install matplotlib in the "
-            * "Python version being used by PyCall."
-        )
-    end
+    include("visulalize.jl")
 end
 include("continuation.jl")
 end # module

@@ -1,4 +1,4 @@
-import BioMASS:isinstalled
+import BioMASS: isinstalled
 
 @testset "Parameter Estimation" begin
     model_ode = Model("../examples/fos_model")
