@@ -13,12 +13,12 @@ Load a BioMASS model. The model must include the following files:
 | Name                   | Content                                                                                                  |
 | :--------------------- | :------------------------------------------------------------------------------------------------------- |
 | `name2idx/`            | Names of model parameters and species                                                                    |
-| `set_model.jl`         | Differential equation, parameters and initial condition                                                  |
+| `ode.jl`               | Differential equation, parameters and initial condition                                                  |
 | `observalbe.jl`        | Model observables for correlating simulation results with experimental observations                      |
 | `simulation.jl`        | Simulation condition                                                                                     |
-| `experimental_data.jl` | Experimental measurements for determining parameters                                                     |
-| `set_search_param.jl`  | Model parameters to optimize and search region                                                           |
-| `fitness.jl`           | An objective function to be minimized, i.e., the distance between model simulation and experimental data |
+| `experimental_data.jl` | Experimental measurements                                                                                |
+| `search_param.jl`      | Lower and upper bounds of model parameters to be estimated                                               |
+| `problem.jl`           | An objective function to be minimized, i.e., the distance between model simulation and experimental data |
 
 - **Parameters**
 

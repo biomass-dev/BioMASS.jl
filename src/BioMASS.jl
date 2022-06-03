@@ -22,12 +22,12 @@ export Model,
 const requirements = [
     joinpath("name2idx", "parameters.jl"),
     joinpath("name2idx", "species.jl"),
-    "set_model.jl",
+    "ode.jl",
     "observable.jl",
     "simulation.jl",
     "experimental_data.jl",
-    "set_search_param.jl",
-    "fitness.jl",
+    "search_param.jl",
+    "problem.jl",
 ]
 
 struct Model
