@@ -1,4 +1,4 @@
-function get_ppMEK_slope(t, ligand)::Flaot
+function get_ppMEK_slope(t, ligand)::Float64
     timepoints = [0, 300, 600, 900, 1800, 2700, 3600, 5400]
     ppMEK_data = Dict(
         "EGF" => [0.000, 0.773, 0.439, 0.252, 0.130, 0.087, 0.080, 0.066],
