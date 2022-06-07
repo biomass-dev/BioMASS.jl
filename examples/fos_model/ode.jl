@@ -7,7 +7,7 @@ function get_ppMEK_slope(t, ligand)::Float64
     slope = [
         (ppMEK_data[ligand][i+1] - activity) / (timepoints[i+1] - timepoint)
         for (i, (timepoint, activity)) in enumerate(zip(timepoints, ppMEK_data[ligand]))
-        if i + 1 < length(timepoints)
+        if i + 1 <= length(timepoints)
     ]
     for (i, timepoint) in enumerate(timepoints)
         if timepoint <= t <= timepoints[i+1]
