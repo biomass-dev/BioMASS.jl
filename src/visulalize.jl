@@ -351,106 +351,103 @@ function plot_timecourse(
     end
 end
 
-if isinstalled("matplotlib")
-    function run_simulation(
-        model::Model;
-        viz_type::String="original",
-        show_all::Bool=false,
-        stdev::Bool=false,
-        save_format::String="pdf")
-        if !isdir(
+
+function run_simulation(
+    model::Model;
+    viz_type::String="original",
+    show_all::Bool=false,
+    stdev::Bool=false,
+    save_format::String="pdf")
+    if !isdir(
+        joinpath(
+            model.path,
+            "figure"
+        )
+    )
+        mkdir(
             joinpath(
                 model.path,
                 "figure"
             )
         )
-            mkdir(
-                joinpath(
-                    model.path,
-                    "figure"
-                )
-            )
-        end
-
-        if !(viz_type in ["best", "average", "original", "experiment"])
-            try
-                parse(Int64, viz_type)
-            catch
-                error(
-                    "Avairable viz_type are: 'best','average','original','experiment','n(=1,2,...)'"
-                )
-            end
-        end
-
-        n_file::Vector{Int} = viz_type in ["original", "experiment"] ? [] : get_executable(model)
-
-        simulaitons_all::Array{Float64,4} = fill(
-            NaN,
-            (
-                length(model.observables),
-                length(n_file),
-                length(model.sim.conditions),
-                length(model.sim.t),
-            )
-        )
-        if viz_type != "experiment"
-            if length(n_file) > 0
-                if length(n_file) == 1 && viz_type == "average"
-                    error("viz_type should be best, not $viz_type")
-                end
-                for (j, nth_param_set) in enumerate(n_file)
-                    (model, is_successful) = validate!(model, nth_param_set)
-                    if is_successful
-                        for i in eachindex(model.observables)
-                            @inbounds simulaitons_all[i, j, :, :] = model.sim.simulations[i, :, :]
-                        end
-                    end
-                end
-                best_fitness_all::Vector{Float64} = fill(Inf, length(n_file))
-                for (i, nth_param_set) in enumerate(n_file)
-                    local filepath = joinpath(
-                        model.path,
-                        "fitparam",
-                        "$nth_param_set",
-                        "best_fitness",
-                    )
-                    if isfile(filepath * ".dat")
-                        best_fitness_all[i] = readdlm(
-                            filepath * ".dat"
-                        )[1, 1]
-                    elseif isfile(filepath * ".npy")
-                        best_fitness_all[i] = numpy_load(
-                            filepath * ".npy"
-                        )[1, 1]
-                    end
-                end
-                best_param_set::Int = n_file[argmin(best_fitness_all)]
-                if viz_type == "best"
-                    model, _ = validate!(model, best_param_set)
-                elseif viz_type != "average" && parse(Int64, viz_type) <= length(n_file)
-                    model, _ = validate!(model, parse(Int64, viz_type))
-                elseif viz_type != "average" && parse(Int64, viz_type) > length(n_file)
-                    error(
-                        @sprintf(
-                            "n (%d) must be smaller than n_fitparam (%d)",
-                            parse(Int64, viz_type), length(n_file)
-                        )
-                    )
-                end
-            else
-                p::Vector{Float64} = param_values()
-                u0::Vector{Float64} = initial_values()
-                if model.sim.simulate!(p, u0) !== nothing
-                    error(
-                        "Simulation failed."
-                    )
-                end
-            end
-        end
-        plot_timecourse(
-            model, n_file, viz_type, show_all, stdev, simulaitons_all, save_format
-        )
     end
-else
-    println("run_simulation requires matplotlib.")
+
+    if !(viz_type in ["best", "average", "original", "experiment"])
+        try
+            parse(Int64, viz_type)
+        catch
+            error(
+                "Avairable viz_type are: 'best','average','original','experiment','n(=1,2,...)'"
+            )
+        end
+    end
+
+    n_file::Vector{Int} = viz_type in ["original", "experiment"] ? [] : get_executable(model)
+
+    simulaitons_all::Array{Float64,4} = fill(
+        NaN,
+        (
+            length(model.observables),
+            length(n_file),
+            length(model.sim.conditions),
+            length(model.sim.t),
+        )
+    )
+    if viz_type != "experiment"
+        if length(n_file) > 0
+            if length(n_file) == 1 && viz_type == "average"
+                error("viz_type should be best, not $viz_type")
+            end
+            for (j, nth_param_set) in enumerate(n_file)
+                (model, is_successful) = validate!(model, nth_param_set)
+                if is_successful
+                    for i in eachindex(model.observables)
+                        @inbounds simulaitons_all[i, j, :, :] = model.sim.simulations[i, :, :]
+                    end
+                end
+            end
+            best_fitness_all::Vector{Float64} = fill(Inf, length(n_file))
+            for (i, nth_param_set) in enumerate(n_file)
+                local filepath = joinpath(
+                    model.path,
+                    "fitparam",
+                    "$nth_param_set",
+                    "best_fitness",
+                )
+                if isfile(filepath * ".dat")
+                    best_fitness_all[i] = readdlm(
+                        filepath * ".dat"
+                    )[1, 1]
+                elseif isfile(filepath * ".npy")
+                    best_fitness_all[i] = numpy_load(
+                        filepath * ".npy"
+                    )[1, 1]
+                end
+            end
+            best_param_set::Int = n_file[argmin(best_fitness_all)]
+            if viz_type == "best"
+                model, _ = validate!(model, best_param_set)
+            elseif viz_type != "average" && parse(Int64, viz_type) <= length(n_file)
+                model, _ = validate!(model, parse(Int64, viz_type))
+            elseif viz_type != "average" && parse(Int64, viz_type) > length(n_file)
+                error(
+                    @sprintf(
+                        "n (%d) must be smaller than n_fitparam (%d)",
+                        parse(Int64, viz_type), length(n_file)
+                    )
+                )
+            end
+        else
+            p::Vector{Float64} = param_values()
+            u0::Vector{Float64} = initial_values()
+            if model.sim.simulate!(p, u0) !== nothing
+                error(
+                    "Simulation failed."
+                )
+            end
+        end
+    end
+    plot_timecourse(
+        model, n_file, viz_type, show_all, stdev, simulaitons_all, save_format
+    )
 end
