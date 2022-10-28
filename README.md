@@ -4,6 +4,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://biomass-dev.github.io/BioMASS.jl/dev)
 [![Actions Status](https://github.com/biomass-dev/BioMASS.jl/workflows/CI/badge.svg)](https://github.com/biomass-dev/BioMASS.jl/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Cancers Paper](https://img.shields.io/badge/DOI-10.3390%2Fcancers12102878-blue)](https://doi.org/10.3390/cancers12102878)
 
 This module provides a Julia interface to the [BioMASS](https://github.com/biomass-dev/biomass) parameter estimation.
 
@@ -38,6 +39,7 @@ This example shows you how to build a simple Michaelis-Menten two-step enzyme ca
 [`pasmopy.Text2Model`](https://pasmopy.readthedocs.io/en/latest/model_development.html) allows you to build a BioMASS model from text. You simply describe biochemical reactions and the molecular mechanisms extracted from text are converted into an executable model.
 
 Prepare a text file describing the biochemical reactions (e.g., `michaelis_menten.txt`)
+
 ```
 E + S ⇄ ES | kf=0.003, kr=0.001 | E=100, S=50
 ES → E + P | kf=0.002
@@ -56,6 +58,7 @@ Convert the text into an executable model
 ```shell
 $ python  # pasmopy requires Python 3.7+
 ```
+
 ```python
 >>> from pasmopy import Text2Model
 >>> description = Text2Model("michaelis_menten.txt", lang="julia")
@@ -67,6 +70,7 @@ Simulate the model using BioMASS.jl
 ```shell
 $ julia
 ```
+
 ```julia
 using BioMASS
 
@@ -75,6 +79,7 @@ run_simulation(model)
 ```
 
 ![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
+
 ### Parameter estimation
 
 ```julia
