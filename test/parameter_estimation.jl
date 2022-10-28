@@ -8,7 +8,7 @@ using PyCall
         # initpop = generate_initial_population(model_ode);
         optimizer_options = Dict{String, Int}(py"{'maxiter': 10}");
         scipy_differential_evolution(model_ode, 1, optimizer_options);
-        lines = open(joinpath(model_ode.path, "logs", "1.log"), "r") do f
+        lines = open(joinpath(model_ode.path, "fitparam", "1", "optimization.log"), "r") do f
             readlines(f)
         end
         @test startswith(lines[end - 1], "differential_evolution step 10:")
