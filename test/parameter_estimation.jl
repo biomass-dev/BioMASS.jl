@@ -11,7 +11,7 @@ using PyCall
         lines = open(joinpath(model_ode.path, "fitparam", "1", "optimization.log"), "r") do f
             readlines(f)
         end
-        @test startswith(lines[end - 1], "differential_evolution step 10:")
+        @test startswith(lines[end], "differential_evolution step 10:")
         push!(output, "logs")
         push!(output, "fitparam")
     end
