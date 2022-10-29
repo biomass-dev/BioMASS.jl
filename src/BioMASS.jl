@@ -9,11 +9,8 @@ using DelimitedFiles
 export Model,
     numpy_load,
     generate_initial_population,
-    optimize,
-    optimize_continue,
     scipy_differential_evolution,
     run_simulation,
-    param2biomass,
     create_diffeq,
     new_curve!,
     get_bistable_regime
@@ -90,10 +87,6 @@ end
 
 include("pyproject.jl")
 include("optimize.jl")
-include("estimation/initial_population.jl")
-include("estimation/converging.jl")
-include("estimation/local_search.jl")
-include("estimation/ga.jl")
 include("visulalize.jl")
 include("continuation.jl")
 end # module
