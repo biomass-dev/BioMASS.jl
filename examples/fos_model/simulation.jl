@@ -49,18 +49,15 @@ function solveode(
             dtmin=eps(),
             verbose=false
         )
-        #is_successful = ifelse(sol.retcode === :Success, true, false)
-        return sol
+        is_successful = ifelse(sol.t[end] == t[end], true, false)
     catch
-        #is_successful = false
-        GC.gc()
-        #finally
-        #    if !is_successful
-        #        GC.gc()
-        #    end
-        return nothing
+        is_successful = false
+    finally
+        if !is_successful
+            GC.gc()
+        end
     end
-    #return is_successful ? sol : nothing
+    return is_successful ? sol : nothing
 end
 
 
@@ -68,7 +65,7 @@ function get_steady_state(
     f::Function,
     u0::Vector{Float64},
     p::Vector{Float64})::Vector{Float64}
-    local sol::SteadyStateSolution{}, is_successful::Bool
+    local sol::SteadyStateSolution{}
     try
         prob = ODEProblem(f, u0, (0.0, Inf), p)
         prob = SteadyStateProblem(prob)
