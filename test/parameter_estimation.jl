@@ -6,8 +6,7 @@ using PyCall
     output = []
     @testset "optimization" begin
         initpop = generate_initial_population(model_ode)
-        optimizer_options = py"{'maxiter': 10, 'init': initpop}"
-        scipy_differential_evolution(model_ode, 1, optimizer_options)
+        scipy_differential_evolution(model_ode, 1, maxiter=10, init=initpop)
         lines = open(joinpath(model_ode.path, "fitparam", "1", "optimization.log"), "r") do f
             readlines(f)
         end
