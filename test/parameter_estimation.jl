@@ -28,13 +28,6 @@ using PyCall
             push!(output, "figure")
         end
     end
-    if isinstalled("numpy")
-        @testset "conversion" begin
-            @test param2biomass(model_ode.path) === nothing
-            @test isdir(joinpath(model_ode.path, "dat2npy", "out", "1"))
-            push!(output, "dat2npy")
-        end
-    end
     for dir in output
         rm(joinpath(model_ode.path, "$dir"), recursive=true, force=true)
     end
