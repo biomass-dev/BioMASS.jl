@@ -278,7 +278,7 @@ function generate_initial_population(
     population::Matrix{Float64} = fill(
         Inf, (n_population, n_gene + 1)
     )
-    @inbounds @simd for i = 1:n_population
+    for i = 1:n_population
         while threshold <= population[i, end]
             for j = 1:n_gene
                 population[i, j] = rand()
