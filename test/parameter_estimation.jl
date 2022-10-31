@@ -1,5 +1,4 @@
 import BioMASS: isinstalled
-using PyCall
 
 @testset "Parameter Estimation" begin
     model_ode = Model("../examples/fos_model")
