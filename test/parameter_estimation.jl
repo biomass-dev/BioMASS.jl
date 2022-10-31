@@ -3,7 +3,7 @@
         output = []
         @testset "optimization" begin
             initpop = generate_initial_population(model_ode)
-            @test size(init) == (225, 75)
+            @test size(initpop) == (225, 75)
             scipy_differential_evolution(model_ode, 1, maxiter=10, init=initpop)
             lines = open(joinpath(model_ode.path, "fitparam", "1", "optimization.log"), "r") do f
                 readlines(f)
