@@ -31,7 +31,7 @@ Load a BioMASS model. The model must include the following files:
 
 ---
 
-**scipy_differential_evolution**(`model`::Model, `ix_id`::Int, `kwargs`...)
+**scipy\_differential\_evolution**(`model`::Model, `ix_id`::Int, `kwargs`...)
 
 Estimate model parameters from experimental data.
 
@@ -74,17 +74,6 @@ Save simulation results with optimized parameter values.
 
   - `save_format`::String (default: `"pdf"`)
     - Either "png" or "pdf", indicating whether to save figures as png or pdf format.
-
----
-
-**param2biomass**(`path_to_model`::String)
-
-Convert optimized parameters (`fitparam/`) and optimization process (`logs/`) into BioMASS format (`out/`).
-
-- **Parameters**
-
-  - `path_to_model`::String
-    - The model folder including optimization results.
 
 ## Estimate unknown model parameters
 
