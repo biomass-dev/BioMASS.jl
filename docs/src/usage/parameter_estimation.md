@@ -31,52 +31,23 @@ Load a BioMASS model. The model must include the following files:
 
 ---
 
-**optimize**(`model`::Model, `index_of_parameter_set`::Int; `popsize`::Int=5, `max_generation`::Int=10000, `allowable_error`::Float64=0.0, `n_children`::Int=50, `local_search_method`::String="mutation")
+**scipy_differential_evolution**(`model`::Model, `ix_id`::Int, `kwargs`...)
 
-Find a parameter set that reproduces experimental observations.
+Estimate model parameters from experimental data.
 
 - **Parameters**
 
   - `model`::Model
 
-    - The BioMASS model object.
+    - Model for parameter estimation.
 
-  - `index_of_parameter_set`::Int
+  - `x_id`::Int
 
-    - Index of parameter sets.
+    - Index of parameter set to estimate.
 
-  - `popsize`::Int (default: 5)
+  - `kwargs`...
 
-    - A multiplier for setting the total population size. The population has popsize \* len(search_param) individuals.
-
-  - `max_generation`::Int (default: 10000)
-
-    - The maximum number of generations over which the entire population is evolved.
-
-  - `initial_threshold`::Float64 (default: 1e12)
-
-    - Allowable error used to generate initial population. Default value is 1e12 (numerically solvable).
-
-  - `allowable_error`::Float64 (default: 0.0)
-
-    - Optimization stops when Best Fitness <= allowable_error.
-
-  - `n_children`::Int (default: 50)
-
-    - The number of children used for local search NDM/MGG ("mutation").
-
-  - `maxiter`::Int (default: 100)
-
-    - The maximum number of iterations over which the entire population is evolved. This is used for the local search methods: "Powell", "DE" or "CMAES".
-
-  - `local_search_method`::String (default: `"mutation"`)
-
-    - Local search method used in GA. Should be one of
-      - `"mutation"` : NDM/MGG
-      - `"Powell"` : Modified Powell method
-      - `"DE"` : Differential Evolution (strategy: `best2bin`)
-      - `"CMAES"` : The CMA Evolution Strategy
-
+    - Keyword arguments to pass to [`scipy.optimize.differential_evolution`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html.).
 ---
 
 **run_simulation**(`model`::Model, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
@@ -119,10 +90,11 @@ Convert optimized parameters (`fitparam/`) and optimization process (`logs/`) in
 
 ```julia
 using BioMASS
+using PyCall
 
-model = Model("./examples/fos_model")
-
-optimize(model, 1, popsize=3, allowable_error=0.35, local_search_method="DE")
+model = Model("./examples/fos_model");
+initpop = generate_initial_population(model)
+scipy_differential_evolution(model, 1, init=initpop)
 ```
 
 ## Simultaneous parameter optimization
@@ -137,7 +109,7 @@ addprocs(); # add worker processes
 @everywhere begin
     model = Model("./examples/fos_model")
     function optimize_parallel(i)
-        optimize(model, 1, popsize=3, allowable_error=0.35, local_search_method="DE")
+        scipy_differential_evolution(model, i)
     end
 end
 
@@ -154,15 +126,7 @@ using BioMASS
 model = Model("./examples/fos_model")
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    optimize(
-        model,
-        parse(Int64, ARGS[1]),
-        max_generation=50,
-        allowable_error=0.35,
-        popsize=3,
-        local_search_method="CMAES",
-        maxiter=1000,
-    )
+    scipy_differential_evolution(model, parse(Int64, ARGS[1]))
 end
 ```
 
@@ -172,10 +136,8 @@ end
 #!/bin/sh
 
 for i in $(seq 1 10); do
-    nohup julia -t 4 main.jl $i >> errout/$i.log  2>&1 &
+    nohup julia main.jl $i >> errout/$i.log  2>&1 &
 done
-
-# The number of execution threads is controlled by using the -t command line argument (local_search_method == "CMAES").
 
 # To terminate the process,
 # $ pgrep -f main.jl | xargs kill -9
@@ -202,14 +164,4 @@ The simulation results will be saved in `figure/`.
 
 ```julia
 run_simulation(model, viz_type="best", show_all=true)
-```
-
-## Conversion of optimized parameters into BioMASS format
-
-![](../assets/conversion.png)
-
-The converted items will be saved in `path2model/dat2npy/out/`.
-
-```julia
-param2biomass("./examples/fos_model")
 ```

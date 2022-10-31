@@ -38,6 +38,7 @@ function solveode(
     t::Vector{Float64},
     p::Vector{Float64})::Union{ODESolution{},Nothing}
     local sol::ODESolution{}, is_successful::Bool
+    prob = ODEProblem(f, u0, (t[1], t[end]), p)
     try
         prob = ODEProblem(f, u0, (t[1], t[end]), p)
         sol = solve(
@@ -48,7 +49,7 @@ function solveode(
             dtmin=eps(),
             verbose=false
         )
-        is_successful = ifelse(sol.retcode === :Success, true, false)
+        is_successful = ifelse(sol.t[end] == t[end], true, false)
     catch
         is_successful = false
     finally
@@ -64,7 +65,7 @@ function get_steady_state(
     f::Function,
     u0::Vector{Float64},
     p::Vector{Float64})::Vector{Float64}
-    local sol::SteadyStateSolution{}, is_successful::Bool
+    local sol::SteadyStateSolution{}
     try
         prob = ODEProblem(f, u0, (0.0, Inf), p)
         prob = SteadyStateProblem(prob)
@@ -79,15 +80,18 @@ function get_steady_state(
             dtmin=eps(),
             verbose=false
         )
-        is_successful = ifelse(sol.retcode === :Success, true, false)
+        #is_successful = ifelse(sol.retcode === :Success, true, false)
+        return sol.u
     catch
-        is_successful = false
-    finally
-        if !is_successful
-            GC.gc()
-        end
+        #is_successful = false
+        GC.gc()
+        #finally
+        #    if !is_successful
+        #        GC.gc()
+        #    end
+        return []
     end
-    return is_successful ? sol.u : []
+    #return is_successful ? sol.u : []
 end
 
 

@@ -81,7 +81,7 @@ function get_search_index()::Tuple{Array{Int64,1},Array{Int64,1}}
 
     # initial values
     search_idx_initials::Vector{Int} = [
-        # V.(variableName)
+    # V.(variableName)
     ]
 
     return search_idx_params, search_idx_initials
@@ -96,19 +96,19 @@ function get_search_region()::Matrix{Float64}
     search_param::Vector{Float64} = initialize_search_param(search_idx, p, u0)
 
     search_rgn::Matrix{Float64} = zeros(2, length(p) + length(u0))
-    
+
     # Default: 0.1 ~ 10x
     for (i, j) in enumerate(search_idx[1])
-        search_rgn[1,j] = search_param[i] * 0.1  # lower bound
-        search_rgn[2,j] = search_param[i] * 10.0  # upper bound
+        search_rgn[1, j] = search_param[i] * 0.1  # lower bound
+        search_rgn[2, j] = search_param[i] * 10.0  # upper bound
     end
 
     # Default: 0.5 ~ 2x
     for (i, j) in enumerate(search_idx[2])
-        search_rgn[1,j + length(p)] = search_param[i + length(search_idx[1])] * 0.5  # lower bound
-        search_rgn[2,j + length(p)] = search_param[i + length(search_idx[1])] * 2.0  # upper bound
+        search_rgn[1, j+length(p)] = search_param[i+length(search_idx[1])] * 0.5  # lower bound
+        search_rgn[2, j+length(p)] = search_param[i+length(search_idx[1])] * 2.0  # upper bound
     end
-    
+
     # search_rgn[:, C.param_name] = [lower_bound, upper_bound]
     # search_rgn[:, V.var_name+length(p)] = [lower_bound, upper_bound]
 
@@ -204,7 +204,7 @@ function update_param(indiv::Vector{Float64})::Tuple{Array{Float64,1},Array{Floa
         @inbounds p[j] = indiv[i]
     end
     for (i, j) in enumerate(search_idx[2])
-        @inbounds u0[j] = indiv[i + length(search_idx[1])]
+        @inbounds u0[j] = indiv[i+length(search_idx[1])]
     end
 
     # constraints --------------------------------------------------------------
@@ -232,27 +232,28 @@ function decode_gene2val(indiv_gene)::Vector{Float64}
     search_rgn::Matrix{Float64} = get_search_region()
     indiv::Vector{Float64} = zeros(length(indiv_gene))
 
-    for i in eachindex(indiv_gene)
+    for (i, g) in enumerate(indiv_gene)
         indiv[i] = 10^(
-            indiv_gene[i] * (
-                search_rgn[2,i] - search_rgn[1,i]
-            ) + search_rgn[1,i]
+            g * (
+                search_rgn[2, i] - search_rgn[1, i]
+            ) + search_rgn[1, i]
         )
     end
 
-    return round.(indiv, sigdigits=7)
+    # return round.(indiv, sigdigits=7)
+    return indiv
 end
 
 
 function encode_val2gene(indiv::Vector{Float64})
     search_rgn::Matrix{Float64} = get_search_region()
     indiv_gene::Vector{Float64} = zeros(length(indiv))
-    
+
     for i in eachindex(indiv)
         indiv_gene[i] = (
-            log10(indiv[i]) - search_rgn[1,i]
+            log10(indiv[i]) - search_rgn[1, i]
         ) / (
-            search_rgn[2,i] - search_rgn[1,i]
+            search_rgn[2, i] - search_rgn[1, i]
         )
     end
 
@@ -261,27 +262,27 @@ end
 
 
 function encode_bestIndivVal2randGene(
-        gene_idx::Int64,
-        best_indiv::Vector{Float64},
-        p0_bounds::Vector{Float64})::Float64
+    gene_idx::Int64,
+    best_indiv::Vector{Float64},
+    p0_bounds::Vector{Float64})::Float64
     search_rgn::Matrix{Float64} = get_search_region()
     rand_gene::Float64 = (
         log10(
             best_indiv[gene_idx] * 10^(
                 rand() * log10(p0_bounds[2] / p0_bounds[1]) + log10(p0_bounds[1])
             )
-        ) - search_rgn[1,gene_idx]
+        ) - search_rgn[1, gene_idx]
     ) / (
-        search_rgn[2,gene_idx] - search_rgn[1,gene_idx]
+        search_rgn[2, gene_idx] - search_rgn[1, gene_idx]
     )
     return rand_gene
 end
 
 
 function initialize_search_param(
-        search_idx::Tuple{Array{Int64,1},Array{Int64,1}},
-        p::Vector{Float64},
-        u0::Vector{Float64})::Vector{Float64}
+    search_idx::Tuple{Array{Int64,1},Array{Int64,1}},
+    p::Vector{Float64},
+    u0::Vector{Float64})::Vector{Float64}
     duplicate::Vector{String} = []
     if length(search_idx[1]) != length(unique(search_idx[1]))
         for idx in findall(
@@ -300,7 +301,7 @@ function initialize_search_param(
         end
         error(
             "Duplicate initial conditions (V.): $duplicate"
-        )   
+        )
     end
     search_param = zeros(
         length(search_idx[1]) + length(search_idx[2])
@@ -309,7 +310,7 @@ function initialize_search_param(
         @inbounds search_param[i] = p[j]
     end
     for (i, j) in enumerate(search_idx[2])
-        @inbounds search_param[i + length(search_idx[1])] = u0[j]
+        @inbounds search_param[i+length(search_idx[1])] = u0[j]
     end
 
     if any(x -> x == 0.0, search_param)
@@ -339,36 +340,36 @@ end
 
 
 function convert_scale!(
-        search_rgn::Matrix{Float64},
-        search_idx::Tuple{Array{Int64,1},Array{Int64,1}})::Matrix{Float64}
+    search_rgn::Matrix{Float64},
+    search_idx::Tuple{Array{Int64,1},Array{Int64,1}})::Matrix{Float64}
     for i = 1:size(search_rgn, 2)
-        if minimum(search_rgn[:,i]) < 0.0
+        if minimum(search_rgn[:, i]) < 0.0
             msg = "search_rgn[lower_bound,upper_bound] must be positive.\n"
             if i <= C.NUM
                 error(@sprintf("`C.%s` ", C.NAMES[i]) * msg)
             else
-                error(@sprintf("`V.%s` ", V.NAMES[i - C.NUM]) * msg)
+                error(@sprintf("`V.%s` ", V.NAMES[i-C.NUM]) * msg)
             end
-        elseif minimum(search_rgn[:,i]) == 0.0 && maximum(search_rgn[:,i]) != 0.0
+        elseif minimum(search_rgn[:, i]) == 0.0 && maximum(search_rgn[:, i]) != 0.0
             msg = "lower_bound must be larger than 0.\n"
             if i <= C.NUM
                 error(@sprintf("`C.%s` ", C.NAMES[i]) * msg)
             else
-                error(@sprintf("`V.%s` ", V.NAMES[i - C.NUM]) * msg)
+                error(@sprintf("`V.%s` ", V.NAMES[i-C.NUM]) * msg)
             end
-        elseif search_rgn[2,i] - search_rgn[1,i] < 0.0
+        elseif search_rgn[2, i] - search_rgn[1, i] < 0.0
             msg = "lower_bound must be smaller than upper_bound.\n"
             if i <= C.NUM
                 error(@sprintf("`C.%s` ", C.NAMES[i]) * msg)
             else
-                error(@sprintf("`V.%s` ", V.NAMES[i - C.NUM]) * msg)
+                error(@sprintf("`V.%s` ", V.NAMES[i-C.NUM]) * msg)
             end
         end
     end
 
     nonzero_idx::Vector{Int} = []
     for i = 1:size(search_rgn, 2)
-        if search_rgn[:,i] != [0.0,0.0]
+        if search_rgn[:, i] != [0.0, 0.0]
             push!(nonzero_idx, i)
         end
     end
@@ -383,7 +384,7 @@ function convert_scale!(
             if idx <= C.NUM
                 println(@sprintf("`C.%s`", C.NAMES[Int(idx)]))
             else
-                println(@sprintf("`V.%s`", V.NAMES[Int(idx) - C.NUM]))
+                println(@sprintf("`V.%s`", V.NAMES[Int(idx)-C.NUM]))
             end
         end
         error(
@@ -391,7 +392,7 @@ function convert_scale!(
         )
     end
 
-    search_rgn = search_rgn[:,nonzero_idx]
+    search_rgn = search_rgn[:, nonzero_idx]
 
     return log10.(search_rgn)
 end
