@@ -18,11 +18,13 @@ end
 
 
 function diffeq!(du, u, p, t)
+    #=
     for (i, ui) in enumerate(u)
         if ui < 0 && abs(ui) < eps()
             u[i] = 0.0
         end
     end
+    =#
     v = Dict{Int64,Float64}()
 
     v[1] = p[C.V1] * p[C.a] * u[V.ppMEKc] * u[V.ERKc] / (p[C.Km1] * (1 + u[V.pERKc] / p[C.Km2]) + u[V.ERKc])
