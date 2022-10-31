@@ -6,7 +6,7 @@
 
 ---
 
-**Model**(`path_to_model`::String)
+### Model(`path_to_model`::String)
 
 Load a BioMASS model. The model must include the following files:
 
@@ -31,7 +31,7 @@ Load a BioMASS model. The model must include the following files:
 
 ---
 
-**scipy\_differential\_evolution**(`model`::Model, `ix_id`::Int, `kwargs`...)
+### scipy_differential_evolution(`model`::Model, `ix_id`::Int, `kwargs`...)
 
 Estimate model parameters from experimental data.
 
@@ -50,7 +50,7 @@ Estimate model parameters from experimental data.
     - Keyword arguments to pass to [`scipy.optimize.differential_evolution`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html.).
 ---
 
-**run_simulation**(`model`::Model, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
+### run_simulation(`model`::Model, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
 
 Save simulation results with optimized parameter values.
 
@@ -141,10 +141,10 @@ $ sh optimize_parallel.sh
 
 ## How to track optimization process
 
-The temporary result will be saved in `path_to_model/logs/n.log` after each iteration.
+The temporary result will be saved in `path_to_model/fitparam/n/optimization.log`.
 
 ```bash
-$ tail examples/fos_model/logs/1.log
+$ tail examples/fos_model/fitparam/1/optimization.log
 ```
 
 ## Visualization of simulation results
