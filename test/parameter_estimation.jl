@@ -1,5 +1,3 @@
-import BioMASS: isinstalled
-
 @testset "Parameter Estimation" begin
     let model_ode = Model("../examples/fos_model")
         output = []
@@ -14,19 +12,17 @@ import BioMASS: isinstalled
             push!(output, "logs")
             push!(output, "fitparam")
         end
-        if isinstalled("matplotlib")
-            @testset "visualization" begin
-                @test run_simulation(model_ode, viz_type="best") === nothing
-                files = readdir(joinpath(model_ode.path, "figure", "simulation", "best"))
-                n_pdf = 0
-                for file in files
-                    if occursin(".pdf", file)
-                        n_pdf += 1
-                    end
+        @testset "visualization" begin
+            @test run_simulation(model_ode, viz_type="best") === nothing
+            files = readdir(joinpath(model_ode.path, "figure", "simulation", "best"))
+            n_pdf = 0
+            for file in files
+                if occursin(".pdf", file)
+                    n_pdf += 1
                 end
-                @test n_pdf == length(model_ode.observables)
-                push!(output, "figure")
             end
+            @test n_pdf == length(model_ode.observables)
+            push!(output, "figure")
         end
         for dir in output
             rm(joinpath(model_ode.path, "$dir"), recursive=true, force=true)
