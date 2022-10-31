@@ -24,7 +24,7 @@ using PyCall
                     n_pdf += 1
                 end
             end
-            @test n_pdf == 8  # length(observables)
+            @test n_pdf == length(model_ode.observables)
             push!(output, "figure")
         end
     end
