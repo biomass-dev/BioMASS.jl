@@ -1,7 +1,7 @@
 name = "BioMASS"
 uuid = "324734c7-f323-4536-9335-775d9be9d101"
 authors = ["Hiroaki Imoto <himoto@protein.osaka-u.ac.jp>"]
-version = "0.7.2"
+version = "0.8.0"
 
 [deps]
 CMAEvolutionStrategy = "8d3b24bd-414e-49e0-94fb-163cc3a3e411"
@@ -30,7 +30,7 @@ PyPlot = "2.9"
 StatsBase = "0.33"
 SteadyStateDiffEq = "1.5"
 Sundials = "4.3"
-julia = "1.5"
+julia = "1.6"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
