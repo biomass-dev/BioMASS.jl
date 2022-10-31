@@ -1,6 +1,3 @@
-using DelimitedFiles
-using Sundials
-using SteadyStateDiffEq
 import BioMASS: isinstalled
 
 @testset "Bifurcation analysis" begin
