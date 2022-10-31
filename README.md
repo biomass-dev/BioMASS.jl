@@ -92,9 +92,6 @@ scipy_differential_evolution(model, 1)  # requires scipy package
 
 # Save simulation results to figure/ in the model folder
 run_simulation(model, viz_type="best", show_all=true)
-
-# Convert optimization results into BioMASS format
-param2biomass("./examples/fos_model")
 ```
 
 ![estimated_parameter_sets](https://raw.githubusercontent.com/biomass-dev/biomass/master/docs/_static/img/estimated_parameter_sets.png)

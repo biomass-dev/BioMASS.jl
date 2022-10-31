@@ -53,7 +53,7 @@ function objective(indiv_gene)::Float64
 
     (p, u0) = update_param(indiv)
 
-    if Sim.simulate!(p, u0) isa Nothing
+    if Sim.simulate!(p, u0) === nothing
         error::Vector{Float64} = zeros(length(observables))
         for (i, obs_name) in enumerate(observables)
             if isassigned(Exp.experiments, i)
