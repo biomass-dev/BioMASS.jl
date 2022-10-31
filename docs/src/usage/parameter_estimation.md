@@ -29,6 +29,8 @@ Load a BioMASS model. The model must include the following files:
   - `model`::Model
     - The executable model in BioMASS.
 
+!!! note [`pasmopy.Text2Model`](https://pasmopy.readthedocs.io/en/latest/model_development.html) allows you to build a BioMASS model from text [[Imoto et al., 2022](https://www.cell.com/iscience/fulltext/S2589-0042(22)00214-0)]. You simply describe biochemical reactions and the molecular mechanisms extracted from text are converted into an executable model. To build a model for BioMASS.jl, please set `lang="julia"`.
+
 ---
 
 ### scipy_differential_evolution(`model`::Model, `ix_id`::Int, `kwargs`...)
