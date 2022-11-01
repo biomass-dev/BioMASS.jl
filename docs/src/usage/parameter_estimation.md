@@ -6,7 +6,7 @@
 
 ---
 
-**Model**(`path_to_model`::String)
+### Model(`path_to_model`::String)
 
 Load a BioMASS model. The model must include the following files:
 
@@ -29,9 +29,11 @@ Load a BioMASS model. The model must include the following files:
   - `model`::Model
     - The executable model in BioMASS.
 
+!!! note [`pasmopy.Text2Model`](https://pasmopy.readthedocs.io/en/latest/model_development.html) allows you to build a BioMASS model from text [[Imoto et al., 2022](https://www.cell.com/iscience/fulltext/S2589-0042(22)00214-0)]. You simply describe biochemical reactions and the molecular mechanisms extracted from text are converted into an executable model. To build a model for BioMASS.jl, please set `lang="julia"`.
+
 ---
 
-**scipy_differential_evolution**(`model`::Model, `ix_id`::Int, `kwargs`...)
+### scipy_differential_evolution(`model`::Model, `ix_id`::Int, `kwargs`...)
 
 Estimate model parameters from experimental data.
 
@@ -50,7 +52,7 @@ Estimate model parameters from experimental data.
     - Keyword arguments to pass to [`scipy.optimize.differential_evolution`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html.).
 ---
 
-**run_simulation**(`model`::Model, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
+### run_simulation(`model`::Model, `viz_type`::String, `show_all`::Bool=false, `stdev`::Bool=false)
 
 Save simulation results with optimized parameter values.
 
@@ -74,17 +76,6 @@ Save simulation results with optimized parameter values.
 
   - `save_format`::String (default: `"pdf"`)
     - Either "png" or "pdf", indicating whether to save figures as png or pdf format.
-
----
-
-**param2biomass**(`path_to_model`::String)
-
-Convert optimized parameters (`fitparam/`) and optimization process (`logs/`) into BioMASS format (`out/`).
-
-- **Parameters**
-
-  - `path_to_model`::String
-    - The model folder including optimization results.
 
 ## Estimate unknown model parameters
 
@@ -152,10 +143,10 @@ $ sh optimize_parallel.sh
 
 ## How to track optimization process
 
-The temporary result will be saved in `path_to_model/logs/n.log` after each iteration.
+The temporary result will be saved in `path_to_model/fitparam/n/optimization.log`.
 
 ```bash
-$ tail examples/fos_model/logs/1.log
+$ tail examples/fos_model/fitparam/1/optimization.log
 ```
 
 ## Visualization of simulation results
