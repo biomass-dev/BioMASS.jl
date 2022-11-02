@@ -52,10 +52,10 @@ function solveode(
         is_successful = ifelse(sol.t[end] == t[end], true, false)
     catch
         is_successful = false
-    finally
-        if !is_successful
-            GC.gc()
-        end
+        #finally
+        #    if !is_successful
+        #        GC.gc()
+        #    end
     end
     return is_successful ? sol : nothing
 end
@@ -84,7 +84,7 @@ function get_steady_state(
         return sol.u
     catch
         #is_successful = false
-        GC.gc()
+        # GC.gc()
         #finally
         #    if !is_successful
         #        GC.gc()
