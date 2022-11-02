@@ -82,7 +82,6 @@ Save simulation results with optimized parameter values.
 
 ```julia
 using BioMASS
-using PyCall
 
 model = Model("./examples/fos_model");
 initpop = generate_initial_population(model)
