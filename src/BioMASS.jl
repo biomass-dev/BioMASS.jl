@@ -86,7 +86,6 @@ function isinstalled(pymodule::String)::Bool
 end
 
 include("pyproject.jl")
-include("optimize.jl")
 include("visulalize.jl")
 include("continuation.jl")
 end # module
