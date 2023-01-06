@@ -1,4 +1,4 @@
-using ForwardDiff:jacobian
+using ForwardDiff: jacobian
 
 const MC = 100000           # maximum of counts
 const IVAL = 1e-2           # first variation
@@ -82,18 +82,18 @@ end
 
 # Newton's method
 function newtons_method!(
-        diffeq::Function,
-        get_derivatives::Function,
-        x::Vector{Float64},
-        real_part::Vector{Float64},
-        imaginary_part::Vector{Float64}, 
-        fix_num::Int,
-        p::Vector{Float64},
-        successful::Bool,
-        bifparam::Int,
-        n_state::Int,
-        dim_newton::Int,
-        n_variable::Int)
+    diffeq::Function,
+    get_derivatives::Function,
+    x::Vector{Float64},
+    real_part::Vector{Float64},
+    imaginary_part::Vector{Float64},
+    fix_num::Int,
+    p::Vector{Float64},
+    successful::Bool,
+    bifparam::Int,
+    n_state::Int,
+    dim_newton::Int,
+    n_variable::Int)
     u::Vector{Float64} = zeros(n_state)
     vx::Vector{Float64} = zeros(dim_newton)
     s::Matrix{Float64} = zeros(dim_newton, dim_newton + 1)
@@ -127,21 +127,21 @@ function newtons_method!(
                     if idx == 0
                         u[j] = x[fix_num]
                     elseif idx < 0
-                        u[j] = vx[n_variable + idx]
+                        u[j] = vx[n_variable+idx]
                     else
                         u[j] = vx[idx]
                     end
                 end
                 break
-        else
+            else
                 continue
-        end
+            end
         end
 
         # initialization
         dFdx::Matrix{Float64} = jacobian(diffeq, u)
         dFdp::Vector{Float64} = get_derivatives(u, p)
-        
+
         F::Vector{Float64} = diffeq(u)
 
         eigenvalues::Array{Complex{Float64},1} = eigvals(dFdx)
@@ -159,7 +159,7 @@ function newtons_method!(
                         if idx == n_variable
                             s[k, j] = dFdp[k]
                         elseif idx > n_variable
-                            s[k, j] = dFdx[k, idx - n_variable]
+                            s[k, j] = dFdx[k, idx-n_variable]
                         else
                             s[k, j] = dFdx[k, idx]
                         end
@@ -205,17 +205,17 @@ end
 
 
 function new_curve!(
-        model_path::Union{String,SubString{String}},
-        p::Vector{Float64},
-        diffeq::Function,
-        get_derivatives::Function,
-        get_steady_state::Function;
-        direction::Bool=false,
-        bifparam::Int,
-        n_state::Int,
-        n_param::Int=1,
-        n_variable::Int=n_state + 1,
-        dim_newton::Int=n_state)
+    model_path::Union{String,SubString{String}},
+    p::Vector{Float64},
+    diffeq::Function,
+    get_derivatives::Function,
+    get_steady_state::Function;
+    direction::Bool=false,
+    bifparam::Int,
+    n_state::Int,
+    n_param::Int=1,
+    n_variable::Int=n_state + 1,
+    dim_newton::Int=n_state)
     # bifparam : name(index) of bifurcation parameter
     # n_state : num of state variables
     # n_param : num of parameters
@@ -229,36 +229,15 @@ function new_curve!(
     imaginary_part::Vector{Float64} = zeros(n_state)
 
     # file
-    if !isdir(
-        joinpath(
-            model_path,
-            "data",
-        )
-    )
-        mkdir(
-            joinpath(
-                model_path,
-                "data",
-            )
-        )
+    if !isdir(joinpath(model_path, "data"))
+        mkdir(joinpath(model_path, "data"))
     else
-        files::Vector{String} = readdir(
-            joinpath(
-                model_path,
-                "data",
-            )
-        )
+        files::Vector{String} = readdir(joinpath(model_path, "data"))
         for file in files
-            rm(
-                joinpath(
-                    model_path,
-                    "data",
-                    "$file",
-                )
-            )
+            rm(joinpath(model_path, "data", "$file"))
         end
     end
-    
+
     FOUT1 = open(joinpath(model_path, "data", "fp.dat"), "w") # file for fixed point
     FOUT2 = open(joinpath(model_path, "data", "ev.dat"), "w") # file for eigenvalues
 
@@ -274,8 +253,18 @@ function new_curve!(
     # first Newton's method
     successful::Bool = true
     newtons_method!(
-        diffeq, get_derivatives, x, real_part, imaginary_part, fix_num, p,
-        successful, bifparam, n_state, dim_newton, n_variable
+        diffeq,
+        get_derivatives,
+        x,
+        real_part,
+        imaginary_part,
+        fix_num,
+        p,
+        successful,
+        bifparam,
+        n_state,
+        dim_newton,
+        n_variable,
     )
 
     write(FOUT1, @sprintf("%d\t", count))
@@ -305,13 +294,23 @@ function new_curve!(
 
     while count <= MC && successful
         newtons_method!(
-            diffeq, get_derivatives, x, real_part, imaginary_part, fix_num, p,
-            successful, bifparam, n_state, dim_newton, n_variable
+            diffeq,
+            get_derivatives,
+            x,
+            real_part,
+            imaginary_part,
+            fix_num,
+            p,
+            successful,
+            bifparam,
+            n_state,
+            dim_newton,
+            n_variable,
         )
 
         # maximum variation
         for (i, prev) in enumerate(px)
-        @inbounds dx[i] = x[i] - prev
+            @inbounds dx[i] = x[i] - prev
         end
         sum::Float64 = 0.0
         for i in eachindex(dx)
@@ -334,7 +333,7 @@ function new_curve!(
             end
         end
 
-            # Stop calc.
+        # Stop calc.
         if x[end] <= 0.0
             successful = false
         end
