@@ -1,5 +1,5 @@
 """
-Barr, A. R., Heldt, F. S., Zhang, T., Bakal, C. & Novák, B. A Dynamical 
+Barr, A. R., Heldt, F. S., Zhang, T., Bakal, C. & Novák, B. A Dynamical
 Framework for the All-or-None G1/S Transition. Cell Syst. 2, 27–37 (2016).
 https://doi.org/10.1016/j.cels.2016.01.001
 """
@@ -41,8 +41,8 @@ function calc_fixed_point_vec(model_path::String)::Tuple{Array,Array}
             model_path, p, diffeq, get_derivatives, get_steady_state,
             direction=false, bifparam=BP, n_state=SN
         )
-        push!(fp, readdlm(model_path * "/data/fp.dat", '\t', Float64, '\n'))
-        push!(ev, readdlm(model_path * "/data/ev.dat", '\t', Float64, '\n'))
+        push!(fp, readdlm(joinpath(model_path, "data", "fp.dat"), '\t', Float64, '\n'))
+        push!(ev, readdlm(joinpath(model_path, "data", "ev.dat"), '\t', Float64, '\n'))
         push!(br, get_bistable_regime(ev[i], SN))
     end
 
@@ -66,29 +66,29 @@ function bifurcation_diagram(model_path::String, fp::Array, br::Array)
             color = "silver"
         end
         plot(
-            fixed_point[1:unstable_ss[1] - 1,VN + 1],
-            fixed_point[1:unstable_ss[1] - 1,V.p27T + 1],
-            "-",color=color
+            fixed_point[1:unstable_ss[1]-1, VN+1],
+            fixed_point[1:unstable_ss[1]-1, V.p27T+1],
+            "-", color=color
         )
         plot(
-            fixed_point[unstable_ss,VN + 1],
-            fixed_point[unstable_ss,V.p27T + 1],
-            "--",color=color
+            fixed_point[unstable_ss, VN+1],
+            fixed_point[unstable_ss, V.p27T+1],
+            "--", color=color
         )
         plot(
-            fixed_point[unstable_ss[end] + 1:end,VN + 1],
-            fixed_point[unstable_ss[end] + 1:end,V.p27T + 1],
-            "-",color=color
+            fixed_point[unstable_ss[end]+1:end, VN+1],
+            fixed_point[unstable_ss[end]+1:end, V.p27T+1],
+            "-", color=color
         )
     end
     xlabel("CycE level")
     ylabel("p27 level")
 
     xlim(0.0, 1.0)
-    xticks([0,0.5,1])
+    xticks([0, 0.5, 1])
     ylim(0.0, 2.05)
-    yticks([0,1,2])
+    yticks([0, 1, 2])
 
-    savefig(model_path * "/bifurcation_diagram.pdf", bbox_inches="tight")
+    savefig(joinpath(model_path, "bifurcation_diagram.pdf"), bbox_inches="tight")
     close()
 end

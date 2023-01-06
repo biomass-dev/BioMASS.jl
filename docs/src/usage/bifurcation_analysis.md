@@ -76,9 +76,9 @@ Here I would like to use a mathematical model of Rb–E2F pathway ([Yao et al., 
             model_path, p, diffeq, get_derivatives, get_steady_state,
             direction=false, bifparam=BP, n_state=SN
         )
-        fp::Array = readdlm(model_path * "/data/fp.dat", '\t', Float64, '\n')
-        ev::Array = readdlm(model_path * "/data/ev.dat", '\t', Float64, '\n')
-        br::Array = get_bistable_regime(ev, SN) # indices at unstable steady state
+        fp::Array = readdlm(joinpath(model_path, "data", "fp.dat"), '\t', Float64, '\n')
+        ev::Array = readdlm(joinpath(model_path, "data", "ev.dat"), '\t', Float64, '\n')
+        br::Array = get_bistable_regime(ev, SN)
 
         return fp, br
     end
@@ -96,20 +96,20 @@ Here I would like to use a mathematical model of Rb–E2F pathway ([Yao et al., 
         rc("ytick.major", width=1)
         rc("lines", linewidth=3)
 
-        plot(fp[1:br[1] - 1,VN + 1], fp[1:br[1] - 1,V.E + 1], "k-")
-        plot(fp[br,VN + 1], fp[br,V.E + 1], lw=1.5, "k--")
-        plot(fp[br[end] + 1:end,VN + 1], fp[br[end] + 1:end,V.E + 1], "k-")
+        plot(fp[1:br[1]-1, VN+1], fp[1:br[1]-1, V.E+1], "k-")
+        plot(fp[br, VN+1], fp[br, V.E+1], lw=1.5, "k--")
+        plot(fp[br[end]+1:end, VN+1], fp[br[end]+1:end, V.E+1], "k-")
 
         xlabel("Serum (percentage)")
         ylabel("E2F (μM)")
 
         xlim(0, 2)
-        xticks([0,0.5,1,1.5,2])
+        xticks([0, 0.5, 1, 1.5, 2])
         yscale("log")
         ylim(1e-4, 2)
-        yticks([1e-4,1e-2,1])
+        yticks([1e-4, 1e-2, 1])
 
-        savefig(model_path * "/bifurcation_diagram.pdf", bbox_inches="tight")
+        savefig(joinpath(model_path, "bifurcation_diagram.pdf"), bbox_inches="tight")
         close()
     end
     ```
