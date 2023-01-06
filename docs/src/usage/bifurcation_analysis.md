@@ -123,4 +123,6 @@ Here I would like to use a mathematical model of Rb–E2F pathway ([Yao et al., 
     bifurcation_diagram(MODEL_PATH, fp, br);
     ```
 
+    ![](../assets/bifurcation_diagram.png)
+
 For more examples, please refer to [examples/bifurcation](https://github.com/biomass-dev/BioMASS.jl/tree/master/examples/bifurcation).
