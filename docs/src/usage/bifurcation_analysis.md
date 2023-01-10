@@ -127,6 +127,6 @@ bifurcation_diagram(MODEL_PATH, fp, br);
 
 ![](../assets/bifurcation_diagram.png)
 
-Stable (solid) and unstable (dashed) steady states of E2F activity with respect to serum stimulation.
+*Stable (solid) and unstable (dashed) steady states of E2F activity with respect to serum stimulation.*
 
 For more examples, please refer to [examples/bifurcation](https://github.com/biomass-dev/BioMASS.jl/tree/master/examples/bifurcation).
