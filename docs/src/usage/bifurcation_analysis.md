@@ -30,7 +30,7 @@ Here I would like to use a mathematical model of Rb–E2F pathway ([Yao et al., 
 
 - See [examples](https://github.com/biomass-dev/BioMASS.jl/tree/master/examples/bifurcation/restriction_point/name2idx).
 
-### Create `set_model.jl`
+### Create [`set_model.jl`](https://github.com/biomass-dev/BioMASS.jl/blob/master/examples/bifurcation/restriction_point/set_model.jl)
 
 In this file, you will need to prepare four functions:
 
