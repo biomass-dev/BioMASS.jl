@@ -312,6 +312,7 @@ function new_curve!(
             n_state,
             dim_newton,
             n_variable,
+            NEPS=NEPS,
         )
 
         # maximum variation
