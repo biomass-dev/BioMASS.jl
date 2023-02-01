@@ -1,10 +1,5 @@
 using ForwardDiff: jacobian
 
-const MC = 100000           # maximum of counts
-const IVAL = 1e-2           # first variation
-const RATE = 1e-3           # variation rate
-const NEPS = 1e-12          # eps of Newton's method
-
 
 function create_diffeq(model_path::String)
     lines::Vector{String} = []
@@ -93,7 +88,8 @@ function newtons_method!(
     bifparam::Int,
     n_state::Int,
     dim_newton::Int,
-    n_variable::Int)
+    n_variable::Int;
+    NEPS::Float64)
     u::Vector{Float64} = zeros(n_state)
     vx::Vector{Float64} = zeros(dim_newton)
     s::Matrix{Float64} = zeros(dim_newton, dim_newton + 1)
@@ -215,12 +211,21 @@ function new_curve!(
     n_state::Int,
     n_param::Int=1,
     n_variable::Int=n_state + 1,
-    dim_newton::Int=n_state)
+    dim_newton::Int=n_state;
+    MC::Int=100000,
+    IVAL::Float64=1e-2,
+    RATE::Float64=1e-3,
+    NEPS::Float64=1e-12)
+    # direction : Set to true to +IVAL, false to -IVAL
     # bifparam : name(index) of bifurcation parameter
     # n_state : num of state variables
     # n_param : num of parameters
     # n_variable : num of variables
     # dim_newton : dim of Newton's method
+    # MC : maximum of counts
+    # IVAL : first variation
+    # RATE : variation rate
+    # NEPS : eps of Newton's method
     count::Int = 1
     x::Vector{Float64} = zeros(n_variable)
     dx::Vector{Float64} = zeros(n_variable)
@@ -265,6 +270,7 @@ function new_curve!(
         n_state,
         dim_newton,
         n_variable,
+        NEPS=NEPS,
     )
 
     write(FOUT1, @sprintf("%d\t", count))
