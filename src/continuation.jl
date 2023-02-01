@@ -211,7 +211,7 @@ function new_curve!(
     n_state::Int,
     n_param::Int=1,
     n_variable::Int=n_state + 1,
-    dim_newton::Int=n_state;
+    dim_newton::Int=n_state,
     MC::Int=100000,
     IVAL::Float64=1e-2,
     RATE::Float64=1e-3,
