@@ -40,7 +40,6 @@ function solveode(
     local sol::ODESolution{}, is_successful::Bool
     prob = ODEProblem(f, u0, (t[1], t[end]), p)
     try
-        prob = ODEProblem(f, u0, (t[1], t[end]), p)
         sol = solve(
             prob, CVODE_BDF(),
             abstol=ABSTOL,
