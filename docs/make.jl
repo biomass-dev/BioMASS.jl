@@ -3,7 +3,7 @@ using Documenter
 
 makedocs(;
     modules=[BioMASS],
-    authors="Hiroaki Imoto <himoto@protein.osaka-u.ac.jp>",
+    authors="Hiroaki Imoto <hiroaki.imoto@ucd.ie>",
     repo="https://github.com/biomass-dev/BioMASS.jl/blob/{commit}{path}#L{line}",
     sitename="BioMASS.jl",
     format=Documenter.HTML(;
