@@ -1,6 +1,6 @@
 name = "BioMASS"
 uuid = "324734c7-f323-4536-9335-775d9be9d101"
-authors = ["Hiroaki Imoto <himoto@protein.osaka-u.ac.jp>"]
+authors = ["Hiroaki Imoto <hiroaki.imoto@ucd.ie>"]
 version = "0.8.2"
 
 [deps]
